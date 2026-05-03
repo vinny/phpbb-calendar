@@ -1,0 +1,85 @@
+vinny_calendar_create:
+    path: /events/create
+    defaults: { _controller: 'vinny.calendar.controller.main:create' }
+
+vinny_calendar_controller:
+    path: /events
+    defaults: { _controller: 'vinny.calendar.controller.main:index' }
+
+vinny_calendar_view:
+    path: /events/view/{id}
+    defaults: { _controller: 'vinny.calendar.controller.main:view' }
+    requirements:
+        id: \d+
+
+vinny_calendar_join:
+    path: /events/join/{id}
+    defaults: { _controller: 'vinny.calendar.controller.main:join' }
+    requirements:
+        id: \d+
+
+vinny_calendar_leave:
+    path: /events/leave/{id}
+    defaults: { _controller: 'vinny.calendar.controller.main:leave' }
+    requirements:
+        id: \d+
+
+vinny_calendar_ical:
+    path: /events/ical
+    defaults: { _controller: 'vinny.calendar.controller.main:ical' }
+
+vinny_calendar_ical_event:
+    path: /events/ical/{id}
+    defaults: { _controller: 'vinny.calendar.controller.main:ical_event' }
+    requirements:
+        id: \d+
+
+vinny_calendar_feed:
+    path: /events/feed
+    defaults: { _controller: 'vinny.calendar.controller.main:feed' }
+
+vinny_calendar_geo_proxy:
+    path: /events/geo_proxy
+    defaults: { _controller: 'vinny.calendar.controller.main:proxy' }
+
+vinny_calendar_comment:
+    path: /events/comment/{id}
+    defaults: { _controller: 'vinny.calendar.controller.main:submit_comment' }
+    requirements:
+        id: \d+
+
+vinny_calendar_delete_comment:
+    path: /events/comment/delete/{id}
+    defaults: { _controller: 'vinny.calendar.controller.main:delete_comment' }
+    requirements:
+        id: \d+
+
+vinny_calendar_upcoming:
+    path: /events/upcoming
+    defaults: { _controller: 'vinny.calendar.controller.main:upcoming' }
+
+vinny_calendar_category:
+    path: /events/category/{id}
+    defaults: { _controller: 'vinny.calendar.controller.main:category' }
+    requirements:
+        id: \d+
+
+vinny_calendar_my_events:
+    path: /events/my-events
+    defaults: { _controller: 'vinny.calendar.controller.main:my_events' }
+
+vinny_calendar_my_rsvps:
+    path: /events/my-rsvps
+    defaults: { _controller: 'vinny.calendar.controller.main:my_rsvps' }
+
+vinny_calendar_edit:
+    path: /events/edit/{id}
+    defaults: { _controller: 'vinny.calendar.controller.main:edit' }
+    requirements:
+        id: \d+
+
+vinny_calendar_delete:
+    path: /events/delete/{id}
+    defaults: { _controller: 'vinny.calendar.controller.main:delete' }
+    requirements:
+        id: \d+

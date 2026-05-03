@@ -1,0 +1,112 @@
+<!-- INCLUDE overall_header.html -->
+
+<h2 class="forum-title">
+	<!-- IF CAT_ICON -->
+	<span class="calendar-category-bullet" style="color: #{CAT_COLOR};">
+		<i class="icon {CAT_ICON} fa-fw" aria-hidden="true"></i>
+	</span>
+	<!-- ENDIF -->
+	{CAT_NAME}
+</h2>
+
+<!-- IF CAT_DESC -->
+<div class="panel bg1">
+	<div class="inner">
+		<p>{CAT_DESC}</p>
+	</div>
+</div>
+<!-- ENDIF -->
+
+<div class="calendar-layout">
+	<div class="calendar-main">
+		<div class="forumbg">
+			<div class="inner">
+				<ul class="topiclist">
+					<li class="header">
+						<dl class="row-item">
+							<dt><div class="list-inner">{L_EVENT_DETAILS}</div></dt>
+							<dd class="posts">{L_ATTENDING}</dd>
+							<dd class="lastpost">{L_DATE}</dd>
+						</dl>
+					</li>
+				</ul>
+				<ul class="topiclist topics">
+					<!-- BEGIN events -->
+					<li class="row<!-- IF events.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">
+						<dl class="row-item">
+							<dt title="{events.LOCATION}" class="calendar-event-row">
+								<span class="calendar-row-icon" style="color: #{events.CAT_COLOR};">
+									<i class="icon {events.CAT_ICON} fa-fw icon-md" aria-hidden="true"></i>
+								</span>
+								<div class="list-inner">
+									<a href="{events.U_VIEW}" class="topictitle">{events.TITLE}</a>
+									<div class="calendar-topic-meta topic-poster">
+										<time>{events.DATE_FULL}</time>
+									</div>
+									<div class="calendar-topic-meta">
+										<!-- IF events.S_IS_ONLINE -->
+											<i class="icon fa-globe fa-fw" aria-hidden="true"></i> {L_EVENT_ONLINE}
+										<!-- ELSE -->
+											<i class="icon fa-map-marker fa-fw" aria-hidden="true"></i> {events.LOCATION}
+										<!-- ENDIF -->
+									</div>
+									<div class="responsive-hide calendar-topic-meta">{events.DESCRIPTION}</div>
+									<div class="responsive-show calendar-mobile-meta" style="display: none;">
+										<span>{L_ATTENDING}{L_COLON} {events.NUM_PARTICIPANTS}</span>
+										<span>{L_DATE}{L_COLON} {events.DATE_FULL}</span>
+									</div>
+								</div>
+							</dt>
+							<dd class="posts responsive-hide">{events.NUM_PARTICIPANTS}</dd>
+							<dd class="lastpost responsive-hide">{events.DATE_FULL}</dd>
+						</dl>
+					</li>
+					<!-- BEGINELSE -->
+					<li class="row bg1">
+						<dl class="row-item">
+							<dt>{L_NO_UPCOMING_EVENTS}</dt>
+						</dl>
+					</li>
+					<!-- END events -->
+				</ul>
+			</div>
+		</div>
+
+		<div class="action-bar bar-bottom">
+			<div class="pagination">
+				<!-- IF TOTAL_EVENTS > 0 -->
+					{TOTAL_EVENTS} {L_EVENTS_LOWER}
+				<!-- ENDIF -->
+				<!-- IF .pagination -->
+					<!-- INCLUDE pagination.html -->
+				<!-- ELSEIF PAGINATION -->
+					&bull; {PAGINATION}
+				<!-- ELSEIF TOTAL_EVENTS > 0 -->
+					&bull; {PAGE_NUMBER}
+				<!-- ENDIF -->
+			</div>
+		</div>
+	</div>
+
+	<div class="calendar-sidebar">
+		<div class="panel bg1">
+			<div class="inner">
+				<h3>{L_CATEGORIES}</h3>
+				<ul class="calendar-side-list calendar-category-side-list">
+					<!-- BEGIN categories -->
+					<li>
+						<a href="{categories.U_VIEW}"<!-- IF categories.S_ACTIVE --> class="calendar-category-active"<!-- ENDIF -->>
+							<span class="calendar-category-bullet" style="color: #{categories.COLOR};">
+								<i class="icon {categories.ICON} fa-fw" aria-hidden="true"></i>
+							</span>
+							{categories.NAME} ({categories.COUNT})
+						</a>
+					</li>
+					<!-- END categories -->
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- INCLUDE overall_footer.html -->

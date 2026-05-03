@@ -1,0 +1,186 @@
+<!-- INCLUDE overall_header.html -->
+
+<script src="{ROOT_PATH}ext/vinny/calendar/assets/fullcalendar/dist/index.global.min.js"></script>
+
+<!-- IF S_FC_LOCALE != 'en' -->
+<script src="{ROOT_PATH}ext/vinny/calendar/assets/fullcalendar/packages/core/locales/{S_FC_LOCALE}.global.min.js"></script>
+<!-- ENDIF -->
+
+<div class="calendar-layout">
+	<div class="calendar-main">
+		<div class="panel">
+			<div class="inner">
+				<h2>{L_EVENT_CALENDAR}</h2>
+
+				<div class="action-bar bar-top">
+					<div class="pagination">
+						<!-- BEGIN categories -->
+						<a class="button button-secondary" href="{categories.U_VIEW}">
+							<!-- IF categories.ICON --><i class="icon {categories.ICON} fa-fw" aria-hidden="true"></i> <!-- ENDIF -->{categories.NAME}
+						</a>
+						<!-- END categories -->
+					</div>
+
+					<div class="topic-actions">
+						<!-- IF U_CREATE_EVENT -->
+						<a class="button button-primary" href="{U_CREATE_EVENT}">
+							<i class="icon fa-plus fa-fw" aria-hidden="true"></i><span>{L_EVENT_CREATE}</span>
+						</a>
+						<!-- ENDIF -->
+					</div>
+				</div>
+
+				<div class="calendar-wrapper">
+					<div id="calendar"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="calendar-sidebar">
+		<div class="forabg">
+			<div class="inner">
+				<ul class="topiclist">
+					<li class="header">
+						<dl>
+							<dt>{L_EVENT_CALENDAR}</dt>
+						</dl>
+					</li>
+				</ul>
+				<ul class="topiclist forums">
+					<li>
+						<dl>
+							<dt><a href="{U_MY_EVENTS}">{L_MY_EVENTS}</a></dt>
+						</dl>
+					</li>
+					<li>
+						<dl>
+							<dt><a href="{U_MY_RSVPS}">{L_MY_RSVPS}</a></dt>
+						</dl>
+					</li>
+					<li>
+						<dl>
+							<dt><a href="{U_VIEW_ALL}">{L_COMING_UP}</a></dt>
+						</dl>
+					</li>
+					<!-- IF S_FEED_ENABLED -->
+					<li>
+						<dl>
+							<dt><a href="{U_FEED_EVENTS}">RSS Feed</a></dt>
+						</dl>
+					</li>
+					<!-- ENDIF -->
+					<li>
+						<dl>
+							<dt><a href="{U_ICAL}">Export .ics</a></dt>
+						</dl>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<div class="forabg">
+			<div class="inner">
+				<ul class="topiclist">
+					<li class="header">
+						<dl>
+							<dt>{L_COMING_UP}</dt>
+						</dl>
+					</li>
+				</ul>
+				<ul class="topiclist topics">
+					<!-- BEGIN upcoming_events -->
+					<li>
+						<dl>
+							<dt>
+								<a href="{upcoming_events.U_VIEW}">{upcoming_events.TITLE}</a>
+								<div class="list-inner small">
+									{upcoming_events.Start_Date_Day} {upcoming_events.Start_Date_Month_Short} • {upcoming_events.TIME}
+								</div>
+							</dt>
+						</dl>
+					</li>
+					<!-- BEGINELSE -->
+					<li>
+						<dl>
+							<dt>{L_NO_UPCOMING_EVENTS}</dt>
+						</dl>
+					</li>
+					<!-- END upcoming_events -->
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+	var calendarEl = document.getElementById('calendar');
+	var calendar = new FullCalendar.Calendar(calendarEl, {
+		initialView: 'dayGridMonth',
+		locale: '{S_FC_LOCALE}',
+		themeSystem: 'standard',
+		timeZone: '{S_FC_TIMEZONE}',
+		navLinks: false,
+		noEventsText: '{LA_NO_EVENTS}',
+		validRange: {
+			start: new Date().toISOString().split('T')[0]
+		},
+		eventTimeFormat: <!-- IF S_FC_TIME_FORMAT eq '12' -->{
+			hour: 'numeric',
+			minute: '2-digit',
+			hour12: true
+		}<!-- ELSE -->{
+			hour: '2-digit',
+			minute: '2-digit',
+			hour12: false
+		}<!-- ENDIF -->,
+		slotLabelFormat: <!-- IF S_FC_TIME_FORMAT eq '12' -->{
+			hour: 'numeric',
+			minute: '2-digit',
+			omitZeroMinute: false,
+			hour12: true
+		}<!-- ELSE -->{
+			hour: '2-digit',
+			minute: '2-digit',
+			hour12: false
+		}<!-- ENDIF -->,
+		headerToolbar: {
+			start: 'title',
+			left: 'prev,next today',
+			center: '',
+			right: 'dayGridMonth,listMonth'
+		},
+		events: <!-- IF CALENDAR_EVENTS_JSON -->{CALENDAR_EVENTS_JSON}<!-- ELSE -->[]<!-- ENDIF -->,
+		height: 'auto',
+		aspectRatio: 1.35,
+		eventContent: function (arg) {
+			var viewType = arg.view.type;
+			var iconClass = arg.event.extendedProps.icon || 'fa-calendar';
+			var title = arg.event.title;
+			var color = arg.event.backgroundColor;
+			var url = arg.event.url;
+			var timeText = arg.timeText;
+
+			if (viewType.startsWith('list')) {
+				return {
+					html: '<a href="' + url + '" class="calendar-event-link"><i class="icon ' + iconClass + ' fa-fw" aria-hidden="true" style="color:' + color + ';"></i> ' + title + '</a>'
+				};
+			}
+
+			return {
+				html: '<span class="calendar-grid-event">' + (timeText ? '<strong>' + timeText + '</strong> ' : '') + '<i class="icon ' + iconClass + ' fa-fw" aria-hidden="true"></i> ' + title + '</span>'
+			};
+		},
+		eventClick: function (info) {
+			if (info.event.url) {
+				window.location.href = info.event.url;
+			}
+		}
+	});
+
+	calendar.render();
+});
+</script>
+
+<!-- INCLUDE overall_footer.html -->

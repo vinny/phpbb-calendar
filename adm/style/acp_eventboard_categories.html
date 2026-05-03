@@ -1,0 +1,107 @@
+{% include 'overall_header.html' %}
+
+<a id="maincontent"></a>
+
+<h1>{{ lang('ACP_EVENTBOARD_CATEGORIES') }}</h1>
+<p>{{ lang('ACP_EVENTBOARD_CATEGORIES_EXPLAIN') }}</p>
+
+{% if S_EDIT_CATEGORY %}
+
+{% if S_ERROR %}
+<div class="errorbox">
+	<h3>{{ lang('WARNING') }}</h3>
+	<p>{{ ERROR_MSG }}</p>
+</div>
+{% endif %}
+
+<a href="{{ U_BACK }}" style="float: {{ S_CONTENT_FLOW_END }};">&laquo; {{ lang('BACK') }}</a>
+
+<form id="acp_categories" method="post" action="{{ U_ACTION }}">
+	<fieldset>
+		<legend>{% if CAT_NAME %}{{ lang('EDIT_CATEGORY') }}{% else %}{{ lang('CREATE_CATEGORY') }}{% endif %}</legend>
+
+		<dl>
+			<dt><label for="cat_name">{{ lang('CAT_NAME') }}:</label><br /><span>{{ lang('CATEGORY_NAME_EXPLAIN') }}</span></dt>
+			<dd><input type="text" name="cat_name" id="cat_name" value="{{ CAT_NAME }}" maxlength="255" size="40" />
+			</dd>
+		</dl>
+		<dl>
+			<dt><label for="cat_desc">{{ lang('CAT_DESC') }}:</label></dt>
+			<dd><textarea name="cat_desc" id="cat_desc" rows="3" cols="40">{{ CAT_DESC }}</textarea></dd>
+		</dl>
+		<dl>
+			<dt><label for="cat_color">{{ lang('CAT_COLOR') }}:</label><br /><span>{{ lang('CATEGORY_COLOR_EXPLAIN') }}</span></dt>
+			<dd>
+				<input type="text" name="cat_color" id="cat_color" value="{{ CAT_COLOR }}" maxlength="7" size="7" />
+				{% if CAT_COLOR %}&nbsp;<span style="background-color: #{{ CAT_COLOR }}">&nbsp; &nbsp;</span>{% endif
+				%}&nbsp;&nbsp;
+				<span>[ <a href="#" id="color_palette_toggle">{{ lang('COLOUR_SWATCH') }}</a> ]</span>
+				<div id="color_palette_placeholder" style="display: none;" data-color-palette="h" data-height="12"
+					data-width="15" data-target="#cat_color"></div>
+			</dd>
+		</dl>
+		<dl>
+			<dt><label for="cat_icon">{{ lang('CAT_ICON') }}:</label><br /><span>{{ lang('CATEGORY_ICON_EXPLAIN') }}</span></dt>
+			<dd><input type="text" name="cat_icon" id="cat_icon" value="{{ CAT_ICON }}" maxlength="50" size="20" /> <i
+					class="icon {{ CAT_ICON }} fa-fw"></i></dd>
+		</dl>
+
+	</fieldset>
+
+	<fieldset>
+		<legend>{{ lang('ACP_SUBMIT_CHANGES') }}</legend>
+		<p class="submit-buttons">
+			<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}" />&nbsp;
+			<input class="button2" type="reset" id="reset" name="reset" value="{{ lang('RESET') }}" />
+		</p>
+		{{ S_FORM_TOKEN }}
+	</fieldset>
+</form>
+
+{% else %}
+
+<table class="table1">
+	<thead>
+		<tr>
+			<th>{{ lang('CAT_NAME') }}</th>
+			<th>{{ lang('CAT_DESC') }}</th>
+			<th>{{ lang('CAT_COLOR') }}</th>
+			<th>{{ lang('CAT_ICON') }}</th>
+			<th>{{ lang('CAT_EVENT_COUNT') }}</th>
+			<th>{{ lang('ACTION') }}</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for category in loops.categories %}
+		<tr>
+			<td><strong>{{ category.NAME }}</strong></td>
+			<td>{{ category.DESC ? category.DESC : lang('NO_DESCRIPTION') }}</td>
+			<td><span style="color: {{ category.COLOR }}; font-weight: bold;">{{ category.COLOR }}</span></td>
+			<td><i class="icon {{ category.ICON }} fa-fw"></i> {{ category.ICON }}</td>
+			<td style="text-align: center;">{{ category.EVENT_COUNT }}</td>
+			<td style="width: 80px; text-align: center;" class="actions">
+				<a href="{{ category.U_EDIT }}">{{ ICON_EDIT }}</a>
+				{% if category.S_CAN_DELETE %}
+				<a href="{{ category.U_DELETE }}" data-ajax="row_delete">{{ ICON_DELETE }}</a>
+				{% else %}
+				<span title="{{ lang('CATEGORY_HAS_EVENTS') }}" aria-disabled="true" style="opacity: .35; cursor: not-allowed;">{{ ICON_DELETE }}</span>
+				{% endif %}
+			</td>
+		</tr>
+		{% else %}
+		<tr>
+			<td colspan="6" style="text-align: center;">{{ lang('NO_ENTRIES') }}</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+
+<form id="acp_cat_add" method="post" action="{{ U_ADD_CATEGORY }}">
+	<fieldset class="quick">
+		<input class="button2" type="submit" name="add" value="{{ lang('CREATE_CATEGORY') }}" />
+	</fieldset>
+</form>
+
+{% endif %}
+
+{% include 'overall_footer.html' %}

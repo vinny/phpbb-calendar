@@ -1,0 +1,207 @@
+<!-- INCLUDE overall_header.html -->
+
+<h2 class="topic-title">
+	<!-- IF CAT_ICON -->
+	<span class="calendar-category-bullet" style="color: #{CAT_COLOR};">
+		<i class="icon {CAT_ICON} fa-fw" aria-hidden="true"></i>
+	</span>
+	<!-- ENDIF -->
+	{EVENT_TITLE}
+</h2>
+
+<p class="author calendar-event-author">
+	{L_EVENT_ORGANIZED_BY} <strong>{ORGANIZER_FULL}</strong> &raquo; <time>{EVENT_CREATED_AT}</time>
+</p>
+
+<div class="action-bar bar-top">
+	<div class="topic-actions">
+		<!-- IF not S_IS_OWNER -->
+			<!-- IF S_IS_COMPLETED -->
+				<span class="button button-secondary">{L_EVENT_ENDED}</span>
+			<!-- ELSEIF S_HAS_JOINED -->
+				<form action="{U_LEAVE_EVENT}" method="post" class="calendar-inline-form">
+					<button type="submit" name="submit_leave" class="button button-secondary">{L_EVENT_LEAVE}</button>
+					{S_FORM_TOKEN}
+				</form>
+			<!-- ELSEIF not S_USER_LOGGED_IN -->
+				<a class="button" href="{U_LOGIN_LOGOUT}">{L_LOGIN_TO_PARTICIPATE}</a>
+			<!-- ELSEIF S_CAN_JOIN -->
+				<form action="{U_JOIN_EVENT}" method="post" class="calendar-inline-form">
+					<button type="submit" name="submit_join" class="button">{L_CONFIRM_ATTENDANCE}</button>
+					{S_FORM_TOKEN}
+				</form>
+			<!-- ELSE -->
+				<span class="button button-secondary">{L_EVENT_FULL}</span>
+			<!-- ENDIF -->
+		<!-- ENDIF -->
+	</div>
+
+	<!-- DEFINE $SHOW_EVENT_BUTTONS = (U_EDIT or U_DELETE) -->
+	<!-- IF $SHOW_EVENT_BUTTONS -->
+	<ul class="post-buttons">
+		<!-- IF U_EDIT -->
+		<li>
+			<a href="{U_EDIT}" title="{L_EDIT}" class="button button-icon-only">
+				<i class="icon fa-pencil fa-fw" aria-hidden="true"></i><span class="sr-only">{L_EDIT}</span>
+			</a>
+		</li>
+		<!-- ENDIF -->
+		<!-- IF U_DELETE -->
+		<li>
+			<a href="{U_DELETE}" data-ajax="true" title="{L_DELETE}" class="button button-icon-only">
+				<i class="icon fa-times fa-fw" aria-hidden="true"></i><span class="sr-only">{L_DELETE}</span>
+			</a>
+		</li>
+		<!-- ENDIF -->
+	</ul>
+	<!-- ENDIF -->
+</div>
+
+<div class="post bg1 calendar-event-post">
+	<div class="inner">
+		<div class="postbody">
+			<div class="content calendar-event-content">
+				<div class="calendar-event-summary">
+					<div class="calendar-event-summary-item">
+						<strong>{L_CATEGORY}{L_COLON}</strong>
+						<span>
+							<span class="calendar-category-bullet" style="color: #{CAT_COLOR};">
+								<i class="icon {CAT_ICON} fa-fw" aria-hidden="true"></i>
+							</span>
+							{CAT_NAME}
+						</span>
+					</div>
+					<div class="calendar-event-summary-item">
+						<strong>{L_EVENT_START}{L_COLON}</strong>
+						<span>{EVENT_START_DATE}</span>
+					</div>
+					<div class="calendar-event-summary-item">
+						<strong>{L_EVENT_DETAILS}{L_COLON}</strong>
+						<span>{EVENT_TIME_RANGE}</span>
+					</div>
+					<div class="calendar-event-summary-item">
+						<strong>{L_EVENT_LOCATION}{L_COLON}</strong>
+						<span><!-- IF S_IS_ONLINE -->{L_EVENT_ONLINE}<!-- ELSE -->{EVENT_LOCATION}<!-- ENDIF --></span>
+					</div>
+					<div class="calendar-event-summary-item">
+						<strong>{L_CAPACITY}{L_COLON}</strong>
+						<span>
+							<!-- IF MAX_PARTICIPANTS > 0 -->
+								{TOTAL_PARTICIPANTS} / {MAX_PARTICIPANTS}
+							<!-- ELSE -->
+								{L_UNLIMITED_SPOTS}
+							<!-- ENDIF -->
+						</span>
+					</div>
+				</div>
+
+				<div class="calendar-event-description">{EVENT_DESCRIPTION}</div>
+
+				<!-- IF EVENT_MAP_IMAGE -->
+				<div class="calendar-map-panel">
+					<img src="{ROOT_PATH}images/vinny_calendar_img/{EVENT_MAP_IMAGE}" alt="{EVENT_LOCATION}">
+				</div>
+				<!-- ENDIF -->
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="panel bg1 calendar-participants-panel">
+	<div class="inner">
+		<h3>{L_WHO_IS_GOING}</h3>
+		<ul class="topiclist forums">
+			<!-- BEGIN participants -->
+			<li class="row">
+				<dl class="row-item">
+					<dt>
+						<div class="list-inner">
+							<a href="{participants.U_PROFILE}">{participants.USERNAME}</a>
+						</div>
+					</dt>
+				</dl>
+			</li>
+			<!-- BEGINELSE -->
+			<li class="row">
+				<dl class="row-item">
+					<dt>{L_NO_RSVPS_FOUND}</dt>
+				</dl>
+			</li>
+			<!-- END participants -->
+		</ul>
+	</div>
+</div>
+
+<!-- IF S_ALLOW_COMMENTS -->
+<div class="panel">
+	<div class="inner">
+		<h3>{L_COMMENTS}</h3>
+
+		<!-- IF S_USER_LOGGED_IN and S_CAN_COMMENT -->
+		<form action="{U_ACTION_COMMENT}" method="post" id="postform">
+			<fieldset class="fields1">
+				<dl>
+					<dt><label for="message">{L_POST_COMMENT}{L_COLON}</label></dt>
+					<dd>
+						<!-- INCLUDE posting_buttons.html -->
+						<textarea name="comment_text" id="message" rows="6" cols="76" class="inputbox" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" onfocus="initInsertions();"></textarea>
+					</dd>
+				</dl>
+			</fieldset>
+			<div id="smiley-box" class="smiley-box">
+				<!-- IF S_SMILIES_ALLOWED and .smiley -->
+					<strong>{L_SMILIES}</strong><br />
+					<!-- BEGIN smiley -->
+						<a href="#" onclick="insert_text('{smiley.A_SMILEY_CODE}', true); return false;"><img src="{smiley.SMILEY_IMG}" width="{smiley.SMILEY_WIDTH}" height="{smiley.SMILEY_HEIGHT}" alt="{smiley.A_SMILEY_CODE}" title="{smiley.SMILEY_DESC}" /></a>
+					<!-- END smiley -->
+				<!-- ENDIF -->
+			</div>
+			<div class="panel bg2">
+				<div class="inner">
+					<fieldset class="submit-buttons">
+						<input type="submit" name="submit" class="button1 default-submit-action" value="{L_POST_COMMENT}">
+						{S_FORM_TOKEN}
+					</fieldset>
+				</div>
+			</div>
+		</form>
+		<!-- ELSEIF S_COMMENTS_CLOSED -->
+		<p>{L_EVENT_COMMENTS_CLOSED}</p>
+		<!-- ELSE -->
+		<p><a href="{U_LOGIN_LOGOUT}">{L_LOGIN_TO_COMMENT}</a></p>
+		<!-- ENDIF -->
+
+		<div id="comments">
+			<!-- BEGIN comments -->
+			<div class="post bg2" id="comment_{comments.ID}">
+				<div class="inner">
+					<div class="postbody">
+						<p class="author">{comments.AUTHOR} &raquo; <time>{comments.DATE}</time></p>
+						<div class="content">{comments.MESSAGE}</div>
+						<!-- IF comments.S_CAN_DELETE -->
+						<ul class="post-buttons">
+							<li>
+								<a href="{comments.U_DELETE}" title="{L_DELETE_COMMENT}" class="button button-icon-only">
+									<i class="icon fa-times fa-fw" aria-hidden="true"></i><span class="sr-only">{L_DELETE_COMMENT}</span>
+								</a>
+							</li>
+						</ul>
+						<!-- ENDIF -->
+					</div>
+				</div>
+			</div>
+			<!-- END comments -->
+		</div>
+	</div>
+</div>
+<!-- ENDIF -->
+
+<script>
+var form_name = 'postform';
+var text_name = 'message';
+var load_draft = false;
+var upload_allowed = false;
+</script>
+<script src="{T_ASSETS_PATH}/javascript/editor.js"></script>
+
+<!-- INCLUDE overall_footer.html -->

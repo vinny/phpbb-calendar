@@ -1,0 +1,175 @@
+services:
+    vinny.calendar.service.event_access:
+        class: vinny\calendar\service\event_access
+        arguments:
+            - '@dbal.conn'
+            - '@auth'
+            - '%core.table_prefix%'
+
+    vinny.calendar.service.map_image:
+        class: vinny\calendar\service\map_image
+        arguments:
+            - '@config'
+            - '%core.root_path%'
+
+    vinny.calendar.service.event_query:
+        class: vinny\calendar\service\event_query
+        arguments:
+            - '@dbal.conn'
+            - '%core.table_prefix%'
+
+    vinny.calendar.service.comment:
+        class: vinny\calendar\service\comment
+        arguments:
+            - '@dbal.conn'
+            - '@notification_manager'
+            - '%core.table_prefix%'
+
+    vinny.calendar.service.feed:
+        class: vinny\calendar\service\feed
+
+    vinny.calendar.service.calendar_link:
+        class: vinny\calendar\service\calendar_link
+        arguments:
+            - '@controller.helper'
+            - '@request'
+            - '@vinny.calendar.service.event_access'
+
+    vinny.calendar.service.event_display:
+        class: vinny\calendar\service\event_display
+        arguments:
+            - '@user'
+
+    vinny.calendar.service.calendar_add:
+        class: vinny\calendar\service\calendar_add
+
+    vinny.calendar.service.geo_proxy:
+        class: vinny\calendar\service\geo_proxy
+        arguments:
+            - '@config'
+            - '@user'
+
+    vinny.calendar.service.share:
+        class: vinny\calendar\service\share
+
+    vinny.calendar.service.event_reminder:
+        class: vinny\calendar\service\event_reminder
+        arguments:
+            - '@config'
+            - '@dbal.conn'
+            - '@notification_manager'
+            - '%core.table_prefix%'
+
+    vinny.calendar.service.event_form:
+        class: vinny\calendar\service\event_form
+        arguments:
+            - '@request'
+            - '@user'
+            - '@vinny.calendar.service.event_access'
+
+    vinny.calendar.service.event_manager:
+        class: vinny\calendar\service\event_manager
+        arguments:
+            - '@dbal.conn'
+            - '@vinny.calendar.service.map_image'
+            - '%core.table_prefix%'
+
+    vinny.calendar.service.rsvp:
+        class: vinny\calendar\service\rsvp
+        arguments:
+            - '@dbal.conn'
+            - '@notification_manager'
+            - '%core.table_prefix%'
+
+    vinny.calendar.controller.main:
+        class: vinny\calendar\controller\main
+        arguments:
+            - '@config'
+            - '@template'
+            - '@user'
+            - '@controller.helper'
+            - '@request'
+            - '@auth'
+            - '@pagination'
+            - '@vinny.calendar.service.event_access'
+            - '@vinny.calendar.service.event_query'
+            - '@vinny.calendar.service.comment'
+            - '@vinny.calendar.service.feed'
+            - '@vinny.calendar.service.calendar_link'
+            - '@vinny.calendar.service.event_display'
+            - '@vinny.calendar.service.calendar_add'
+            - '@vinny.calendar.service.share'
+            - '@vinny.calendar.service.geo_proxy'
+            - '@vinny.calendar.service.event_form'
+            - '@vinny.calendar.service.event_manager'
+            - '@vinny.calendar.service.rsvp'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+
+    vinny.calendar.notification.type.participant_added:
+        class: vinny\calendar\notification\type\participant_added
+        shared: false
+        tags: [{ name: notification.type }]
+        arguments:
+            - '@dbal.conn'
+            - '@language'
+            - '@user'
+            - '@auth'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+            - '%core.table_prefix%user_notifications'
+            - '@config'
+        calls:
+            - [set_helper, ['@controller.helper']]
+            - [set_user_loader, ['@user_loader']]
+
+    vinny.calendar.notification.type.new_comment:
+        class: vinny\calendar\notification\type\new_comment
+        shared: false
+        tags: [{ name: notification.type }]
+        arguments:
+            - '@dbal.conn'
+            - '@language'
+            - '@user'
+            - '@auth'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+            - '%core.table_prefix%user_notifications'
+            - '@config'
+        calls:
+            - [set_helper, ['@controller.helper']]
+            - [set_user_loader, ['@user_loader']]
+
+    vinny.calendar.notification.type.event_reminder:
+        class: vinny\calendar\notification\type\event_reminder
+        shared: false
+        tags: [{ name: notification.type }]
+        arguments:
+            - '@dbal.conn'
+            - '@language'
+            - '@user'
+            - '@auth'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+            - '%core.table_prefix%user_notifications'
+            - '@config'
+        calls:
+            - [set_helper, ['@controller.helper']]
+
+    vinny.calendar.cron.task.event_reminder:
+        class: vinny\calendar\cron\task\event_reminder
+        arguments:
+            - '@config'
+            - '@vinny.calendar.service.event_reminder'
+        tags:
+            - { name: cron.task }
+
+    vinny.calendar.listener.main:
+        class: vinny\calendar\event\main_listener
+        arguments:
+            - '@user'
+            - '@controller.helper'
+            - '@template'
+            - '@config'
+        tags:
+            - { name: event.listener }

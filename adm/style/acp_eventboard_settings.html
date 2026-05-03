@@ -1,0 +1,194 @@
+{% include 'overall_header.html' %}
+
+<a id="maincontent"></a>
+
+<h1>{{ lang('ACP_EVENTBOARD_SETTINGS') }}</h1>
+<p>{{ lang('ACP_EVENTBOARD_SETTINGS_EXPLAIN') }}</p>
+
+<form id="acp_eventboard_settings" method="post" action="{{ U_ACTION }}">
+	<fieldset>
+		<legend>{{ lang('ACP_EVENTBOARD_SETTINGS') }}</legend>
+
+		<dl>
+			<dt><label for="vinny_calendar_enable">{{ lang('EVENTBOARD_ENABLE') }}:</label><br /><span>{{ lang('EVENTBOARD_ENABLE_EXPLAIN') }}</span></dt>
+			<dd>
+				<label><input type="radio" class="radio" name="vinny_calendar_enable" value="1" {% if VINNY_CALENDAR_ENABLE %}checked="checked" {% endif %} /> {{ lang('YES') }}</label>
+				<label><input type="radio" class="radio" name="vinny_calendar_enable" value="0" {% if not VINNY_CALENDAR_ENABLE %}checked="checked" {% endif %} /> {{ lang('NO') }}</label>
+			</dd>
+		</dl>
+
+		<dl>
+			<dt><label for="vinny_calendar_allow_comments">{{ lang('EVENTBOARD_ALLOW_COMMENTS') }}:</label><br /><span>{{ lang('EVENTBOARD_ALLOW_COMMENTS_EXPLAIN') }}</span></dt>
+			<dd>
+				<label><input type="radio" class="radio" name="vinny_calendar_allow_comments" value="1" {% if VINNY_CALENDAR_ALLOW_COMMENTS %}checked="checked" {% endif %} /> {{ lang('YES') }}</label>
+				<label><input type="radio" class="radio" name="vinny_calendar_allow_comments" value="0" {% if not VINNY_CALENDAR_ALLOW_COMMENTS %}checked="checked" {% endif %} /> {{ lang('NO') }}</label>
+			</dd>
+		</dl>
+
+		<dl>
+			<dt><label for="vinny_calendar_enable_feed">{{ lang('EVENTBOARD_ENABLE_FEED') }}:</label><br /><span>{{ lang('EVENTBOARD_ENABLE_FEED_EXPLAIN') }}</span></dt>
+			<dd>
+				<label><input type="radio" class="radio" name="vinny_calendar_enable_feed" value="1" {% if VINNY_CALENDAR_ENABLE_FEED %}checked="checked" {% endif %} /> {{ lang('YES') }}</label>
+				<label><input type="radio" class="radio" name="vinny_calendar_enable_feed" value="0" {% if not VINNY_CALENDAR_ENABLE_FEED %}checked="checked" {% endif %} /> {{ lang('NO') }}</label>
+			</dd>
+		</dl>
+
+		<dl>
+			<dt><label for="vinny_calendar_reminder_minutes">{{ lang('EVENTBOARD_REMINDER_MINUTES') }}:</label><br /><span>{{ lang('EVENTBOARD_REMINDER_MINUTES_EXPLAIN') }}</span></dt>
+			<dd><input type="number" id="vinny_calendar_reminder_minutes" name="vinny_calendar_reminder_minutes" value="{{ VINNY_CALENDAR_REMINDER_MINUTES }}" min="0" max="60" /></dd>
+		</dl>
+
+	</fieldset>
+
+	<fieldset>
+		<legend>{{ lang('ACP_EVENTBOARD_FC_SETTINGS') }}</legend>
+
+		<dl>
+			<dt><label for="vinny_calendar_fc_locale">{{ lang('ACP_FC_LOCALE') }}:</label><br /><span>{{ lang('ACP_FC_LOCALE_EXPLAIN') }}</span></dt>
+			<dd>
+				<select name="vinny_calendar_fc_locale" id="vinny_calendar_fc_locale">
+					{% for locale in loops.fc_locales %}
+					<option value="{{ locale.VALUE }}" {% if locale.SELECTED %}selected="selected" {% endif %}>{{ locale.NAME }}</option>
+					{% endfor %}
+				</select>
+			</dd>
+		</dl>
+		<dl>
+			<dt><label for="vinny_calendar_fc_timezone">{{ lang('ACP_FC_TIMEZONE') }}:</label><br /><span>{{ lang('ACP_FC_TIMEZONE_EXPLAIN') }}</span></dt>
+			<dd>
+				<select name="vinny_calendar_fc_timezone" id="vinny_calendar_fc_timezone">
+					{% for tz in loops.timezones %}
+					<option value="{{ tz.VALUE }}" {% if tz.SELECTED %}selected="selected" {% endif %}>{{ tz.NAME }}
+					</option>
+					{% endfor %}
+				</select>
+			</dd>
+		</dl>
+		<dl>
+			<dt><label for="vinny_calendar_fc_time_format">{{ lang('ACP_FC_TIME_FORMAT') }}:</label><br /><span>{{ lang('ACP_FC_TIME_FORMAT_EXPLAIN') }}</span></dt>
+			<dd>
+				<label><input type="radio" class="radio" name="vinny_calendar_fc_time_format" value="12" {% if VINNY_CALENDAR_FC_TIME_FORMAT=='12' %}checked="checked" {% endif %} /> {{ lang('ACP_FC_TIME_FORMAT_12') }}</label>
+				<label><input type="radio" class="radio" name="vinny_calendar_fc_time_format" value="24" {% if VINNY_CALENDAR_FC_TIME_FORMAT !='12' %}checked="checked" {% endif %} /> {{ lang('ACP_FC_TIME_FORMAT_24') }}</label>
+			</dd>
+		</dl>
+	</fieldset>
+
+	<fieldset>
+		<legend>{{ lang('ACP_EVENTBOARD_MAP_SETTINGS') }}</legend>
+		<dl>
+			<dt><label for="vinny_calendar_geoapify_key">{{ lang('EVENTBOARD_GEOAPIFY_KEY') }}:</label><br /><span>{{ lang('EVENTBOARD_GEOAPIFY_KEY_EXPLAIN') }}</span></dt>
+			<dd><input type="text" id="vinny_calendar_geoapify_key" name="vinny_calendar_geoapify_key"
+					value="{{ VINNY_CALENDAR_GEOAPIFY_KEY }}" size="50" /></dd>
+		</dl>
+		<dl>
+			<dt><label for="vinny_calendar_map_width">{{ lang('ACP_MAP_WIDTH') }}:</label><br /><span>{{ lang('ACP_MAP_WIDTH_EXPLAIN') }}</span></dt>
+			<dd><input type="number" id="vinny_calendar_map_width" name="vinny_calendar_map_width" value="{{ VINNY_CALENDAR_MAP_WIDTH }}" min="100" max="2000" /></dd>
+		</dl>
+		<dl>
+			<dt><label for="vinny_calendar_map_height">{{ lang('ACP_MAP_HEIGHT') }}:</label><br /><span>{{ lang('ACP_MAP_HEIGHT_EXPLAIN') }}</span></dt>
+			<dd><input type="number" id="vinny_calendar_map_height" name="vinny_calendar_map_height" value="{{ VINNY_CALENDAR_MAP_HEIGHT }}" min="100" max="2000" /></dd>
+		</dl>
+		<dl>
+			<dt><label for="vinny_calendar_map_zoom">{{ lang('ACP_MAP_ZOOM') }}:</label><br /><span>{{ lang('ACP_MAP_ZOOM_EXPLAIN') }}</span></dt>
+			<dd><input type="number" id="vinny_calendar_map_zoom" name="vinny_calendar_map_zoom" value="{{ VINNY_CALENDAR_MAP_ZOOM }}" min="1" max="20" /></dd>
+		</dl>
+		<dl>
+			<dt><label for="vinny_calendar_map_lang">{{ lang('ACP_MAP_LANG') }}:</label><br /><span>{{ lang('ACP_MAP_LANG_EXPLAIN') }}</span></dt>
+			<dd>
+				<select name="vinny_calendar_map_lang" id="vinny_calendar_map_lang">
+					{% for lang in loops.map_langs %}
+					<option value="{{ lang.VALUE }}" {% if lang.SELECTED %}selected="selected" {% endif %}>{{ lang.NAME }}</option>
+					{% endfor %}
+				</select>
+			</dd>
+		</dl>
+	</fieldset>
+
+	<fieldset>
+		<legend>{{ lang('ACP_FP_SETTINGS') }}</legend>
+		<dl>
+			<dt><label for="vinny_calendar_fp_theme">{{ lang('ACP_FP_THEME') }}:</label><br /><span>{{ lang('ACP_FP_THEME_EXPLAIN') }}</span></dt>
+			<dd>
+				<select name="vinny_calendar_fp_theme" id="vinny_calendar_fp_theme">
+					{% for theme in loops.fp_themes %}
+					<option value="{{ theme.VALUE }}" {% if theme.SELECTED %}selected="selected" {% endif %}>{{ theme.NAME }}</option>
+					{% endfor %}
+				</select>
+
+				<div id="fp-preview-box" style="margin-top:15px; display:block;">
+					<div style="margin-bottom:5px;"><strong>{{ lang('PREVIEW') }}:</strong></div>
+					<input type="text" id="fp-preview-input" style="display: none;">
+				</div>
+
+				<script src="../ext/vinny/calendar/assets/flatpickr/flatpickr.min.js"></script>
+				<link href="../ext/vinny/calendar/assets/flatpickr/flatpickr.min.css" rel="stylesheet">
+				<link id="fp-preview-theme-css" rel="stylesheet" href="">
+
+				<script>
+					(function () {
+						var previewInitialized = false;
+						var initPreview = function () {
+							var themeSelect = document.getElementById('vinny_calendar_fp_theme');
+							var themeLink = document.getElementById('fp-preview-theme-css');
+							var previewInput = document.getElementById('fp-preview-input');
+							var themesPath = "../ext/vinny/calendar/assets/flatpickr/themes/";
+
+							if (previewInitialized || typeof flatpickr === 'undefined' || !themeSelect || !themeLink || !previewInput) {
+								return;
+							}
+
+							previewInitialized = true;
+							flatpickr(previewInput, { inline: true, dateFormat: "d/m/Y" });
+
+							function updateTheme() {
+								var val = themeSelect.value;
+								if (val && val !== 'default') {
+									themeLink.href = themesPath + val + '.css';
+								} else {
+									themeLink.href = '';
+								}
+							}
+
+							themeSelect.addEventListener('change', updateTheme);
+							updateTheme();
+						};
+
+						if (document.readyState !== 'loading') {
+							initPreview();
+						} else {
+							document.addEventListener('DOMContentLoaded', initPreview, { once: true });
+						}
+					})();
+				</script>
+			</dd>
+		</dl>
+		<dl>
+			<dt><label for="vinny_calendar_fp_language">{{ lang('ACP_FP_LANGUAGE') }}:</label><br /><span>{{ lang('ACP_FP_LANGUAGE_EXPLAIN') }}</span></dt>
+			<dd>
+				<select name="vinny_calendar_fp_language" id="vinny_calendar_fp_language">
+					{% for lang in loops.fp_langs %}
+					<option value="{{ lang.VALUE }}" {% if lang.SELECTED %}selected="selected" {% endif %}>{{ lang.NAME }}</option>
+					{% endfor %}
+				</select>
+			</dd>
+		</dl>
+		<dl>
+			<dt><label for="vinny_calendar_fp_time_24hr">{{ lang('ACP_FP_TIME_24HR') }}:</label><br /><span>{{ lang('ACP_FP_TIME_24HR_EXPLAIN') }}</span></dt>
+			<dd>
+				<label><input type="radio" class="radio" name="vinny_calendar_fp_time_24hr" value="1" {% if VINNY_CALENDAR_FP_TIME_24HR %}checked="checked" {% endif %} /> {{ lang('YES') }}</label>
+				<label><input type="radio" class="radio" name="vinny_calendar_fp_time_24hr" value="0" {% if not VINNY_CALENDAR_FP_TIME_24HR %}checked="checked" {% endif %} /> {{ lang('NO') }}</label>
+			</dd>
+		</dl>
+	</fieldset>
+
+	<fieldset>
+		<legend>{{ lang('ACP_SUBMIT_CHANGES') }}</legend>
+		<p class="submit-buttons">
+			<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}" />&nbsp;
+			<input class="button2" type="reset" id="reset" name="reset" value="{{ lang('RESET') }}" />
+		</p>
+		{{ S_FORM_TOKEN }}
+	</fieldset>
+</form>
+
+{% include 'overall_footer.html' %}

@@ -1,0 +1,87 @@
+<!-- INCLUDE overall_header.html -->
+
+<h2 class="forum-title">{L_MY_RSVPS}</h2>
+
+<div class="panel bg1">
+	<div class="inner">
+		<div class="calendar-stat-grid">
+			<div class="stat-block">
+				<strong>{TOTAL_RSVPS_COUNT}</strong>
+				<span>{L_MY_RSVPS}</span>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="forumbg">
+	<div class="inner">
+		<ul class="topiclist">
+			<li class="header">
+				<dl class="row-item">
+					<dt><div class="list-inner">{L_EVENT_DETAILS}</div></dt>
+					<dd class="lastpost calendar-actions-head">{L_ACTIONS}</dd>
+				</dl>
+			</li>
+		</ul>
+		<ul class="topiclist topics">
+			<!-- BEGIN events -->
+			<li class="row<!-- IF events.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">
+				<dl class="row-item">
+					<dt title="{events.TITLE}" class="calendar-event-row">
+						<span class="calendar-row-icon" style="color: #{events.CAT_COLOR};">
+							<i class="icon {events.CAT_ICON} fa-fw icon-md" aria-hidden="true"></i>
+						</span>
+						<div class="list-inner">
+							<a href="{events.U_VIEW}" class="topictitle">{events.TITLE}</a>
+							<div class="calendar-topic-meta topic-poster">
+								<time>{events.DATE_FULL} • {events.TIME}</time>
+							</div>
+							<div class="responsive-show calendar-mobile-meta" style="display: none;">
+								<div class="calendar-mobile-actions">
+									<form action="{events.U_LEAVE}" method="post" class="calendar-inline-form">
+										<button type="submit" name="submit_leave" title="{L_LEAVE}" class="button button-icon-only">
+											<i class="icon fa-times fa-fw" aria-hidden="true"></i><span class="sr-only">{L_LEAVE}</span>
+										</button>
+										{S_FORM_TOKEN}
+									</form>
+								</div>
+							</div>
+						</div>
+					</dt>
+					<dd class="lastpost calendar-actions-cell responsive-hide">
+						<form action="{events.U_LEAVE}" method="post" class="calendar-inline-form">
+							<button type="submit" name="submit_leave" title="{L_LEAVE}" class="button button-icon-only">
+								<i class="icon fa-times fa-fw" aria-hidden="true"></i><span class="sr-only">{L_LEAVE}</span>
+							</button>
+							{S_FORM_TOKEN}
+						</form>
+					</dd>
+				</dl>
+			</li>
+			<!-- BEGINELSE -->
+			<li class="row bg1">
+				<dl class="row-item">
+					<dt>{L_NO_RSVPS_FOUND}</dt>
+				</dl>
+			</li>
+			<!-- END events -->
+		</ul>
+	</div>
+</div>
+
+<div class="action-bar bar-bottom">
+	<div class="pagination">
+		<!-- IF TOTAL_EVENTS > 0 -->
+			{TOTAL_EVENTS} {L_EVENTS_LOWER}
+		<!-- ENDIF -->
+		<!-- IF .pagination -->
+			<!-- INCLUDE pagination.html -->
+		<!-- ELSEIF PAGINATION -->
+			&bull; {PAGINATION}
+		<!-- ELSEIF TOTAL_EVENTS > 0 -->
+			&bull; {PAGE_NUMBER}
+		<!-- ENDIF -->
+	</div>
+</div>
+
+<!-- INCLUDE overall_footer.html -->

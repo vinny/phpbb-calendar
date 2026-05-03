@@ -1,0 +1,32 @@
+{
+	"name": "vinny/calendar",
+	"type": "phpbb-extension",
+	"description": "EventBoard - Calendar & Events for phpBB",
+	"homepage": "https://github.com/vinny",
+	"version": "1.0.0",
+	"license": "GPL-2.0-only",
+	"authors": [
+		{
+			"name": "Vinny",
+			"role": "Developer"
+		}
+	],
+	"require": {
+		"php": ">=7.2.0",
+		"phpbb/phpbb": ">=3.3.0"
+	},
+	"extra": {
+		"display-name": "EventBoard Calendar",
+		"soft-require": {
+			"phpbb/phpbb": ">=3.3.0,<3.4.0@dev"
+		}
+	},
+	"autoload": {
+		"psr-4": {
+			"vinny\\calendar\\": ""
+		}
+	},
+	"require-dev": {
+		"phpbb/epv": "^0.0.12"
+	}
+}

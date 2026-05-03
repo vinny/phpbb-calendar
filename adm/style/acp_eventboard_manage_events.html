@@ -1,0 +1,57 @@
+{% include 'overall_header.html' %}
+
+<a id="maincontent"></a>
+
+<h1>{{ lang('ACP_EVENTBOARD_MANAGE') }}</h1>
+<p>{{ lang('ACP_EVENTBOARD_MANAGE_EXPLAIN') }}</p>
+
+<div class="pagination top-pagination">
+	{{ lang('ACP_EVENT_TOTAL') }}{{ lang('COLON') }} <strong>{{ TOTAL_EVENTS }}</strong>
+	&bull; <a href="{{ U_ACTIVE_EVENTS }}"{% if not S_COMPLETED_VIEW %} style="font-weight: bold;"{% endif %}>{{ lang('ACTIVE_EVENTS') }} ({{ TOTAL_ACTIVE_EVENTS }})</a>
+	&bull; <a href="{{ U_COMPLETED_EVENTS }}"{% if S_COMPLETED_VIEW %} style="font-weight: bold;"{% endif %}>{{ lang('COMPLETED') }} ({{ TOTAL_COMPLETED_EVENTS }})</a>
+	{% if loops.pagination|length %}
+		&bull; {% include 'pagination.html' %}
+	{% endif %}
+</div>
+
+<table class="table1 zebra-table fixed-width-table">
+	<thead>
+		<tr>
+			<th>{{ lang('EVENT_TITLE') }}</th>
+			<th>{{ lang('CATEGORY') }}</th>
+			<th>{{ lang('EVENT_START') }}</th>
+			<th>{{ lang('ACP_EVENT_VISIBILITY') }}</th>
+			<th>{{ lang('AUTHOR') }}</th>
+			<th>{{ lang('SIGNUPS') }}</th>
+			<th>{{ lang('ACTION') }}</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for event in loops.events %}
+		<tr>
+			<td><a href="{{ event.U_VIEW }}"><strong>{{ event.TITLE }}</strong></a></td>
+			<td>{{ event.CATEGORY }}</td>
+			<td>{{ event.START_TIME }}</td>
+			<td>{{ event.VISIBILITY }}</td>
+			<td>{{ event.AUTHOR|raw }}</td>
+			<td style="text-align: center;">{{ event.PARTICIPANT_COUNT }}</td>
+			<td style="width: 80px; text-align: center;" class="actions">
+				<a href="{{ event.U_EDIT }}">{{ ICON_EDIT }}</a>
+				<a href="{{ event.U_DELETE }}" data-ajax="row_delete">{{ ICON_DELETE }}</a>
+			</td>
+		</tr>
+		{% else %}
+		<tr>
+			<td colspan="7" style="text-align: center;">{{ lang('NO_EVENTS') }}</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+
+{% if loops.pagination|length %}
+<div class="pagination">
+	{% include 'pagination.html' %}
+</div>
+{% endif %}
+
+{% include 'overall_footer.html' %}
