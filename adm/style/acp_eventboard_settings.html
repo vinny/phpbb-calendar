@@ -54,17 +54,6 @@
 			</dd>
 		</dl>
 		<dl>
-			<dt><label for="vinny_calendar_fc_timezone">{{ lang('ACP_FC_TIMEZONE') }}:</label><br /><span>{{ lang('ACP_FC_TIMEZONE_EXPLAIN') }}</span></dt>
-			<dd>
-				<select name="vinny_calendar_fc_timezone" id="vinny_calendar_fc_timezone">
-					{% for tz in loops.timezones %}
-					<option value="{{ tz.VALUE }}" {% if tz.SELECTED %}selected="selected" {% endif %}>{{ tz.NAME }}
-					</option>
-					{% endfor %}
-				</select>
-			</dd>
-		</dl>
-		<dl>
 			<dt><label for="vinny_calendar_fc_time_format">{{ lang('ACP_FC_TIME_FORMAT') }}:</label><br /><span>{{ lang('ACP_FC_TIME_FORMAT_EXPLAIN') }}</span></dt>
 			<dd>
 				<label><input type="radio" class="radio" name="vinny_calendar_fc_time_format" value="12" {% if VINNY_CALENDAR_FC_TIME_FORMAT=='12' %}checked="checked" {% endif %} /> {{ lang('ACP_FC_TIME_FORMAT_12') }}</label>

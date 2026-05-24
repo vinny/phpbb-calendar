@@ -103,8 +103,8 @@ class main
 		{
 			$events[] = [
 				'title' => html_entity_decode($row['title']),
-				'start' => date('c', $row['start_at']),
-				'end' => date('c', $row['end_at']),
+				'start' => $this->format_fullcalendar_value((int) $row['start_at']),
+				'end' => $this->format_fullcalendar_value((int) $row['end_at']),
 				'url' => $this->calendar_link->route('vinny_calendar_view', $row, ['id' => (int) $row['event_id']]),
 				'backgroundColor' => '#' . ($row['cat_color'] ?: '3788d8'),
 				'borderColor' => '#' . ($row['cat_color'] ?: '3788d8'),
@@ -123,7 +123,6 @@ class main
 			'S_ALLOW_COMMENTS' => (int) ($this->config['vinny_calendar_allow_comments'] ?? 0),
 			'CALENDAR_EVENTS_JSON' => json_encode($events),
 			'S_FC_LOCALE' => $this->config['vinny_calendar_fc_locale'] ?? 'en',
-			'S_FC_TIMEZONE' => $this->config['vinny_calendar_fc_timezone'] ?? 'UTC',
 			'S_FC_TIME_FORMAT' => $this->config['vinny_calendar_fc_time_format'] ?? '24',
 		]);
 
@@ -908,6 +907,13 @@ class main
 		$date = new \DateTimeImmutable('@' . (int) $timestamp);
 
 		return $date->setTimezone($this->get_user_timezone())->format('Y-m-d H:i');
+	}
+
+	protected function format_fullcalendar_value($timestamp)
+	{
+		$date = new \DateTimeImmutable('@' . (int) $timestamp);
+
+		return $date->setTimezone($this->get_user_timezone())->format('Y-m-d\TH:i:s');
 	}
 
 	protected function get_user_timezone()

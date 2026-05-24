@@ -62,7 +62,6 @@ class main_module
 			$config->set('vinny_calendar_map_zoom', min(20, max(1, $request->variable('vinny_calendar_map_zoom', 17))));
 			$config->set('vinny_calendar_map_lang', $request->variable('vinny_calendar_map_lang', 'en', true));
 			$config->set('vinny_calendar_fc_locale', $request->variable('vinny_calendar_fc_locale', 'en', true));
-			$config->set('vinny_calendar_fc_timezone', $request->variable('vinny_calendar_fc_timezone', 'UTC', true));
 			$config->set('vinny_calendar_fc_time_format', $request->variable('vinny_calendar_fc_time_format', '24', true) === '12' ? '12' : '24');
 			$config->set('vinny_calendar_fp_theme', $request->variable('vinny_calendar_fp_theme', 'default', true));
 			$config->set('vinny_calendar_fp_time_24hr', $request->variable('vinny_calendar_fp_time_24hr', 1));
@@ -87,11 +86,6 @@ class main_module
 		foreach ($this->get_fullcalendar_locales($config['vinny_calendar_fc_locale']) as $locale)
 		{
 			$template->assign_block_vars('fc_locales', $locale);
-		}
-
-		foreach ($this->get_timezones($config['vinny_calendar_fc_timezone']) as $timezone)
-		{
-			$template->assign_block_vars('timezones', $timezone);
 		}
 
 		foreach ($this->get_map_languages($ext_path, $config['vinny_calendar_map_lang']) as $language)
@@ -445,21 +439,6 @@ class main_module
 		}
 
 		return $data;
-	}
-
-	protected function get_timezones($current)
-	{
-		$items = [];
-		foreach (\DateTimeZone::listIdentifiers() as $timezone)
-		{
-			$items[] = [
-				'VALUE' => $timezone,
-				'NAME' => $timezone,
-				'SELECTED' => ($current === $timezone),
-			];
-		}
-
-		return $items;
 	}
 
 	protected function get_map_languages($ext_path, $current)
