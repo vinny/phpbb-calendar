@@ -18,13 +18,17 @@ class event_form
 	/** @var \phpbb\user */
 	protected $user;
 
+	/** @var \phpbb\config\config */
+	protected $config;
+
 	/** @var \vinny\calendar\service\event_access */
 	protected $event_access;
 
-	public function __construct(\phpbb\request\request $request, \phpbb\user $user, \vinny\calendar\service\event_access $event_access)
+	public function __construct(\phpbb\request\request $request, \phpbb\user $user, \phpbb\config\config $config, \vinny\calendar\service\event_access $event_access)
 	{
 		$this->request = $request;
 		$this->user = $user;
+		$this->config = $config;
 		$this->event_access = $event_access;
 	}
 
@@ -127,13 +131,13 @@ class event_form
 			trigger_error('EVENT_LOCATION_REQUIRED');
 		}
 
-		$start_at = strtotime($start);
+		$start_at = $this->parse_local_datetime($start);
 		if (!$start_at)
 		{
 			trigger_error('EVENT_START_INVALID');
 		}
 
-		$end_at = $end ? strtotime($end) : ($start_at + 3600);
+		$end_at = $end ? $this->parse_local_datetime($end) : ($start_at + 3600);
 		if (!$end_at || $end_at <= $start_at)
 		{
 			trigger_error('EVENT_END_INVALID');
@@ -157,6 +161,42 @@ class event_form
 		}
 
 		return [$subject, $start_at, $end_at, $loc, $desc, $cat_id, $lat, $lng, $visibility, $access_token, $max_participants];
+	}
+
+	protected function parse_local_datetime($value)
+	{
+		$value = trim((string) $value);
+		if ($value === '')
+		{
+			return false;
+		}
+
+		$date = \DateTimeImmutable::createFromFormat('!Y-m-d H:i', $value, $this->get_user_timezone());
+		$errors = \DateTimeImmutable::getLastErrors();
+
+		if (!$date || ($errors !== false && ($errors['warning_count'] || $errors['error_count'])))
+		{
+			return false;
+		}
+
+		return $date->getTimestamp();
+	}
+
+	protected function get_user_timezone()
+	{
+		if (isset($this->user->timezone) && $this->user->timezone instanceof \DateTimeZone)
+		{
+			return $this->user->timezone;
+		}
+
+		try
+		{
+			return new \DateTimeZone((string) ($this->config['board_timezone'] ?? date_default_timezone_get()));
+		}
+		catch (\Exception $e)
+		{
+			return new \DateTimeZone(date_default_timezone_get());
+		}
 	}
 
 	protected function prepare_description(&$desc, &$uid, &$bitfield, &$options)

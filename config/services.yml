@@ -65,6 +65,7 @@ services:
         arguments:
             - '@request'
             - '@user'
+            - '@config'
             - '@vinny.calendar.service.event_access'
 
     vinny.calendar.service.event_manager:

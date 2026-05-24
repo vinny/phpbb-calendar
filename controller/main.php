@@ -499,8 +499,8 @@ class main
 		$this->assign_form_defaults([
 			'U_ACTION' => $this->calendar_link->route('vinny_calendar_edit', $event, ['id' => (int) $event['event_id']]),
 			'EVENT_SUBJECT' => $event['title'],
-			'EVENT_START' => date('Y-m-d H:i', (int) $event['start_at']),
-			'EVENT_END' => date('Y-m-d H:i', (int) $event['end_at']),
+			'EVENT_START' => $this->format_flatpickr_value((int) $event['start_at']),
+			'EVENT_END' => $this->format_flatpickr_value((int) $event['end_at']),
 			'EVENT_LOCATION' => $event['location'],
 			'EVENT_DESC' => $desc,
 			'EVENT_LAT' => $event['lat'],
@@ -776,6 +776,7 @@ class main
 			'S_FP_TIME_24HR' => (int) ($this->config['vinny_calendar_fp_time_24hr'] ?? 1),
 			'S_FP_DATE_FORMAT' => $this->get_flatpickr_alt_format(),
 			'U_GEO_PROXY' => $this->helper->route('vinny_calendar_geo_proxy'),
+			'S_GEOAPIFY_ENABLED' => ((string) ($this->config['vinny_calendar_geoapify_key'] ?? '') !== ''),
 			'VINNY_CALENDAR_MAP_LANG' => (string) ($this->config['vinny_calendar_map_lang'] ?? 'en'),
 			'S_BBCODE_ALLOWED' => true,
 			'S_SMILIES_ALLOWED' => true,
@@ -889,7 +890,41 @@ class main
 
 	protected function get_flatpickr_alt_format()
 	{
-		return ((int) ($this->config['vinny_calendar_fp_time_24hr'] ?? 1) === 1) ? 'D M j, Y H:i' : 'D M j, Y h:i K';
+		$format = trim((string) ($this->config['vinny_calendar_fp_date_format'] ?? 'd/m/Y H:i'));
+		$time_format = ((int) ($this->config['vinny_calendar_fp_time_24hr'] ?? 1) === 1) ? 'H:i' : 'h:i K';
+
+		if ($format === '')
+		{
+			return 'd/m/Y ' . $time_format;
+		}
+
+		$updated = preg_replace('/(?:H|G|h|g):i(?:\s*(?:K|A))?/', $time_format, $format, 1);
+
+		return ($updated === $format) ? trim($format . ' ' . $time_format) : $updated;
+	}
+
+	protected function format_flatpickr_value($timestamp)
+	{
+		$date = new \DateTimeImmutable('@' . (int) $timestamp);
+
+		return $date->setTimezone($this->get_user_timezone())->format('Y-m-d H:i');
+	}
+
+	protected function get_user_timezone()
+	{
+		if (isset($this->user->timezone) && $this->user->timezone instanceof \DateTimeZone)
+		{
+			return $this->user->timezone;
+		}
+
+		try
+		{
+			return new \DateTimeZone((string) ($this->config['board_timezone'] ?? date_default_timezone_get()));
+		}
+		catch (\Exception $e)
+		{
+			return new \DateTimeZone(date_default_timezone_get());
+		}
 	}
 
 	protected function build_page_number($total, $per_page, $start)

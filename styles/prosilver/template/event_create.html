@@ -155,13 +155,26 @@ document.addEventListener('DOMContentLoaded', function () {
 		var html = '<ul class="dropdown-contents">';
 		items.forEach(function (item) {
 			var formatted = item.formatted || '';
+			var safeFormatted = escapeHtml(formatted);
 			var lat = String(item.lat || '');
 			var lon = String(item.lon || '');
-			html += '<li><a href="#" class="js-geo-item" data-lat="' + lat + '" data-lon="' + lon + '" data-address="' + formatted.replace(/"/g, '&quot;') + '">' + formatted + '</a></li>';
+			html += '<li><a href="#" class="js-geo-item" data-lat="' + lat + '" data-lon="' + lon + '" data-address="' + safeFormatted + '">' + safeFormatted + '</a></li>';
 		});
 		html += '</ul>';
 		geoResults.innerHTML = html;
 		geoResults.classList.remove('hidden');
+	}
+
+	function escapeHtml(value) {
+		return String(value).replace(/[&<>"']/g, function (character) {
+			return {
+				'&': '&amp;',
+				'<': '&lt;',
+				'>': '&gt;',
+				'"': '&quot;',
+				"'": '&#039;'
+			}[character];
+		});
 	}
 
 	function searchGeo(query) {
@@ -169,6 +182,11 @@ document.addEventListener('DOMContentLoaded', function () {
 			renderGeoResults([]);
 			return;
 		}
+
+		<!-- IF not S_GEOAPIFY_ENABLED -->
+		renderGeoResults([]);
+		return;
+		<!-- ENDIF -->
 
 		var geoProxyUrl = '{U_GEO_PROXY}';
 		var geoProxySeparator = geoProxyUrl.indexOf('?') === -1 ? '?' : '&';
@@ -186,6 +204,10 @@ document.addEventListener('DOMContentLoaded', function () {
 	locationInput.addEventListener('input', function () {
 		latInput.value = '';
 		lngInput.value = '';
+		<!-- IF not S_GEOAPIFY_ENABLED -->
+		renderGeoResults([]);
+		return;
+		<!-- ENDIF -->
 		clearTimeout(geoTimer);
 		geoTimer = setTimeout(function () {
 			searchGeo(locationInput.value.trim());
