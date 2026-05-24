@@ -96,6 +96,7 @@ class main
 	{
 		$this->guard_enabled();
 		$this->guard_view_permission();
+		$this->assign_breadcrumbs('EVENT_CALENDAR', $this->helper->route('vinny_calendar_controller'));
 
 		$events = [];
 		foreach ($this->event_query->get_public_calendar_events() as $row)
@@ -109,31 +110,6 @@ class main
 				'borderColor' => '#' . ($row['cat_color'] ?: '3788d8'),
 				'icon' => $row['cat_icon'] ?: 'fa-calendar',
 			];
-		}
-
-		foreach ($this->event_query->get_category_filters(true, 12) as $category)
-		{
-			$this->template->assign_block_vars('categories', [
-				'ID' => (int) $category['cat_id'],
-				'NAME' => $category['cat_name'],
-				'ICON' => $category['cat_icon'],
-				'COLOR' => ltrim($category['cat_color'], '#'),
-				'COUNT' => (int) $category['event_count'],
-				'U_VIEW' => $this->helper->route('vinny_calendar_category', ['id' => (int) $category['cat_id']]),
-			]);
-		}
-
-		foreach ($this->event_query->get_upcoming_public_events(8) as $row)
-		{
-			$this->template->assign_block_vars('upcoming_events', [
-				'TITLE' => $row['title'],
-				'LOCATION' => $row['location'] ?: $this->user->lang('EVENT_ONLINE'),
-				'TIME' => $this->user->format_date($row['start_at'], $this->get_time_format()),
-				'DATE_FULL' => $this->user->format_date($row['start_at']),
-				'Start_Date_Day' => $this->user->format_date($row['start_at'], 'd'),
-				'Start_Date_Month_Short' => $this->user->format_date($row['start_at'], 'M'),
-				'U_VIEW' => $this->calendar_link->route('vinny_calendar_view', $row, ['id' => (int) $row['event_id']]),
-			]);
 		}
 
 		$this->template->assign_vars([
@@ -159,6 +135,7 @@ class main
 		$this->guard_enabled();
 		$this->guard_view_permission();
 		$this->ensure_content_helpers();
+		$this->assign_breadcrumbs('COMING_UP', $this->helper->route('vinny_calendar_upcoming'));
 
 		$start = $this->request->variable('start', 0);
 		$per_page = 10;
@@ -202,6 +179,7 @@ class main
 		{
 			trigger_error('CATEGORY_NOT_FOUND');
 		}
+		$this->assign_breadcrumbs($category['cat_name'], $this->helper->route('vinny_calendar_category', ['id' => (int) $id]), false);
 
 		$start = $this->request->variable('start', 0);
 		$per_page = 10;
@@ -244,6 +222,7 @@ class main
 		$this->guard_enabled();
 		$this->guard_view_permission();
 		$this->guard_login();
+		$this->assign_breadcrumbs('MY_EVENTS', $this->helper->route('vinny_calendar_my_events'));
 
 		$completed = (bool) $this->request->variable('completed', 0);
 		$start = $this->request->variable('start', 0);
@@ -291,6 +270,7 @@ class main
 		$this->guard_enabled();
 		$this->guard_view_permission();
 		$this->guard_login();
+		$this->assign_breadcrumbs('MY_RSVPS', $this->helper->route('vinny_calendar_my_rsvps'));
 
 		$start = $this->request->variable('start', 0);
 		$per_page = 10;
@@ -320,7 +300,6 @@ class main
 			'TOTAL_RSVPS_COUNT' => $this->event_query->count_user_rsvps($user_id),
 			'TOTAL_EVENTS' => $total,
 			'PAGE_NUMBER' => $this->build_page_number($total, $per_page, $start),
-			'S_FORM_TOKEN' => generate_form_token($form_key),
 		]);
 
 		return $this->helper->render('event_my_rsvps.html', $this->user->lang('MY_RSVPS'));
@@ -337,6 +316,7 @@ class main
 		{
 			trigger_error('EVENT_NOT_FOUND');
 		}
+		$this->assign_breadcrumbs($event['title'], $this->calendar_link->route('vinny_calendar_view', $event, ['id' => (int) $event['event_id']]), false);
 
 		$this->assert_event_visible($event);
 
@@ -358,22 +338,30 @@ class main
 		foreach ($this->event_query->get_event_participants((int) $event['event_id']) as $row)
 		{
 			$this->template->assign_block_vars('participants', [
-				'USERNAME' => $row['username'],
-				'U_PROFILE' => get_username_string('profile', $row['user_id'], $row['username'], $row['user_colour']),
+				'USER_FULL' => get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']),
 			]);
 		}
 
 		foreach ($this->comment_service->get_comments_for_event((int) $event['event_id']) as $row)
 		{
+			$comment_text = generate_text_for_edit($row['message'], $row['uid'] ?? '', $row['options'] ?? 7);
 			$this->template->assign_block_vars('comments', [
 				'ID' => (int) $row['comment_id'],
 				'AUTHOR' => get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']),
+				'AUTHOR_NAME' => $row['username'],
 				'DATE' => $this->user->format_date($row['created_at']),
 				'MESSAGE' => generate_text_for_display($row['message'], $row['uid'] ?? '', $row['bitfield'] ?? '', $row['options'] ?? 7),
+				'QUOTE_TEXT' => $comment_text['text'],
 				'S_CAN_DELETE' => ($row['user_id'] == $user_id) || $this->can_manage_event($event),
 				'U_DELETE' => $this->calendar_link->private_route('vinny_calendar_delete_comment', (int) $row['comment_id'], (int) $event['visibility'], $event['access_token'], ['id' => (int) $row['comment_id']]),
 			]);
 		}
+
+		$event_url = $this->calendar_link->absolute_route(generate_board_url(), 'vinny_calendar_view', $event, ['id' => (int) $event['event_id']]);
+		$event_location = $this->event_display->is_online($event) ? $this->user->lang('EVENT_ONLINE') : (string) $event['location'];
+		$event_plain_description = $this->event_display->plain_text($event['description'], $event['desc_uid'], $event['desc_bitfield'], $event['desc_options']);
+		$calendar_targets = $this->calendar_add->build_targets($event, $event_url, $event_plain_description, $event_location);
+		$share_targets = $this->share->build_targets($event_url, (string) $event['title']);
 
 		$this->template->assign_vars([
 			'EVENT_TITLE' => $event['title'],
@@ -381,7 +369,7 @@ class main
 			'CAT_COLOR' => ltrim($event['cat_color'], '#'),
 			'CAT_ICON' => $event['cat_icon'],
 			'EVENT_START_DATE' => $this->user->format_date($event['start_at']),
-			'EVENT_TIME_RANGE' => $this->user->format_date($event['end_at']),
+			'EVENT_END_DATE' => $this->user->format_date($event['end_at']),
 			'S_IS_ONLINE' => $this->event_display->is_online($event),
 			'EVENT_LOCATION' => $event['location'],
 			'EVENT_DESCRIPTION' => generate_text_for_display($event['description'], $event['desc_uid'], $event['desc_bitfield'], $event['desc_options']),
@@ -404,8 +392,20 @@ class main
 			'U_DELETE' => $this->can_manage_event($event) ? $this->calendar_link->route('vinny_calendar_delete', $event, ['id' => (int) $event['event_id']]) : '',
 			'U_ACTION_COMMENT' => $this->calendar_link->route('vinny_calendar_comment', $event, ['id' => (int) $event['event_id']]),
 			'U_LOGIN_LOGOUT' => append_sid($this->root_path . 'ucp.' . $this->php_ext, 'mode=login'),
-			'S_FORM_TOKEN' => generate_form_token($form_key),
 			'S_SMILIES_ALLOWED' => true,
+			'S_BBCODE_ALLOWED' => true,
+			'S_BBCODE_QUOTE' => true,
+			'S_BBCODE_IMG' => true,
+			'S_LINKS_ALLOWED' => true,
+			'S_BBCODE_FLASH' => false,
+			'U_ADD_GOOGLE' => $calendar_targets['google'],
+			'U_ADD_OUTLOOK' => $calendar_targets['outlook'],
+			'U_ADD_YAHOO' => $calendar_targets['yahoo'],
+			'U_SHARE_WHATSAPP' => $share_targets['whatsapp'],
+			'U_SHARE_FACEBOOK' => $share_targets['facebook'],
+			'U_SHARE_TWITTER' => $share_targets['twitter'],
+			'U_SHARE_TELEGRAM' => $share_targets['telegram'],
+			'U_SHARE_COPY' => $share_targets['copy'],
 		]);
 
 		return $this->helper->render('event_view.html', $event['title']);
@@ -416,6 +416,7 @@ class main
 		$this->guard_enabled();
 		$this->guard_view_permission();
 		$this->guard_login();
+		$this->assign_breadcrumbs('EVENT_CREATE', $this->helper->route('vinny_calendar_create'));
 
 		if (!$this->auth->acl_get('u_eventboard_create'))
 		{
@@ -472,6 +473,7 @@ class main
 		{
 			trigger_error('EVENT_NOT_FOUND');
 		}
+		$this->assign_breadcrumbs('EDIT_EVENT', $this->calendar_link->route('vinny_calendar_edit', $event, ['id' => (int) $event['event_id']]));
 
 		if (!$this->can_manage_event($event))
 		{
@@ -575,6 +577,10 @@ class main
 		}
 
 		$this->assert_event_visible($event);
+		if ((int) $event['start_at'] <= time())
+		{
+			trigger_error('EVENT_ENDED');
+		}
 
 		if ((int) $event['user_id'] === (int) $this->user->data['user_id'])
 		{
@@ -715,6 +721,10 @@ class main
 		}
 
 		$this->assert_event_visible($event);
+		if ((int) $event['start_at'] <= time())
+		{
+			trigger_error('EVENT_COMMENTS_CLOSED');
+		}
 
 		$message = trim($this->request->variable('comment_text', '', true));
 		if ($message === '')
@@ -765,9 +775,14 @@ class main
 			'S_FP_LANGUAGE' => $this->config['vinny_calendar_fp_language'] ?? 'default',
 			'S_FP_TIME_24HR' => (int) ($this->config['vinny_calendar_fp_time_24hr'] ?? 1),
 			'S_FP_DATE_FORMAT' => $this->get_flatpickr_alt_format(),
-			'GEOAPIFY_API_KEY' => (string) ($this->config['vinny_calendar_geoapify_key'] ?? ''),
+			'U_GEO_PROXY' => $this->helper->route('vinny_calendar_geo_proxy'),
 			'VINNY_CALENDAR_MAP_LANG' => (string) ($this->config['vinny_calendar_map_lang'] ?? 'en'),
-			'S_FORM_TOKEN' => generate_form_token('vinny_calendar_event'),
+			'S_BBCODE_ALLOWED' => true,
+			'S_SMILIES_ALLOWED' => true,
+			'S_LINKS_ALLOWED' => true,
+			'S_BBCODE_IMG' => true,
+			'S_BBCODE_URL' => true,
+			'S_BBCODE_FLASH' => false,
 			'S_LIMIT_ENABLED' => false,
 			'S_PUBLIC_ENABLED' => true,
 			'S_FORMAT_IN_PERSON' => true,
@@ -855,6 +870,8 @@ class main
 	{
 		$this->ensure_content_helpers();
 		include_once($this->root_path . 'includes/functions_posting.' . $this->php_ext);
+		$this->user->add_lang('posting');
+		$this->user->add_lang('viewtopic');
 	}
 
 	protected function check_action_form()
@@ -886,5 +903,21 @@ class main
 		$pages = (int) ceil($total / $per_page);
 
 		return $current . ' / ' . $pages;
+	}
+
+	protected function assign_breadcrumbs($label, $url, $translate = true)
+	{
+		$this->template->assign_block_vars('navlinks', [
+			'FORUM_NAME' => $this->user->lang('EVENT_CALENDAR'),
+			'U_VIEW_FORUM' => $this->helper->route('vinny_calendar_controller'),
+		]);
+
+		if ($label !== 'EVENT_CALENDAR')
+		{
+			$this->template->assign_block_vars('navlinks', [
+				'FORUM_NAME' => $translate ? $this->user->lang($label) : $label,
+				'U_VIEW_FORUM' => $url,
+			]);
+		}
 	}
 }

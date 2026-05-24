@@ -107,7 +107,7 @@ class event_query
 
     public function get_event_for_join($event_id)
     {
-        $sql = 'SELECT event_id, user_id, title, max_participants, visibility, access_token
+        $sql = 'SELECT event_id, user_id, title, max_participants, start_at, visibility, access_token
             FROM ' . $this->table_prefix . 'eventboard_events
             WHERE event_id = ' . (int) $event_id;
 
@@ -125,7 +125,7 @@ class event_query
 
     public function get_event_for_comment($event_id)
     {
-        $sql = 'SELECT event_id, user_id, title, visibility, access_token
+        $sql = 'SELECT event_id, user_id, title, start_at, visibility, access_token
             FROM ' . $this->table_prefix . 'eventboard_events
             WHERE event_id = ' . (int) $event_id;
 

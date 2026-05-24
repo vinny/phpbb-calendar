@@ -1,17 +1,9 @@
 <!-- INCLUDE overall_header.html -->
 
 <h2 class="topic-title">
-	<!-- IF CAT_ICON -->
-	<span class="calendar-category-bullet" style="color: #{CAT_COLOR};">
-		<i class="icon {CAT_ICON} fa-fw" aria-hidden="true"></i>
-	</span>
-	<!-- ENDIF -->
 	{EVENT_TITLE}
 </h2>
-
-<p class="author calendar-event-author">
-	{L_EVENT_ORGANIZED_BY} <strong>{ORGANIZER_FULL}</strong> &raquo; <time>{EVENT_CREATED_AT}</time>
-</p>
+<p class="author calendar-event-author">{L_EVENT_ORGANIZED_BY} <strong>{ORGANIZER_FULL}</strong> &raquo; <time>{EVENT_CREATED_AT}</time></p>
 
 <div class="action-bar bar-top">
 	<div class="topic-actions">
@@ -36,9 +28,35 @@
 		<!-- ENDIF -->
 	</div>
 
-	<!-- DEFINE $SHOW_EVENT_BUTTONS = (U_EDIT or U_DELETE) -->
-	<!-- IF $SHOW_EVENT_BUTTONS -->
 	<ul class="post-buttons">
+		<li class="dropdown-container dropdown-button-control">
+			<a class="button button-icon-only dropdown-trigger" href="#" title="{L_ADD_TO_CALENDAR}">
+				<i class="icon fa-calendar-plus-o fa-fw" aria-hidden="true"></i><span class="sr-only">{L_ADD_TO_CALENDAR}</span>
+			</a>
+			<div class="dropdown hidden">
+				<div class="pointer"><div class="pointer-inner"></div></div>
+				<ul class="dropdown-contents calendar-dropdown-contents">
+					<li><a href="{U_ADD_GOOGLE}" target="_blank" rel="noopener"><i class="icon fa-google fa-fw" aria-hidden="true"></i> {L_GOOGLE_CALENDAR}</a></li>
+					<li><a href="{U_ADD_OUTLOOK}" target="_blank" rel="noopener"><i class="icon fa-envelope fa-fw" aria-hidden="true"></i> {L_OUTLOOK_CALENDAR}</a></li>
+					<li><a href="{U_ADD_YAHOO}" target="_blank" rel="noopener"><i class="icon fa-yahoo fa-fw" aria-hidden="true"></i> {L_YAHOO_CALENDAR}</a></li>
+				</ul>
+			</div>
+		</li>
+		<li class="dropdown-container dropdown-button-control">
+			<a class="button button-icon-only dropdown-trigger" href="#" title="{L_SHARE_EVENT}">
+				<i class="icon fa-share-alt fa-fw" aria-hidden="true"></i><span class="sr-only">{L_SHARE_EVENT}</span>
+			</a>
+			<div class="dropdown hidden">
+				<div class="pointer"><div class="pointer-inner"></div></div>
+				<ul class="dropdown-contents calendar-dropdown-contents">
+					<li><a href="{U_SHARE_WHATSAPP}" target="_blank" rel="noopener"><i class="icon fa-whatsapp fa-fw" aria-hidden="true"></i> {L_SHARE_WHATSAPP}</a></li>
+					<li><a href="{U_SHARE_FACEBOOK}" target="_blank" rel="noopener"><i class="icon fa-facebook fa-fw" aria-hidden="true"></i> {L_SHARE_FACEBOOK}</a></li>
+					<li><a href="{U_SHARE_TWITTER}" target="_blank" rel="noopener"><i class="icon fa-twitter fa-fw" aria-hidden="true"></i> {L_SHARE_TWITTER}</a></li>
+					<li><a href="{U_SHARE_TELEGRAM}" target="_blank" rel="noopener"><i class="icon fa-telegram fa-fw" aria-hidden="true"></i> {L_SHARE_TELEGRAM}</a></li>
+					<li><a href="{U_SHARE_COPY}" data-ajax="false"><i class="icon fa-link fa-fw" aria-hidden="true"></i> {L_COPY_LINK}</a></li>
+				</ul>
+			</div>
+		</li>
 		<!-- IF U_EDIT -->
 		<li>
 			<a href="{U_EDIT}" title="{L_EDIT}" class="button button-icon-only">
@@ -54,45 +72,18 @@
 		</li>
 		<!-- ENDIF -->
 	</ul>
-	<!-- ENDIF -->
 </div>
 
 <div class="post bg1 calendar-event-post">
 	<div class="inner">
-		<div class="postbody">
+		<div class="postbody" style="width: 100%;">
 			<div class="content calendar-event-content">
-				<div class="calendar-event-summary">
-					<div class="calendar-event-summary-item">
-						<strong>{L_CATEGORY}{L_COLON}</strong>
-						<span>
-							<span class="calendar-category-bullet" style="color: #{CAT_COLOR};">
-								<i class="icon {CAT_ICON} fa-fw" aria-hidden="true"></i>
-							</span>
-							{CAT_NAME}
-						</span>
-					</div>
-					<div class="calendar-event-summary-item">
-						<strong>{L_EVENT_START}{L_COLON}</strong>
-						<span>{EVENT_START_DATE}</span>
-					</div>
-					<div class="calendar-event-summary-item">
-						<strong>{L_EVENT_DETAILS}{L_COLON}</strong>
-						<span>{EVENT_TIME_RANGE}</span>
-					</div>
-					<div class="calendar-event-summary-item">
-						<strong>{L_EVENT_LOCATION}{L_COLON}</strong>
-						<span><!-- IF S_IS_ONLINE -->{L_EVENT_ONLINE}<!-- ELSE -->{EVENT_LOCATION}<!-- ENDIF --></span>
-					</div>
-					<div class="calendar-event-summary-item">
-						<strong>{L_CAPACITY}{L_COLON}</strong>
-						<span>
-							<!-- IF MAX_PARTICIPANTS > 0 -->
-								{TOTAL_PARTICIPANTS} / {MAX_PARTICIPANTS}
-							<!-- ELSE -->
-								{L_UNLIMITED_SPOTS}
-							<!-- ENDIF -->
-						</span>
-					</div>
+				<div class="calendar-event-summary calendar-event-summary-rows">
+					<div class="calendar-event-summary-row"><strong>{L_CATEGORY}{L_COLON}</strong><span>{CAT_NAME}</span></div>
+					<div class="calendar-event-summary-row"><strong>{L_EVENT_START}{L_COLON}</strong><span>{EVENT_START_DATE}</span></div>
+					<div class="calendar-event-summary-row"><strong>{L_EVENT_END}{L_COLON}</strong><span>{EVENT_END_DATE}</span></div>
+					<div class="calendar-event-summary-row"><strong>{L_EVENT_LOCATION}{L_COLON}</strong><span><!-- IF S_IS_ONLINE -->{L_EVENT_ONLINE}<!-- ELSE -->{EVENT_LOCATION}<!-- ENDIF --></span></div>
+					<div class="calendar-event-summary-row"><strong>{L_CAPACITY}{L_COLON}</strong><span><!-- IF MAX_PARTICIPANTS > 0 -->{TOTAL_PARTICIPANTS} / {MAX_PARTICIPANTS}<!-- ELSE -->{L_UNLIMITED_SPOTS}<!-- ENDIF --></span></div>
 				</div>
 
 				<div class="calendar-event-description">{EVENT_DESCRIPTION}</div>
@@ -110,25 +101,13 @@
 <div class="panel bg1 calendar-participants-panel">
 	<div class="inner">
 		<h3>{L_WHO_IS_GOING}</h3>
-		<ul class="topiclist forums">
+		<p class="calendar-participants-inline">
 			<!-- BEGIN participants -->
-			<li class="row">
-				<dl class="row-item">
-					<dt>
-						<div class="list-inner">
-							<a href="{participants.U_PROFILE}">{participants.USERNAME}</a>
-						</div>
-					</dt>
-				</dl>
-			</li>
+				{participants.USER_FULL}<!-- IF not participants.S_LAST_ROW -->, <!-- ENDIF -->
 			<!-- BEGINELSE -->
-			<li class="row">
-				<dl class="row-item">
-					<dt>{L_NO_RSVPS_FOUND}</dt>
-				</dl>
-			</li>
+				{L_NO_RSVPS_FOUND}
 			<!-- END participants -->
-		</ul>
+		</p>
 	</div>
 </div>
 
@@ -139,60 +118,57 @@
 
 		<!-- IF S_USER_LOGGED_IN and S_CAN_COMMENT -->
 		<form action="{U_ACTION_COMMENT}" method="post" id="postform">
-			<fieldset class="fields1">
-				<dl>
-					<dt><label for="message">{L_POST_COMMENT}{L_COLON}</label></dt>
-					<dd>
-						<!-- INCLUDE posting_buttons.html -->
-						<textarea name="comment_text" id="message" rows="6" cols="76" class="inputbox" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" onfocus="initInsertions();"></textarea>
-					</dd>
-				</dl>
+			<div id="message-box" class="message-box">
+				<!-- INCLUDE posting_buttons.html -->
+				<textarea name="comment_text" id="message" rows="8" cols="76" class="inputbox" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" onfocus="initInsertions();"></textarea>
+			</div>
+			<fieldset class="submit-buttons">
+				<input type="submit" name="submit" class="button1 default-submit-action" value="{L_POST_COMMENT}">
+				{S_FORM_TOKEN}
 			</fieldset>
-			<div id="smiley-box" class="smiley-box">
-				<!-- IF S_SMILIES_ALLOWED and .smiley -->
-					<strong>{L_SMILIES}</strong><br />
-					<!-- BEGIN smiley -->
-						<a href="#" onclick="insert_text('{smiley.A_SMILEY_CODE}', true); return false;"><img src="{smiley.SMILEY_IMG}" width="{smiley.SMILEY_WIDTH}" height="{smiley.SMILEY_HEIGHT}" alt="{smiley.A_SMILEY_CODE}" title="{smiley.SMILEY_DESC}" /></a>
-					<!-- END smiley -->
-				<!-- ENDIF -->
-			</div>
-			<div class="panel bg2">
-				<div class="inner">
-					<fieldset class="submit-buttons">
-						<input type="submit" name="submit" class="button1 default-submit-action" value="{L_POST_COMMENT}">
-						{S_FORM_TOKEN}
-					</fieldset>
-				</div>
-			</div>
 		</form>
 		<!-- ELSEIF S_COMMENTS_CLOSED -->
 		<p>{L_EVENT_COMMENTS_CLOSED}</p>
 		<!-- ELSE -->
 		<p><a href="{U_LOGIN_LOGOUT}">{L_LOGIN_TO_COMMENT}</a></p>
 		<!-- ENDIF -->
+	</div>
+</div>
 
-		<div id="comments">
-			<!-- BEGIN comments -->
-			<div class="post bg2" id="comment_{comments.ID}">
-				<div class="inner">
-					<div class="postbody">
-						<p class="author">{comments.AUTHOR} &raquo; <time>{comments.DATE}</time></p>
-						<div class="content">{comments.MESSAGE}</div>
-						<!-- IF comments.S_CAN_DELETE -->
-						<ul class="post-buttons">
-							<li>
-								<a href="{comments.U_DELETE}" title="{L_DELETE_COMMENT}" class="button button-icon-only">
-									<i class="icon fa-times fa-fw" aria-hidden="true"></i><span class="sr-only">{L_DELETE_COMMENT}</span>
-								</a>
-							</li>
-						</ul>
-						<!-- ENDIF -->
-					</div>
-				</div>
+<hr>
+
+
+<div id="comments">
+	<!-- BEGIN comments -->
+	<div class="post calendar-comment-post <!-- IF comments.S_ROW_COUNT is even -->bg1<!-- ELSE -->bg2<!-- ENDIF -->" id="comment_{comments.ID}">
+		<div class="inner">
+			<div class="postbody" style="width: 100%;">
+				<ul class="post-buttons">
+					<li>
+						<a href="#" class="button button-icon-only js-calendar-quote" title="{L_QUOTE}" data-quote-author="{comments.AUTHOR_NAME}" data-quote-message="{comments.QUOTE_TEXT}">
+							<i class="icon fa-quote-left fa-fw" aria-hidden="true"></i><span class="sr-only">{L_QUOTE}</span>
+						</a>
+					</li>
+					<!-- IF comments.S_CAN_DELETE -->
+					<li>
+						<a href="{comments.U_DELETE}" title="{L_DELETE_COMMENT}" class="button button-icon-only">
+							<i class="icon fa-times fa-fw" aria-hidden="true"></i><span class="sr-only">{L_DELETE_COMMENT}</span>
+						</a>
+					</li>
+					<!-- ENDIF -->
+				</ul>
+				<p class="author">{comments.AUTHOR} &raquo; <time>{comments.DATE}</time></p>
+				<div class="content">{comments.MESSAGE}</div>
 			</div>
-			<!-- END comments -->
 		</div>
 	</div>
+	<!-- BEGINELSE -->
+	<div class="panel">
+		<div class="inner">
+			<p>{L_NO_COMMENTS}</p>
+		</div>
+	</div>
+	<!-- END comments -->
 </div>
 <!-- ENDIF -->
 
@@ -201,6 +177,25 @@ var form_name = 'postform';
 var text_name = 'message';
 var load_draft = false;
 var upload_allowed = false;
+
+document.addEventListener('DOMContentLoaded', function () {
+	var quoteButtons = document.querySelectorAll('.js-calendar-quote');
+	var messageField = document.getElementById('message');
+	if (!quoteButtons.length || !messageField) {
+		return;
+	}
+
+	quoteButtons.forEach(function (button) {
+		button.addEventListener('click', function (e) {
+			e.preventDefault();
+			var author = button.getAttribute('data-quote-author') || '';
+			var message = button.getAttribute('data-quote-message') || '';
+			var quote = '[quote="' + author.replace(/"/g, '\\"') + '"]' + message + '[/quote]\n';
+			insert_text(quote, true);
+			messageField.focus();
+		});
+	});
+});
 </script>
 <script src="{T_ASSETS_PATH}/javascript/editor.js"></script>
 

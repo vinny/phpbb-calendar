@@ -17,7 +17,7 @@ if (empty($lang) || !is_array($lang)) {
 }
 
 $lang = array_merge($lang, array(
-    'EVENT_CALENDAR' => 'Events',
+    'EVENT_CALENDAR' => 'Calendar',
     'EVENT_VIEW' => 'View Event',
     'EVENT_CREATE' => 'Create Event',
     'EVENT_TITLE' => 'Title',
@@ -41,7 +41,13 @@ $lang = array_merge($lang, array(
 
 
     'EVENT_CREATED' => 'Event created successfully.',
+    'EVENT_TITLE_REQUIRED' => 'The event title is required.',
+    'EVENT_CATEGORY_REQUIRED' => 'You must select a category.',
+    'EVENT_DESCRIPTION_REQUIRED' => 'The event description is required.',
     'EVENT_LOCATION_REQUIRED' => 'The location field is required for in-person events.',
+    'EVENT_START_INVALID' => 'The start date is invalid.',
+    'EVENT_END_INVALID' => 'The end date must be after the start date.',
+    'EVENT_LIMIT_INVALID' => 'The participants limit must be greater than zero.',
     'RETURN_TO_CALENDAR' => 'Click %shere%s to return to the calendar.',
 
     // Create Event Form
@@ -88,6 +94,7 @@ $lang = array_merge($lang, array(
     'COMMENT_NOT_FOUND' => 'The requested comment could not be found.',
     'ALREADY_JOINED' => 'You have already joined this event.',
     'EVENT_FULL' => 'This event has reached its maximum participant limit.',
+    'EVENT_COMMENTS_CLOSED' => 'Comments are closed for ended events.',
     'NO_PARTICIPANTS' => 'No participants yet.',
     'SHARE_EVENT' => 'Share this Event',
     'COMMENTS_DISABLED' => 'Comments are currently disabled for this board.',
@@ -102,15 +109,26 @@ $lang = array_merge($lang, array(
     
     // Event View Strings
     'EVENT_ORGANIZER' => 'Event Organizer',
+    'EVENT_ORGANIZED_BY' => 'Organized by',
     'CONTACT_ORGANIZER' => 'Contact Organizer',
     'WHO_IS_GOING' => "Who's Going",
     'SEE_ALL' => 'See all',
     'ADD_TO_CALENDAR' => 'Add to Calendar',
+    'GOOGLE_CALENDAR' => 'Google Calendar',
+    'OUTLOOK_CALENDAR' => 'Outlook Calendar',
+    'YAHOO_CALENDAR' => 'Yahoo Calendar',
+    'COPY_LINK' => 'Copy link',
+    'SHARE_WHATSAPP' => 'WhatsApp',
+    'SHARE_FACEBOOK' => 'Facebook',
+    'SHARE_TWITTER' => 'X / Twitter',
+    'SHARE_TELEGRAM' => 'Telegram',
+    'RSS_FEED' => 'RSS Feed',
+    'EXPORT_ICS' => 'Export .ics',
     'REGISTRATION' => 'Registration',
     'RSVP_REQUIRED' => 'RSVP is required for food planning.',
     'CONFIRM_ATTENDANCE' => 'Confirm Attendance',
     'MY_RSVPS' => 'My RSVPs',
-    'NO_RSVPS_FOUND' => 'You have not RSVP\'d to any upcoming events.',
+    'NO_RSVPS_FOUND' => 'No one has confirmed attendance yet.',
     'LEAVE' => 'Leave',
     'VIEW' => 'View',
     'VIEW_EVENT' => 'View Event',

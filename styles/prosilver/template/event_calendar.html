@@ -8,108 +8,37 @@
 
 <div class="calendar-layout">
 	<div class="calendar-main">
-		<div class="panel">
-			<div class="inner">
-				<h2>{L_EVENT_CALENDAR}</h2>
-
-				<div class="action-bar bar-top">
-					<div class="pagination">
-						<!-- BEGIN categories -->
-						<a class="button button-secondary" href="{categories.U_VIEW}">
-							<!-- IF categories.ICON --><i class="icon {categories.ICON} fa-fw" aria-hidden="true"></i> <!-- ENDIF -->{categories.NAME}
-						</a>
-						<!-- END categories -->
-					</div>
-
-					<div class="topic-actions">
+		<div class="inner">
+			<div class="action-bar bar-top">
+				<div class="topic-actions">
 						<!-- IF U_CREATE_EVENT -->
 						<a class="button button-primary" href="{U_CREATE_EVENT}">
 							<i class="icon fa-plus fa-fw" aria-hidden="true"></i><span>{L_EVENT_CREATE}</span>
 						</a>
 						<!-- ENDIF -->
-					</div>
-				</div>
-
-				<div class="calendar-wrapper">
-					<div id="calendar"></div>
+						<!-- IF S_USER_LOGGED_IN and not S_IS_BOT -->
+						<a class="button button-secondary" href="{U_MY_EVENTS}">{L_MY_EVENTS}</a>
+						<a class="button button-secondary" href="{U_MY_RSVPS}">{L_MY_RSVPS}</a>
+						<!-- ENDIF -->
+						<a class="button button-secondary" href="{U_VIEW_ALL}">{L_COMING_UP}</a>
 				</div>
 			</div>
-		</div>
-	</div>
-
-	<div class="calendar-sidebar">
-		<div class="forabg">
-			<div class="inner">
-				<ul class="topiclist">
-					<li class="header">
-						<dl>
-							<dt>{L_EVENT_CALENDAR}</dt>
-						</dl>
-					</li>
-				</ul>
-				<ul class="topiclist forums">
-					<li>
-						<dl>
-							<dt><a href="{U_MY_EVENTS}">{L_MY_EVENTS}</a></dt>
-						</dl>
-					</li>
-					<li>
-						<dl>
-							<dt><a href="{U_MY_RSVPS}">{L_MY_RSVPS}</a></dt>
-						</dl>
-					</li>
-					<li>
-						<dl>
-							<dt><a href="{U_VIEW_ALL}">{L_COMING_UP}</a></dt>
-						</dl>
-					</li>
+			<div class="calendar-wrapper">
+				<div id="calendar"></div>
+			</div>
+			<div class="action-bar bar-bottom">
+				<div class="topic-actions calendar-bottom-actions">
 					<!-- IF S_FEED_ENABLED -->
-					<li>
-						<dl>
-							<dt><a href="{U_FEED_EVENTS}">RSS Feed</a></dt>
-						</dl>
-					</li>
+					<a class="button button-icon-only" href="{U_FEED_EVENTS}" title="{L_RSS_FEED}">
+						<i class="icon fa-rss fa-fw" aria-hidden="true"></i>{L_RSS_FEED}
+					</a>
 					<!-- ENDIF -->
-					<li>
-						<dl>
-							<dt><a href="{U_ICAL}">Export .ics</a></dt>
-						</dl>
-					</li>
-				</ul>
+					<a class="button button-icon-only" href="{U_ICAL}" title="{L_EXPORT_ICS}">
+						<i class="icon fa-download fa-fw" aria-hidden="true"></i>{L_EXPORT_ICS}
+					</a>
+				</div>
 			</div>
-		</div>
-
-		<div class="forabg">
-			<div class="inner">
-				<ul class="topiclist">
-					<li class="header">
-						<dl>
-							<dt>{L_COMING_UP}</dt>
-						</dl>
-					</li>
-				</ul>
-				<ul class="topiclist topics">
-					<!-- BEGIN upcoming_events -->
-					<li>
-						<dl>
-							<dt>
-								<a href="{upcoming_events.U_VIEW}">{upcoming_events.TITLE}</a>
-								<div class="list-inner small">
-									{upcoming_events.Start_Date_Day} {upcoming_events.Start_Date_Month_Short} • {upcoming_events.TIME}
-								</div>
-							</dt>
-						</dl>
-					</li>
-					<!-- BEGINELSE -->
-					<li>
-						<dl>
-							<dt>{L_NO_UPCOMING_EVENTS}</dt>
-						</dl>
-					</li>
-					<!-- END upcoming_events -->
-				</ul>
-			</div>
-		</div>
+	</div>
 	</div>
 </div>
 

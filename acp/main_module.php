@@ -111,7 +111,6 @@ class main_module
 			'VINNY_CALENDAR_MAP_ZOOM' => (int) ($config['vinny_calendar_map_zoom'] ?? 17),
 			'VINNY_CALENDAR_FC_TIME_FORMAT' => (string) ($config['vinny_calendar_fc_time_format'] ?? '24'),
 			'VINNY_CALENDAR_FP_TIME_24HR' => (int) ($config['vinny_calendar_fp_time_24hr'] ?? 1),
-			'S_FORM_TOKEN' => generate_form_token($form_key),
 		]);
 	}
 
@@ -223,7 +222,6 @@ class main_module
 					'CAT_DESC' => $category['cat_desc'],
 					'CAT_COLOR' => ltrim($category['cat_color'], '#'),
 					'CAT_ICON' => $category['cat_icon'],
-					'S_FORM_TOKEN' => generate_form_token('vinny_calendar_categories'),
 				]);
 			return;
 
