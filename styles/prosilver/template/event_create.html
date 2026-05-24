@@ -170,7 +170,10 @@ document.addEventListener('DOMContentLoaded', function () {
 			return;
 		}
 
-		fetch('{U_GEO_PROXY}?text=' + encodeURIComponent(query), { credentials: 'same-origin' })
+		var geoProxyUrl = '{U_GEO_PROXY}';
+		var geoProxySeparator = geoProxyUrl.indexOf('?') === -1 ? '?' : '&';
+
+		fetch(geoProxyUrl + geoProxySeparator + 'text=' + encodeURIComponent(query), { credentials: 'same-origin' })
 			.then(function (response) { return response.json(); })
 			.then(function (payload) { renderGeoResults(payload.features || []); })
 			.catch(function () { renderGeoResults([]); });

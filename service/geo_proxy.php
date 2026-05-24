@@ -31,7 +31,8 @@ class geo_proxy
 		$api_key = (string) ($this->config['vinny_calendar_geoapify_key'] ?? '');
 		$map_lang = (string) ($this->config['vinny_calendar_map_lang'] ?? 'en');
 
-		if ($text === '' || mb_strlen($text) < 2 || $api_key === '') {
+		if ($text === '' || mb_strlen($text) < 2 || $api_key === '')
+		{
 			return ['features' => []];
 		}
 
@@ -41,27 +42,24 @@ class geo_proxy
 			. '&lang=' . urlencode($map_lang)
 			. '&limit=5';
 
-		$options = [
-			'http' => [
-				'method' => 'GET',
-				'header' => "User-Agent: phpBB-Calendar-Extension\r\n",
-			],
-		];
+		$result = $this->fetch_url($url);
 
-		$result = @file_get_contents($url, false, stream_context_create($options));
-
-		if ($result === false) {
+		if ($result === false)
+		{
 			return ['features' => [], 'error' => $this->user->lang('EVENT_GEO_PROXY_FETCH_FAILED')];
 		}
 
 		$data = json_decode($result, true);
-		if (!is_array($data) || empty($data['features']) || !is_array($data['features'])) {
+		if (!is_array($data) || empty($data['features']) || !is_array($data['features']))
+		{
 			return ['features' => [], 'error' => $this->user->lang('EVENT_GEO_PROXY_INVALID_JSON')];
 		}
 
 		$features = [];
-		foreach (array_slice($data['features'], 0, 5) as $feature) {
-			if (empty($feature['properties']) || !is_array($feature['properties'])) {
+		foreach (array_slice($data['features'], 0, 5) as $feature)
+		{
+			if (empty($feature['properties']) || !is_array($feature['properties']))
+			{
 				continue;
 			}
 
@@ -74,5 +72,50 @@ class geo_proxy
 		}
 
 		return ['features' => $features];
+	}
+
+	protected function fetch_url($url)
+	{
+		$options = [
+			'http' => [
+				'method' => 'GET',
+				'header' => "User-Agent: phpBB-Calendar-Extension\r\n",
+				'timeout' => 8,
+			],
+		];
+
+		$result = false;
+
+		if (ini_get('allow_url_fopen'))
+		{
+			$result = @file_get_contents($url, false, stream_context_create($options));
+		}
+
+		if ($result !== false)
+		{
+			return $result;
+		}
+
+		if (function_exists('curl_init'))
+		{
+			$ch = curl_init($url);
+			curl_setopt_array($ch, [
+				CURLOPT_CONNECTTIMEOUT => 5,
+				CURLOPT_RETURNTRANSFER => true,
+				CURLOPT_TIMEOUT => 8,
+				CURLOPT_USERAGENT => 'phpBB-Calendar-Extension',
+			]);
+
+			$result = curl_exec($ch);
+			$status = (int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+			curl_close($ch);
+
+			if ($result !== false && $status >= 200 && $status < 300)
+			{
+				return $result;
+			}
+		}
+
+		return false;
 	}
 }
