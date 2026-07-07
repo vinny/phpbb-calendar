@@ -4,11 +4,11 @@
  * EventBoard extension for the phpBB Forum Software package.
  *
  * @copyright (c) 2026 _Vinny_ <https://github.com/vinny>
- * @license All Rights Reserved
+ * @license GPL-2.0-only
  *
  */
 
-namespace vinny\calendar\migrations;
+namespace vinny\calendar\migrations\v100;
 
 class v100_schema extends \phpbb\db\migration\migration
 {
@@ -108,5 +108,48 @@ class v100_schema extends \phpbb\db\migration\migration
 				$this->table_prefix . 'eventboard_categories',
 			],
 		];
+	}
+
+	public function update_data()
+	{
+		return [
+			['custom', [[$this, 'insert_default_category']]],
+		];
+	}
+
+	public function revert_data()
+	{
+		return [
+			['custom', [[$this, 'remove_default_category']]],
+		];
+	}
+
+	public function insert_default_category()
+	{
+		global $user;
+
+		if (isset($user) && is_object($user))
+		{
+			$user->add_lang_ext('vinny/calendar', 'common');
+			$cat_name = $user->lang('UNCATEGORIZED');
+		}
+		else
+		{
+			$cat_name = 'Uncategorized';
+		}
+
+		$sql = 'INSERT INTO ' . $this->table_prefix . 'eventboard_categories ' . $this->db->sql_build_array('INSERT', [
+			'cat_name'  => $cat_name,
+			'cat_desc'  => '',
+			'cat_color' => '000000',
+			'cat_icon'  => 'fa-calendar-o',
+		]);
+		$this->db->sql_query($sql);
+	}
+
+	public function remove_default_category()
+	{
+		$sql = 'DELETE FROM ' . $this->table_prefix . "eventboard_categories WHERE cat_color = '000000' AND cat_icon = 'fa-calendar-o'";
+		$this->db->sql_query($sql);
 	}
 }

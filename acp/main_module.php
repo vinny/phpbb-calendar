@@ -63,27 +63,12 @@ class main_module
 			$config->set('vinny_calendar_map_height', min(2000, max(100, $request->variable('vinny_calendar_map_height', 768))));
 			$config->set('vinny_calendar_map_zoom', min(20, max(1, $request->variable('vinny_calendar_map_zoom', 17))));
 			$config->set('vinny_calendar_map_lang', $request->variable('vinny_calendar_map_lang', 'en', true));
-			$config->set('vinny_calendar_fp_theme', $request->variable('vinny_calendar_fp_theme', 'default', true));
-			$config->set('vinny_calendar_fp_time_24hr', $request->variable('vinny_calendar_fp_time_24hr', 1));
-			$config->set('vinny_calendar_fp_language', $request->variable('vinny_calendar_fp_language', 'default', true));
 
 			add_log('admin', 'LOG_EVENTBOARD_CONFIG_UPDATED');
 			trigger_error($user->lang('CONFIG_UPDATED') . adm_back_link($this->u_action));
 		}
 
 		$ext_path = $container->getParameter('core.root_path') . 'ext/vinny/calendar/';
-
-		foreach ($this->get_flatpickr_themes($ext_path, $user, $config['vinny_calendar_fp_theme']) as $theme)
-		{
-			$template->assign_block_vars('fp_themes', $theme);
-		}
-
-		foreach ($this->get_flatpickr_languages($ext_path, $user, $config['vinny_calendar_fp_language']) as $lang)
-		{
-			$template->assign_block_vars('fp_langs', $lang);
-		}
-
-
 
 		foreach ($this->get_map_languages($ext_path, $config['vinny_calendar_map_lang']) as $language)
 		{
@@ -100,7 +85,6 @@ class main_module
 			'VINNY_CALENDAR_MAP_WIDTH' => (int) ($config['vinny_calendar_map_width'] ?? 1024),
 			'VINNY_CALENDAR_MAP_HEIGHT' => (int) ($config['vinny_calendar_map_height'] ?? 768),
 			'VINNY_CALENDAR_MAP_ZOOM' => (int) $config['vinny_calendar_map_zoom'],
-			'VINNY_CALENDAR_FP_TIME_24HR' => (int) ($config['vinny_calendar_fp_time_24hr'] ?? 1),
 		]);
 	}
 
@@ -379,47 +363,7 @@ class main_module
 		]);
 	}
 
-	protected function get_flatpickr_themes($ext_path, $user, $current)
-	{
-		$themes = [[
-			'VALUE' => 'default',
-			'NAME' => $user->lang('DEFAULT_LIGHT'),
-			'SELECTED' => ($current === 'default'),
-		]];
 
-		foreach (glob($ext_path . 'assets/flatpickr/themes/*.css') as $filename)
-		{
-			$basename = basename($filename, '.css');
-			$themes[] = [
-				'VALUE' => $basename,
-				'NAME' => ucfirst(str_replace('_', ' ', $basename)),
-				'SELECTED' => ($current === $basename),
-			];
-		}
-
-		return $themes;
-	}
-
-	protected function get_flatpickr_languages($ext_path, $user, $current)
-	{
-		$languages = [[
-			'VALUE' => 'default',
-			'NAME' => $user->lang('ENGLISH_DEFAULT'),
-			'SELECTED' => ($current === 'default'),
-		]];
-
-		foreach (glob($ext_path . 'assets/flatpickr/l10n/*.js') as $filename)
-		{
-			$basename = basename($filename, '.js');
-			$languages[] = [
-				'VALUE' => $basename,
-				'NAME' => $basename,
-				'SELECTED' => ($current === $basename),
-			];
-		}
-
-		return $languages;
-	}
 
 
 

@@ -64,22 +64,7 @@ $lang = array_merge($lang, array(
     'ACP_EVENT_TOTAL' => 'Total events',
     'ACP_EVENT_VISIBILITY' => 'Visibility',
 
-    // Flatpickr Settings
-    'ACP_FP_SETTINGS' => 'Date/Time picker',
-    'ACP_FP_THEME' => 'Calendar Theme',
-    'ACP_FP_THEME_EXPLAIN' => 'Choose the color scheme for the date picker.',
-    'ACP_FP_DATE_FORMAT' => 'Date and Time Format',
-    'ACP_FP_DATE_FORMAT_EXPLAIN' => 'Use compatible formats (e.g. d/m/Y H:i).',
-    'ACP_FP_TIME_24HR' => 'Use 24h Time',
-    'ACP_FP_TIME_24HR_EXPLAIN' => 'If disabled, AM/PM will be used.',
-    'ACP_FP_LANGUAGE' => 'Calendar Language',
-    'ACP_FP_LANGUAGE_EXPLAIN' => 'Select the language for the date picker interface.',
 
-
-    // Config Options
-    'DEFAULT' => 'Default',
-    'DEFAULT_LIGHT' => 'Default (Light)',
-    'ENGLISH_DEFAULT' => 'English (Default)',
     
     // Logs
     'LOG_EVENTBOARD_CONFIG_UPDATED' => '<strong>Updated EventBoard settings</strong>',

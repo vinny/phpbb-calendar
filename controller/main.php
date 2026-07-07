@@ -112,18 +112,6 @@ class main
 			];
 		}
 
-		$user_dateformat = !empty($this->user->data['user_dateformat']) ? $this->user->data['user_dateformat'] : ($this->config['default_dateformat'] ?? 'Y-m-d H:i');
-		// Remove escaped characters to avoid false positives (e.g., \h, \d, \e, \a)
-		$clean_format = preg_replace('/\\\\./', '', $user_dateformat);
-		$is_12hour = (
-			(strpos($clean_format, 'a') !== false ||
-			strpos($clean_format, 'A') !== false ||
-			strpos($clean_format, 'g') !== false ||
-			strpos($clean_format, 'h') !== false) &&
-			strpos($clean_format, 'H') === false &&
-			strpos($clean_format, 'G') === false
-		);
-
 		$this->template->assign_vars([
 			'U_CREATE_EVENT' => $this->auth->acl_get('u_eventboard_create') ? $this->helper->route('vinny_calendar_create') : '',
 			'U_MY_EVENTS' => $this->helper->route('vinny_calendar_my_events'),
@@ -134,7 +122,7 @@ class main
 			'S_FEED_ENABLED' => (int) ($this->config['vinny_calendar_enable_feed'] ?? 0),
 			'S_ALLOW_COMMENTS' => (int) ($this->config['vinny_calendar_allow_comments'] ?? 0),
 			'CALENDAR_EVENTS_JSON' => json_encode($events),
-			'S_FC_12HR' => $is_12hour,
+			'S_FC_12HR' => $this->is_user_12hour(),
 		]);
 
 		return $this->helper->render('event_calendar.html', $this->user->lang('EVENT_CALENDAR'));
@@ -468,7 +456,7 @@ class main
 			'EVENT_CATEGORY' => $this->request->variable('event_category', 0),
 		]);
 
-		return $this->helper->render('event_create.html', $this->user->lang('EVENT_CREATE'));
+		return $this->helper->render('event_editor.html', $this->user->lang('EVENT_CREATE'));
 	}
 
 	public function edit($id)
@@ -508,6 +496,7 @@ class main
 		$this->assign_category_options($this->event_query->get_category_list(), (int) $event['cat_id']);
 		$this->assign_form_defaults([
 			'U_ACTION' => $this->calendar_link->route('vinny_calendar_edit', $event, ['id' => (int) $event['event_id']]),
+			'S_EDIT_MODE' => true,
 			'EVENT_SUBJECT' => $event['title'],
 			'EVENT_START' => $this->format_flatpickr_value((int) $event['start_at']),
 			'EVENT_END' => $this->format_flatpickr_value((int) $event['end_at']),
@@ -524,7 +513,7 @@ class main
 			'EVENT_MAP_IMAGE_SRC' => $event['map_image'] ? 'images/vinny_calendar_img/' . $event['map_image'] : '',
 		]);
 
-		return $this->helper->render('event_edit.html', $this->user->lang('EDIT_EVENT'));
+		return $this->helper->render('event_editor.html', $this->user->lang('EDIT_EVENT'));
 	}
 
 	public function delete($id)
@@ -781,9 +770,8 @@ class main
 	protected function assign_form_defaults(array $vars)
 	{
 		$this->template->assign_vars(array_merge([
-			'S_FP_THEME' => $this->config['vinny_calendar_fp_theme'] ?? 'default',
-			'S_FP_LANGUAGE' => $this->config['vinny_calendar_fp_language'] ?? 'default',
-			'S_FP_TIME_24HR' => (int) ($this->config['vinny_calendar_fp_time_24hr'] ?? 1),
+			'S_EDIT_MODE' => false,
+			'S_FP_24HR' => !$this->is_user_12hour(),
 			'S_FP_DATE_FORMAT' => $this->get_flatpickr_alt_format(),
 			'U_GEO_PROXY' => $this->helper->route('vinny_calendar_geo_proxy'),
 			'S_GEOAPIFY_ENABLED' => ((string) ($this->config['vinny_calendar_geoapify_key'] ?? '') !== ''),
@@ -895,13 +883,13 @@ class main
 
 	protected function get_time_format()
 	{
-		return (($this->config['vinny_calendar_fc_time_format'] ?? '24') === '12') ? 'g:i A' : 'H:i';
+		return $this->is_user_12hour() ? 'g:i A' : 'H:i';
 	}
 
 	protected function get_flatpickr_alt_format()
 	{
 		$format = trim((string) ($this->config['vinny_calendar_fp_date_format'] ?? 'd/m/Y H:i'));
-		$time_format = ((int) ($this->config['vinny_calendar_fp_time_24hr'] ?? 1) === 1) ? 'H:i' : 'h:i K';
+		$time_format = !$this->is_user_12hour() ? 'H:i' : 'h:i K';
 
 		if ($format === '')
 		{
@@ -911,6 +899,21 @@ class main
 		$updated = preg_replace('/(?:H|G|h|g):i(?:\s*(?:K|A))?/', $time_format, $format, 1);
 
 		return ($updated === $format) ? trim($format . ' ' . $time_format) : $updated;
+	}
+
+	protected function is_user_12hour()
+	{
+		$user_dateformat = !empty($this->user->data['user_dateformat']) ? $this->user->data['user_dateformat'] : ($this->config['default_dateformat'] ?? 'Y-m-d H:i');
+		$clean_format = preg_replace('/\\\\./', '', $user_dateformat);
+
+		return (
+			(strpos($clean_format, 'a') !== false ||
+			strpos($clean_format, 'A') !== false ||
+			strpos($clean_format, 'g') !== false ||
+			strpos($clean_format, 'h') !== false) &&
+			strpos($clean_format, 'H') === false &&
+			strpos($clean_format, 'G') === false
+		);
 	}
 
 	protected function format_flatpickr_value($timestamp)

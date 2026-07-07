@@ -1,14 +1,11 @@
 {% INCLUDE 'overall_header.html' %}
 
-<link href="{{ ROOT_PATH }}ext/vinny/calendar/assets/flatpickr/flatpickr.min.css" rel="stylesheet">
-{% if S_FP_THEME != 'default' %}
-<link href="{{ ROOT_PATH }}ext/vinny/calendar/assets/flatpickr/themes/{{ S_FP_THEME }}.css" rel="stylesheet">
-{% endif %}
+{% INCLUDECSS '@vinny_calendar/assets/flatpickr/dist/flatpickr.min.css' %}
 
 <form id="postform" method="post" action="{{ U_ACTION }}">
 	<div class="panel" id="postingbox">
 		<div class="inner">
-			<h2>{{ lang('EDIT_EVENT') }}</h2>
+			<h2>{% if S_EDIT_MODE %}{{ lang('EDIT_EVENT') }}{% else %}{{ lang('EVENT_CREATE') }}{% endif %}</h2>
 
 			<fieldset class="fields2">
 				<dl>
@@ -37,7 +34,7 @@
 				<dl>
 					<dt><label>{{ lang('EVENT_FORMAT') }}{{ lang('COLON') }}</label></dt>
 					<dd>
-						<label><input type="radio" name="event_format" value="in-person"{% if S_FORMAT_IN_PERSON %} checked{% endif %}> {{ lang('FORMAT_IN_PERSON') }}</label>
+						<label><input type="radio" name="event_format" value="in-person"{% if S_FORMAT_IN_PERSON or not S_EDIT_MODE %} checked{% endif %}> {{ lang('FORMAT_IN_PERSON') }}</label>
 						<label><input type="radio" name="event_format" value="online"{% if S_FORMAT_ONLINE %} checked{% endif %}> {{ lang('FORMAT_ONLINE') }}</label>
 					</dd>
 				</dl>
@@ -75,7 +72,7 @@
 					<dt><label for="limit_registrations_enabled">{{ lang('LIMIT_REGISTRATIONS') }}{{ lang('COLON') }}</label></dt>
 					<dd>
 						<label><input type="checkbox" name="limit_registrations_enabled" id="limit_registrations_enabled" value="1"{% if S_LIMIT_ENABLED %} checked{% endif %}></label>
-						<input type="number" name="event_attendees_limit" id="limit-input" value="{{ EVENT_ATTENDEES_LIMIT }}" min="1" class="inputbox autowidth" style="margin-left: 10px;{% if not S_LIMIT_ENABLED %} display: none;{% endif %}">
+						<input type="number" name="event_attendees_limit" id="limit-input" value="{{ EVENT_ATTENDEES_LIMIT }}" min="1" class="inputbox autowidth"{% if not S_LIMIT_ENABLED %} style="display: none;"{% endif %}>
 					</dd>
 				</dl>
 				<dl>
@@ -99,10 +96,7 @@
 	</div>
 </form>
 
-<script src="{{ ROOT_PATH }}ext/vinny/calendar/assets/flatpickr/flatpickr.min.js"></script>
-{% if S_FP_LANGUAGE != 'default' %}
-<script src="{{ ROOT_PATH }}ext/vinny/calendar/assets/flatpickr/l10n/{{ S_FP_LANGUAGE }}.js"></script>
-{% endif %}
+{% INCLUDEJS '@vinny_calendar/assets/flatpickr/dist/flatpickr.min.js' %}
 <script src="{{ ROOT_PATH }}ext/vinny/calendar/assets/js/calendar_geo_autocomplete.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -112,9 +106,72 @@ document.addEventListener('DOMContentLoaded', function () {
 		altInput: true,
 		altFormat: '{{ S_FP_DATE_FORMAT|e('js') }}',
 		minDate: 'today',
-		time_24hr: {% if S_FP_TIME_24HR %}true{% else %}false{% endif %},
-		locale: '{{ S_FP_LANGUAGE|e('js') }}' === 'default' ? 'default' : '{{ S_FP_LANGUAGE|e('js') }}',
-		allowInput: false
+		time_24hr: {% if S_FP_24HR %}true{% else %}false{% endif %},
+		allowInput: false,
+		locale: {
+			firstDayOfWeek: 1,
+			weekdays: {
+				shorthand: [
+					'{{ lang('FLATPICKR_SUN')|e('js') }}',
+					'{{ lang('FLATPICKR_MON')|e('js') }}',
+					'{{ lang('FLATPICKR_TUE')|e('js') }}',
+					'{{ lang('FLATPICKR_WED')|e('js') }}',
+					'{{ lang('FLATPICKR_THU')|e('js') }}',
+					'{{ lang('FLATPICKR_FRI')|e('js') }}',
+					'{{ lang('FLATPICKR_SAT')|e('js') }}'
+				],
+				longhand: [
+					'{{ lang('FLATPICKR_SUNDAY')|e('js') }}',
+					'{{ lang('FLATPICKR_MONDAY')|e('js') }}',
+					'{{ lang('FLATPICKR_TUESDAY')|e('js') }}',
+					'{{ lang('FLATPICKR_WEDNESDAY')|e('js') }}',
+					'{{ lang('FLATPICKR_THURSDAY')|e('js') }}',
+					'{{ lang('FLATPICKR_FRIDAY')|e('js') }}',
+					'{{ lang('FLATPICKR_SATURDAY')|e('js') }}'
+				]
+			},
+			months: {
+				shorthand: [
+					'{{ lang('FLATPICKR_JAN')|e('js') }}',
+					'{{ lang('FLATPICKR_FEB')|e('js') }}',
+					'{{ lang('FLATPICKR_MAR')|e('js') }}',
+					'{{ lang('FLATPICKR_APR')|e('js') }}',
+					'{{ lang('FLATPICKR_MAY')|e('js') }}',
+					'{{ lang('FLATPICKR_JUN')|e('js') }}',
+					'{{ lang('FLATPICKR_JUL')|e('js') }}',
+					'{{ lang('FLATPICKR_AUG')|e('js') }}',
+					'{{ lang('FLATPICKR_SEP')|e('js') }}',
+					'{{ lang('FLATPICKR_OCT')|e('js') }}',
+					'{{ lang('FLATPICKR_NOV')|e('js') }}',
+					'{{ lang('FLATPICKR_DEC')|e('js') }}'
+				],
+				longhand: [
+					'{{ lang('FLATPICKR_JANUARY')|e('js') }}',
+					'{{ lang('FLATPICKR_FEBRUARY')|e('js') }}',
+					'{{ lang('FLATPICKR_MARCH')|e('js') }}',
+					'{{ lang('FLATPICKR_APRIL')|e('js') }}',
+					'{{ lang('FLATPICKR_MAY_LONG')|e('js') }}',
+					'{{ lang('FLATPICKR_JUNE')|e('js') }}',
+					'{{ lang('FLATPICKR_JULY')|e('js') }}',
+					'{{ lang('FLATPICKR_AUGUST')|e('js') }}',
+					'{{ lang('FLATPICKR_SEPTEMBER')|e('js') }}',
+					'{{ lang('FLATPICKR_OCTOBER')|e('js') }}',
+					'{{ lang('FLATPICKR_NOVEMBER')|e('js') }}',
+					'{{ lang('FLATPICKR_DECEMBER')|e('js') }}'
+				]
+			},
+			rangeSeparator: '{{ lang('FLATPICKR_RANGE_SEPARATOR')|e('js') }}',
+			weekAbbreviation: '{{ lang('FLATPICKR_WEEK_ABBREVIATION')|e('js') }}',
+			scrollTitle: '{{ lang('FLATPICKR_SCROLL_TITLE')|e('js') }}',
+			toggleTitle: '{{ lang('FLATPICKR_TOGGLE_TITLE')|e('js') }}',
+			amPM: [
+				'{{ lang('FLATPICKR_AM')|e('js') }}',
+				'{{ lang('FLATPICKR_PM')|e('js') }}'
+			],
+			yearAriaLabel: '{{ lang('FLATPICKR_YEAR_ARIA_LABEL')|e('js') }}',
+			hourAriaLabel: '{{ lang('FLATPICKR_HOUR_ARIA_LABEL')|e('js') }}',
+			minuteAriaLabel: '{{ lang('FLATPICKR_MINUTE_ARIA_LABEL')|e('js') }}'
+		}
 	});
 
 	var formatInputs = document.querySelectorAll('input[name="event_format"]');
