@@ -40,7 +40,6 @@ $lang = array_merge($lang, array(
     'COMING_UP' => 'Coming Up',
     'TODAY' => 'Today',
 
-
     'EVENT_CREATED' => 'Event created successfully.',
     'EVENT_TITLE_REQUIRED' => 'The event title is required.',
     'EVENT_CATEGORY_REQUIRED' => 'You must select a category.',
@@ -77,8 +76,6 @@ $lang = array_merge($lang, array(
     'PRO_TIP' => 'Pro Tip',
     'PRO_TIP_TEXT' => 'Adding an image to your description increases engagement by 40%.',
     'MAP_PREVIEW' => 'Map Preview',
-
-
 
     // Missing Keys added in MVP Phase
     'EVENT_DELETED' => 'Event deleted successfully.',
@@ -255,4 +252,7 @@ $lang = array_merge($lang, array(
     'FLATPICKR_YEAR_ARIA_LABEL' => 'Year',
     'FLATPICKR_HOUR_ARIA_LABEL' => 'Hour',
     'FLATPICKR_MINUTE_ARIA_LABEL' => 'Minute',
+
+	// Full list: https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes
+	'MAP_LANG'			=> 'en',
 ));

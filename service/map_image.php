@@ -18,14 +18,26 @@ class map_image
     /** @var string */
     protected $root_path;
 
-    public function __construct(\phpbb\config\config $config, $root_path)
+    /** @var \phpbb\user */
+    protected $user;
+
+    /** @var \phpbb\auth\auth */
+    protected $auth;
+
+    public function __construct(\phpbb\config\config $config, $root_path, \phpbb\user $user, \phpbb\auth\auth $auth)
     {
         $this->config = $config;
         $this->root_path = $root_path;
+        $this->user = $user;
+        $this->auth = $auth;
     }
 
     public function generate($event_id, $lat, $lng)
     {
+        if ($this->user->data['user_id'] == ANONYMOUS || !empty($this->user->data['is_bot']) || !$this->auth->acl_get('u_eventboard_create')) {
+            return '';
+        }
+
         $lat = (float) $lat;
         $lng = (float) $lng;
 
@@ -41,7 +53,7 @@ class map_image
         $width = (int) ($this->config['vinny_calendar_map_width'] ?? 1024);
         $height = (int) ($this->config['vinny_calendar_map_height'] ?? 768);
         $zoom = (int) ($this->config['vinny_calendar_map_zoom'] ?? 17);
-        $map_lang = $this->config['vinny_calendar_map_lang'] ?? 'en';
+        $map_lang = $this->user->lang('MAP_LANG') ?: 'en';
 
         $url = 'https://maps.geoapify.com/v1/staticmap'
             . '?style=osm-carto'

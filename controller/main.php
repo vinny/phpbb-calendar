@@ -695,7 +695,11 @@ class main
 	public function proxy()
 	{
 		$this->guard_enabled();
-		$this->guard_login();
+		
+		if ((int) $this->user->data['user_id'] === ANONYMOUS || !empty($this->user->data['is_bot']))
+		{
+			return new JsonResponse(['features' => []], 403);
+		}
 
 		if (!$this->auth->acl_get('u_eventboard_create'))
 		{
@@ -775,7 +779,6 @@ class main
 			'S_FP_DATE_FORMAT' => $this->get_flatpickr_alt_format(),
 			'U_GEO_PROXY' => $this->helper->route('vinny_calendar_geo_proxy'),
 			'S_GEOAPIFY_ENABLED' => ((string) ($this->config['vinny_calendar_geoapify_key'] ?? '') !== ''),
-			'VINNY_CALENDAR_MAP_LANG' => (string) ($this->config['vinny_calendar_map_lang'] ?? 'en'),
 			'S_BBCODE_ALLOWED' => true,
 			'S_SMILIES_ALLOWED' => true,
 			'S_LINKS_ALLOWED' => true,

@@ -61,16 +61,6 @@
 			<dt><label for="vinny_calendar_map_zoom">{{ lang('ACP_MAP_ZOOM') }}:</label><br /><span>{{ lang('ACP_MAP_ZOOM_EXPLAIN') }}</span></dt>
 			<dd><input type="number" id="vinny_calendar_map_zoom" name="vinny_calendar_map_zoom" value="{{ VINNY_CALENDAR_MAP_ZOOM }}" min="1" max="20" /></dd>
 		</dl>
-		<dl>
-			<dt><label for="vinny_calendar_map_lang">{{ lang('ACP_MAP_LANG') }}:</label><br /><span>{{ lang('ACP_MAP_LANG_EXPLAIN') }}</span></dt>
-			<dd>
-				<select name="vinny_calendar_map_lang" id="vinny_calendar_map_lang">
-					{% for lang in loops.map_langs %}
-					<option value="{{ lang.VALUE }}" {% if lang.SELECTED %}selected="selected" {% endif %}>{{ lang.NAME }}</option>
-					{% endfor %}
-				</select>
-			</dd>
-		</dl>
 	</fieldset>
 
 	<fieldset>

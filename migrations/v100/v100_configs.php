@@ -32,7 +32,6 @@ class v100_configs extends \phpbb\db\migration\migration
 			['config.add', ['vinny_calendar_map_width', 1024]],
 			['config.add', ['vinny_calendar_map_height', 768]],
 			['config.add', ['vinny_calendar_map_zoom', 17]],
-			['config.add', ['vinny_calendar_map_lang', 'en']],
 		];
 	}
 }

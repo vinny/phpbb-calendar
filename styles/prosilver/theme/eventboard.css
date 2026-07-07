@@ -382,3 +382,51 @@
 		flex-basis: 100%;
 	}
 }
+
+.calendar-geo-dropdown {
+	background: #ffffff;
+	border: 1px solid #b4bac0;
+	border-radius: 3px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 100%;
+	z-index: 100;
+	max-height: 200px;
+	overflow-y: auto;
+}
+
+.calendar-geo-dropdown.hidden {
+	display: none;
+}
+
+.calendar-geo-dropdown-contents {
+	list-style: none;
+	margin: 0;
+	padding: 4px 0;
+}
+
+.calendar-geo-dropdown-contents li {
+	margin: 0;
+	padding: 0;
+}
+
+.calendar-geo-dropdown-contents li a {
+	color: #333333;
+	display: block;
+	padding: 6px 12px;
+	text-decoration: none;
+}
+
+.calendar-geo-dropdown-contents li a:hover,
+.calendar-geo-dropdown-contents li a.autocomplete-active {
+	background-color: #eef4f9;
+	color: #105289;
+}
+
+#group-location {
+	overflow: visible;
+	position: relative;
+	z-index: 10;
+}

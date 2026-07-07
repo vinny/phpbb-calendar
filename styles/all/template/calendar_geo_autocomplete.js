@@ -9,17 +9,14 @@ document.addEventListener('DOMContentLoaded', function () {
 		var placeholder = container.getAttribute('data-placeholder') || '';
 		var dropdown = document.createElement('div');
 		var debounceTimer = null;
+		var currentItems = [];
+		var focusedItemIndex = -1;
 
 		if (!input || !latInput || !lngInput || !endpoint) {
 			return;
 		}
 
-		dropdown.className = 'dropdown hidden';
-		dropdown.style.left = '0';
-		dropdown.style.right = '0';
-		dropdown.style.top = '100%';
-		dropdown.style.position = 'absolute';
-		dropdown.style.zIndex = '100';
+		dropdown.className = 'calendar-geo-dropdown hidden';
 		container.appendChild(dropdown);
 
 		input.setAttribute('autocomplete', 'off');
@@ -28,6 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		function clearResults() {
 			dropdown.innerHTML = '';
 			dropdown.classList.add('hidden');
+			focusedItemIndex = -1;
 		}
 
 		function applySelection(item) {
@@ -37,17 +35,32 @@ document.addEventListener('DOMContentLoaded', function () {
 			clearResults();
 		}
 
+		function setActive(index) {
+			var links = dropdown.querySelectorAll('li a');
+			if (!links.length) return;
+
+			links.forEach(function (a, i) {
+				if (i === index) {
+					a.classList.add('autocomplete-active');
+					a.scrollIntoView({ block: 'nearest' });
+				} else {
+					a.classList.remove('autocomplete-active');
+				}
+			});
+		}
+
 		function renderResults(items) {
 			clearResults();
+			currentItems = items;
 
 			if (!items.length) {
 				return;
 			}
 
 			var ul = document.createElement('ul');
-			ul.className = 'dropdown-contents';
+			ul.className = 'calendar-geo-dropdown-contents';
 
-			items.forEach(function (item) {
+			items.forEach(function (item, index) {
 				var li = document.createElement('li');
 				var a = document.createElement('a');
 				a.href = '#';
@@ -105,8 +118,30 @@ document.addEventListener('DOMContentLoaded', function () {
 			}, 180);
 		});
 
-		input.addEventListener('blur', function () {
-			window.setTimeout(clearResults, 150);
+		input.addEventListener('keydown', function (e) {
+			var links = dropdown.querySelectorAll('li a');
+			if (links.length && !dropdown.classList.contains('hidden')) {
+				if (e.keyCode === 40) { // Arrow Down
+					e.preventDefault();
+					focusedItemIndex = (focusedItemIndex === links.length - 1) ? 0 : focusedItemIndex + 1;
+					setActive(focusedItemIndex);
+				} else if (e.keyCode === 38) { // Arrow Up
+					e.preventDefault();
+					focusedItemIndex = (focusedItemIndex <= 0) ? links.length - 1 : focusedItemIndex - 1;
+					setActive(focusedItemIndex);
+				} else if (e.keyCode === 13) { // Enter
+					if (focusedItemIndex > -1) {
+						e.preventDefault();
+						applySelection(currentItems[focusedItemIndex]);
+					}
+				}
+			}
+		});
+
+		document.addEventListener('click', function (e) {
+			if (!container.contains(e.target)) {
+				clearResults();
+			}
 		});
 	});
 });

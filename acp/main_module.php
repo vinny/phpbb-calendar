@@ -62,17 +62,9 @@ class main_module
 			$config->set('vinny_calendar_map_width', min(2000, max(100, $request->variable('vinny_calendar_map_width', 1024))));
 			$config->set('vinny_calendar_map_height', min(2000, max(100, $request->variable('vinny_calendar_map_height', 768))));
 			$config->set('vinny_calendar_map_zoom', min(20, max(1, $request->variable('vinny_calendar_map_zoom', 17))));
-			$config->set('vinny_calendar_map_lang', $request->variable('vinny_calendar_map_lang', 'en', true));
 
 			add_log('admin', 'LOG_EVENTBOARD_CONFIG_UPDATED');
 			trigger_error($user->lang('CONFIG_UPDATED') . adm_back_link($this->u_action));
-		}
-
-		$ext_path = $container->getParameter('core.root_path') . 'ext/vinny/calendar/';
-
-		foreach ($this->get_map_languages($ext_path, $config['vinny_calendar_map_lang']) as $language)
-		{
-			$template->assign_block_vars('map_langs', $language);
 		}
 
 		$template->assign_vars([
@@ -363,45 +355,7 @@ class main_module
 		]);
 	}
 
-
-
-
-
-	protected function get_map_languages($ext_path, $current)
-	{
-		$path = $ext_path . 'assets/ISO-639-1-language.json';
-		$languages = [];
-
-		if (file_exists($path))
-		{
-			$data = json_decode((string) @file_get_contents($path), true);
-			if (is_array($data))
-			{
-				foreach ($data as $code => $info)
-				{
-					$languages[] = [
-						'VALUE' => $code,
-						'NAME' => $info['nativeName'],
-						'SELECTED' => ($current === $code),
-					];
-				}
-			}
-		}
-
-		if (empty($languages))
-		{
-			foreach (['en', 'pt', 'es', 'fr', 'de'] as $code)
-			{
-				$languages[] = [
-					'VALUE' => $code,
-					'NAME' => strtoupper($code),
-					'SELECTED' => ($current === $code),
-				];
-			}
-		}
-
-		return $languages;
-	}
+	
 
 	protected function fetch_count($db, $sql)
 	{

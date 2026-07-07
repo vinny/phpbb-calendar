@@ -27,8 +27,6 @@ $lang = array_merge($lang, array(
     'ACP_MAP_HEIGHT_EXPLAIN' => 'Set the height of the static map image generated for events.',
     'ACP_MAP_ZOOM' => 'Zoom Level',
     'ACP_MAP_ZOOM_EXPLAIN' => 'Default zoom level for the map view (1-20).',
-    'ACP_MAP_LANG' => 'Map Language',
-    'ACP_MAP_LANG_EXPLAIN' => 'Select the language for map labels.',
     'ACP_EVENTBOARD_CATEGORIES' => 'Categories',
     'ACP_EVENTBOARD_CATEGORIES_EXPLAIN' => 'Create and manage event categories.',
     'ACP_EVENTBOARD_MANAGE' => 'Manage Events',
@@ -63,8 +61,6 @@ $lang = array_merge($lang, array(
     'COLOUR_SWATCH' => 'Color Swatch',
     'ACP_EVENT_TOTAL' => 'Total events',
     'ACP_EVENT_VISIBILITY' => 'Visibility',
-
-
     
     // Logs
     'LOG_EVENTBOARD_CONFIG_UPDATED' => '<strong>Updated EventBoard settings</strong>',

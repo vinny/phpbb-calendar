@@ -97,7 +97,7 @@
 </form>
 
 {% INCLUDEJS '@vinny_calendar/assets/flatpickr/dist/flatpickr.min.js' %}
-<script src="{{ ROOT_PATH }}ext/vinny/calendar/assets/js/calendar_geo_autocomplete.js"></script>
+{% INCLUDEJS '@vinny_calendar/calendar_geo_autocomplete.js' %}
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 	flatpickr('input.flatpickr-input', {
