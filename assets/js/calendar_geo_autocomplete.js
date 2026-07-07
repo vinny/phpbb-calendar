@@ -14,15 +14,20 @@ document.addEventListener('DOMContentLoaded', function () {
 			return;
 		}
 
-		dropdown.className = 'calendar-geo-results';
-		dropdown.hidden = true;
+		dropdown.className = 'dropdown hidden';
+		dropdown.style.left = '0';
+		dropdown.style.right = '0';
+		dropdown.style.top = '100%';
+		dropdown.style.position = 'absolute';
+		dropdown.style.zIndex = '100';
 		container.appendChild(dropdown);
+
 		input.setAttribute('autocomplete', 'off');
 		input.setAttribute('placeholder', placeholder);
 
 		function clearResults() {
 			dropdown.innerHTML = '';
-			dropdown.hidden = true;
+			dropdown.classList.add('hidden');
 		}
 
 		function applySelection(item) {
@@ -39,18 +44,24 @@ document.addEventListener('DOMContentLoaded', function () {
 				return;
 			}
 
+			var ul = document.createElement('ul');
+			ul.className = 'dropdown-contents';
+
 			items.forEach(function (item) {
-				var button = document.createElement('button');
-				button.type = 'button';
-				button.className = 'calendar-geo-result';
-				button.textContent = item.formatted || '';
-				button.addEventListener('click', function () {
+				var li = document.createElement('li');
+				var a = document.createElement('a');
+				a.href = '#';
+				a.textContent = item.formatted || '';
+				a.addEventListener('click', function (e) {
+					e.preventDefault();
 					applySelection(item);
 				});
-				dropdown.appendChild(button);
+				li.appendChild(a);
+				ul.appendChild(li);
 			});
 
-			dropdown.hidden = false;
+			dropdown.appendChild(ul);
+			dropdown.classList.remove('hidden');
 		}
 
 		function fetchResults(query) {

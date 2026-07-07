@@ -48,23 +48,39 @@ class event_reminder
 				AND reminder_sent_at = 0';
 		$result = $this->db->sql_query($sql);
 
+		$events = [];
+		$event_ids = [];
 		while ($event = $this->db->sql_fetchrow($result))
 		{
-			$notify_users = [];
-			$participant_sql = 'SELECT user_id
-				FROM ' . $this->table_prefix . 'eventboard_participants
-				WHERE event_id = ' . (int) $event['event_id'];
-			$participant_result = $this->db->sql_query($participant_sql);
-			while ($participant = $this->db->sql_fetchrow($participant_result))
-			{
-				$notify_users[] = (int) $participant['user_id'];
-			}
-			$this->db->sql_freeresult($participant_result);
+			$events[(int) $event['event_id']] = $event;
+			$event_ids[] = (int) $event['event_id'];
+		}
+		$this->db->sql_freeresult($result);
+
+		if (empty($event_ids))
+		{
+			return;
+		}
+
+		$participants = [];
+		$participant_sql = 'SELECT event_id, user_id
+			FROM ' . $this->table_prefix . 'eventboard_participants
+			WHERE ' . $this->db->sql_in_set('event_id', $event_ids);
+		$participant_result = $this->db->sql_query($participant_sql);
+		while ($row = $this->db->sql_fetchrow($participant_result))
+		{
+			$participants[(int) $row['event_id']][] = (int) $row['user_id'];
+		}
+		$this->db->sql_freeresult($participant_result);
+
+		foreach ($events as $event_id => $event)
+		{
+			$notify_users = isset($participants[$event_id]) ? $participants[$event_id] : [];
 
 			$this->notification_manager->add_notifications(
 				'vinny.calendar.notification.type.event_reminder',
 				[
-					'event_id' => (int) $event['event_id'],
+					'event_id' => $event_id,
 					'event_title' => $event['title'],
 					'event_visibility' => (int) $event['visibility'],
 					'event_access_token' => $event['access_token'],
@@ -73,13 +89,11 @@ class event_reminder
 					'lead_minutes' => $lead_minutes,
 				]
 			);
-
-			$sql = 'UPDATE ' . $this->table_prefix . 'eventboard_events
-				SET reminder_sent_at = ' . $now . '
-				WHERE event_id = ' . (int) $event['event_id'];
-			$this->db->sql_query($sql);
 		}
 
-		$this->db->sql_freeresult($result);
+		$update_sql = 'UPDATE ' . $this->table_prefix . 'eventboard_events
+			SET reminder_sent_at = ' . $now . '
+			WHERE ' . $this->db->sql_in_set('event_id', $event_ids);
+		$this->db->sql_query($update_sql);
 	}
 }

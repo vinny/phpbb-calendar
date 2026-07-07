@@ -1,68 +1,67 @@
-<!-- INCLUDE overall_header.html -->
+{% INCLUDE 'overall_header.html' %}
 
-<link href="{ROOT_PATH}ext/vinny/calendar/assets/flatpickr/flatpickr.min.css" rel="stylesheet">
-<!-- IF S_FP_THEME != 'default' -->
-<link href="{ROOT_PATH}ext/vinny/calendar/assets/flatpickr/themes/{S_FP_THEME}.css" rel="stylesheet">
-<!-- ENDIF -->
+<link href="{{ ROOT_PATH }}ext/vinny/calendar/assets/flatpickr/flatpickr.min.css" rel="stylesheet">
+{% if S_FP_THEME != 'default' %}
+<link href="{{ ROOT_PATH }}ext/vinny/calendar/assets/flatpickr/themes/{{ S_FP_THEME }}.css" rel="stylesheet">
+{% endif %}
 
-<form id="postform" method="post" action="{U_ACTION}">
+<form id="postform" method="post" action="{{ U_ACTION }}">
 	<div class="panel" id="postingbox">
 		<div class="inner">
-			<h2>{L_EDIT_EVENT}</h2>
+			<h2>{{ lang('EDIT_EVENT') }}</h2>
 
 			<fieldset class="fields2">
 				<dl>
-					<dt><label for="event_subject">{L_EVENT_TITLE}{L_COLON}</label></dt>
-					<dd><input type="text" name="event_subject" id="event_subject" value="{EVENT_SUBJECT}" maxlength="255" class="inputbox full" required></dd>
+					<dt><label for="event_subject">{{ lang('EVENT_TITLE') }}{{ lang('COLON') }}</label></dt>
+					<dd><input type="text" name="event_subject" id="event_subject" value="{{ EVENT_SUBJECT }}" maxlength="255" class="inputbox full" required></dd>
 				</dl>
 				<dl>
-					<dt><label for="event_category">{L_CATEGORY}{L_COLON}</label></dt>
+					<dt><label for="event_category">{{ lang('CATEGORY') }}{{ lang('COLON') }}</label></dt>
 					<dd>
 						<select name="event_category" id="event_category">
-							<option value="0">{L_SELECT_CATEGORY}</option>
-							<!-- BEGIN categories -->
-							<option value="{categories.ID}"<!-- IF categories.ID == EVENT_CATEGORY --> selected<!-- ENDIF -->>{categories.NAME}</option>
-							<!-- END categories -->
+							<option value="0">{{ lang('SELECT_CATEGORY') }}</option>
+							{% for category in loops.categories %}
+							<option value="{{ category.ID }}"{% if category.ID == EVENT_CATEGORY %} selected{% endif %}>{{ category.NAME }}</option>
+							{% endfor %}
 						</select>
 					</dd>
 				</dl>
 				<dl>
-					<dt><label for="event_start">{L_EVENT_START}{L_COLON}</label></dt>
-					<dd><input type="text" name="event_start" id="event_start" value="{EVENT_START}" class="inputbox medium flatpickr-input" required></dd>
+					<dt><label for="event_start">{{ lang('EVENT_START') }}{{ lang('COLON') }}</label></dt>
+					<dd><input type="text" name="event_start" id="event_start" value="{{ EVENT_START }}" class="inputbox medium flatpickr-input" required></dd>
 				</dl>
 				<dl>
-					<dt><label for="event_end">{L_EVENT_END}{L_COLON}</label></dt>
-					<dd><input type="text" name="event_end" id="event_end" value="{EVENT_END}" class="inputbox medium flatpickr-input"></dd>
+					<dt><label for="event_end">{{ lang('EVENT_END') }}{{ lang('COLON') }}</label></dt>
+					<dd><input type="text" name="event_end" id="event_end" value="{{ EVENT_END }}" class="inputbox medium flatpickr-input"></dd>
 				</dl>
 				<dl>
-					<dt><label>{L_EVENT_FORMAT}{L_COLON}</label></dt>
+					<dt><label>{{ lang('EVENT_FORMAT') }}{{ lang('COLON') }}</label></dt>
 					<dd>
-						<label><input type="radio" name="event_format" value="in-person"<!-- IF S_FORMAT_IN_PERSON --> checked<!-- ENDIF -->> {L_FORMAT_IN_PERSON}</label>
-						<label><input type="radio" name="event_format" value="online"<!-- IF S_FORMAT_ONLINE --> checked<!-- ENDIF -->> {L_FORMAT_ONLINE}</label>
+						<label><input type="radio" name="event_format" value="in-person"{% if S_FORMAT_IN_PERSON %} checked{% endif %}> {{ lang('FORMAT_IN_PERSON') }}</label>
+						<label><input type="radio" name="event_format" value="online"{% if S_FORMAT_ONLINE %} checked{% endif %}> {{ lang('FORMAT_ONLINE') }}</label>
 					</dd>
 				</dl>
-				<dl id="group-location"<!-- IF S_FORMAT_ONLINE --> style="display: none;"<!-- ENDIF -->>
-					<dt><label for="event_location">{L_EVENT_LOCATION}{L_COLON}</label></dt>
-					<dd style="position: relative;">
-						<input type="text" name="event_location" id="event_location" value="{EVENT_LOCATION}" class="inputbox full" placeholder="{L_EVENT_GEO_SEARCH_PLACEHOLDER}" autocomplete="off">
-						<input type="hidden" name="event_lat" id="event_lat" value="{EVENT_LAT}">
-						<input type="hidden" name="event_lng" id="event_lng" value="{EVENT_LNG}">
-						<div id="calendar-geo-results" class="dropdown hidden" style="left: 0; right: 0; top: 100%;"></div>
-						<!-- IF EVENT_MAP_IMAGE_SRC -->
+				<dl id="group-location"{% if S_FORMAT_ONLINE %} style="display: none;"{% endif %}>
+					<dt><label for="event_location">{{ lang('EVENT_LOCATION') }}{{ lang('COLON') }}</label></dt>
+					<dd style="position: relative;" data-calendar-geo-autocomplete data-input-id="event_location" data-lat-id="event_lat" data-lng-id="event_lng" data-endpoint="{{ U_GEO_PROXY }}" data-placeholder="{{ lang('EVENT_GEO_SEARCH_PLACEHOLDER') }}">
+						<input type="text" name="event_location" id="event_location" value="{{ EVENT_LOCATION }}" class="inputbox full" placeholder="{{ lang('EVENT_GEO_SEARCH_PLACEHOLDER') }}" autocomplete="off">
+						<input type="hidden" name="event_lat" id="event_lat" value="{{ EVENT_LAT }}">
+						<input type="hidden" name="event_lng" id="event_lng" value="{{ EVENT_LNG }}">
+						{% if EVENT_MAP_IMAGE_SRC %}
 						<div class="calendar-map-preview" style="margin-top: 8px;">
-							<img src="{ROOT_PATH}{EVENT_MAP_IMAGE_SRC}" alt="{L_MAP_PREVIEW}">
+							<img src="{{ ROOT_PATH }}{{ EVENT_MAP_IMAGE_SRC }}" alt="{{ lang('MAP_PREVIEW') }}">
 						</div>
-						<!-- ENDIF -->
+						{% endif %}
 					</dd>
 				</dl>
 			</fieldset>
 
 			<fieldset class="fields2">
 				<dl>
-					<dt><label for="message">{L_EVENT_DESCRIPTION}{L_COLON}</label></dt>
+					<dt><label for="message">{{ lang('EVENT_DESCRIPTION') }}{{ lang('COLON') }}</label></dt>
 					<dd>
-						<!-- INCLUDE posting_buttons.html -->
-						<textarea name="event_desc" id="message" rows="12" cols="76" class="inputbox" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" onfocus="initInsertions();">{EVENT_DESC}</textarea>
+						{% INCLUDE 'posting_buttons.html' %}
+						<textarea name="event_desc" id="message" rows="12" cols="76" class="inputbox" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" onfocus="initInsertions();">{{ EVENT_DESC }}</textarea>
 					</dd>
 				</dl>
 			</fieldset>
@@ -73,17 +72,17 @@
 		<div class="inner">
 			<fieldset class="fields2">
 				<dl>
-					<dt><label for="limit_registrations_enabled">{L_LIMIT_REGISTRATIONS}{L_COLON}</label></dt>
+					<dt><label for="limit_registrations_enabled">{{ lang('LIMIT_REGISTRATIONS') }}{{ lang('COLON') }}</label></dt>
 					<dd>
-						<label><input type="checkbox" name="limit_registrations_enabled" id="limit_registrations_enabled" value="1"<!-- IF S_LIMIT_ENABLED --> checked<!-- ENDIF -->> </label>
-						<input type="number" name="event_attendees_limit" id="limit-input" value="{EVENT_ATTENDEES_LIMIT}" min="1" class="inputbox autowidth" style="margin-left: 10px;<!-- IF not S_LIMIT_ENABLED --> display: none;<!-- ENDIF -->">
+						<label><input type="checkbox" name="limit_registrations_enabled" id="limit_registrations_enabled" value="1"{% if S_LIMIT_ENABLED %} checked{% endif %}></label>
+						<input type="number" name="event_attendees_limit" id="limit-input" value="{{ EVENT_ATTENDEES_LIMIT }}" min="1" class="inputbox autowidth" style="margin-left: 10px;{% if not S_LIMIT_ENABLED %} display: none;{% endif %}">
 					</dd>
 				</dl>
 				<dl>
-					<dt><label for="public_calendar_enabled">{L_PUBLIC_CALENDAR}{L_COLON}</label></dt>
+					<dt><label for="public_calendar_enabled">{{ lang('PUBLIC_CALENDAR') }}{{ lang('COLON') }}</label></dt>
 					<dd>
-						<label><input type="checkbox" name="public_calendar_enabled" id="public_calendar_enabled" value="1"<!-- IF S_PUBLIC_ENABLED --> checked<!-- ENDIF -->> </label>
-						<span class="explain"><!-- IF S_PUBLIC_ENABLED -->{L_PUBLIC_CALENDAR_EXPLAIN}<!-- ELSE -->{L_PUBLIC_CALENDAR_PRIVATE_EXPLAIN}<!-- ENDIF --></span>
+						<label><input type="checkbox" name="public_calendar_enabled" id="public_calendar_enabled" value="1"{% if S_PUBLIC_ENABLED %} checked{% endif %}></label>
+						<span class="explain">{% if S_PUBLIC_ENABLED %}{{ lang('PUBLIC_CALENDAR_EXPLAIN') }}{% else %}{{ lang('PUBLIC_CALENDAR_PRIVATE_EXPLAIN') }}{% endif %}</span>
 					</dd>
 				</dl>
 			</fieldset>
@@ -93,27 +92,28 @@
 	<div class="panel bg3">
 		<div class="inner">
 			<fieldset class="submit-buttons">
-				<input type="submit" name="submit" class="button1 default-submit-action" value="{L_SUBMIT}">
-				{S_FORM_TOKEN}
+				<input type="submit" name="submit" class="button1 default-submit-action" value="{{ lang('SUBMIT') }}">
+				{{ S_FORM_TOKEN }}
 			</fieldset>
 		</div>
 	</div>
 </form>
 
-<script src="{ROOT_PATH}ext/vinny/calendar/assets/flatpickr/flatpickr.min.js"></script>
-<!-- IF S_FP_LANGUAGE != 'default' -->
-<script src="{ROOT_PATH}ext/vinny/calendar/assets/flatpickr/l10n/{S_FP_LANGUAGE}.js"></script>
-<!-- ENDIF -->
+<script src="{{ ROOT_PATH }}ext/vinny/calendar/assets/flatpickr/flatpickr.min.js"></script>
+{% if S_FP_LANGUAGE != 'default' %}
+<script src="{{ ROOT_PATH }}ext/vinny/calendar/assets/flatpickr/l10n/{{ S_FP_LANGUAGE }}.js"></script>
+{% endif %}
+<script src="{{ ROOT_PATH }}ext/vinny/calendar/assets/js/calendar_geo_autocomplete.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 	flatpickr('input.flatpickr-input', {
 		enableTime: true,
 		dateFormat: 'Y-m-d H:i',
 		altInput: true,
-		altFormat: '{S_FP_DATE_FORMAT}',
+		altFormat: '{{ S_FP_DATE_FORMAT|e('js') }}',
 		minDate: 'today',
-		time_24hr: <!-- IF S_FP_TIME_24HR -->true<!-- ELSE -->false<!-- ENDIF -->,
-		locale: '{S_FP_LANGUAGE}' === 'default' ? 'default' : '{S_FP_LANGUAGE}',
+		time_24hr: {% if S_FP_TIME_24HR %}true{% else %}false{% endif %},
+		locale: '{{ S_FP_LANGUAGE|e('js') }}' === 'default' ? 'default' : '{{ S_FP_LANGUAGE|e('js') }}',
 		allowInput: false
 	});
 
@@ -124,8 +124,6 @@ document.addEventListener('DOMContentLoaded', function () {
 	var lngInput = document.getElementById('event_lng');
 	var limitToggle = document.getElementById('limit_registrations_enabled');
 	var limitInput = document.getElementById('limit-input');
-	var geoResults = document.getElementById('calendar-geo-results');
-	var geoTimer = null;
 
 	function toggleLocation() {
 		var selected = document.querySelector('input[name="event_format"]:checked');
@@ -138,7 +136,6 @@ document.addEventListener('DOMContentLoaded', function () {
 		locationInput.value = '';
 		latInput.value = '';
 		lngInput.value = '';
-		geoResults.classList.add('hidden');
 	}
 
 	function toggleLimit() {
@@ -150,90 +147,10 @@ document.addEventListener('DOMContentLoaded', function () {
 		limitInput.value = '';
 	}
 
-	function renderGeoResults(items) {
-		if (!items.length) {
-			geoResults.classList.add('hidden');
-			geoResults.innerHTML = '';
-			return;
-		}
-
-		var html = '<ul class="dropdown-contents">';
-		items.forEach(function (item) {
-			var formatted = item.formatted || '';
-			var safeFormatted = escapeHtml(formatted);
-			var lat = String(item.lat || '');
-			var lon = String(item.lon || '');
-			html += '<li><a href="#" class="js-geo-item" data-lat="' + lat + '" data-lon="' + lon + '" data-address="' + safeFormatted + '">' + safeFormatted + '</a></li>';
-		});
-		html += '</ul>';
-		geoResults.innerHTML = html;
-		geoResults.classList.remove('hidden');
-	}
-
-	function escapeHtml(value) {
-		return String(value).replace(/[&<>"']/g, function (character) {
-			return {
-				'&': '&amp;',
-				'<': '&lt;',
-				'>': '&gt;',
-				'"': '&quot;',
-				"'": '&#039;'
-			}[character];
-		});
-	}
-
-	function searchGeo(query) {
-		if (query.length < 2) {
-			renderGeoResults([]);
-			return;
-		}
-
-		<!-- IF not S_GEOAPIFY_ENABLED -->
-		renderGeoResults([]);
-		return;
-		<!-- ENDIF -->
-
-		var geoProxyUrl = '{U_GEO_PROXY}';
-		var geoProxySeparator = geoProxyUrl.indexOf('?') === -1 ? '?' : '&';
-
-		fetch(geoProxyUrl + geoProxySeparator + 'text=' + encodeURIComponent(query), { credentials: 'same-origin' })
-			.then(function (response) { return response.json(); })
-			.then(function (payload) { renderGeoResults(payload.features || []); })
-			.catch(function () { renderGeoResults([]); });
-	}
-
 	formatInputs.forEach(function (radio) {
 		radio.addEventListener('change', toggleLocation);
 	});
 	limitToggle.addEventListener('change', toggleLimit);
-	locationInput.addEventListener('input', function () {
-		latInput.value = '';
-		lngInput.value = '';
-		<!-- IF not S_GEOAPIFY_ENABLED -->
-		renderGeoResults([]);
-		return;
-		<!-- ENDIF -->
-		clearTimeout(geoTimer);
-		geoTimer = setTimeout(function () {
-			searchGeo(locationInput.value.trim());
-		}, 250);
-	});
-
-	document.addEventListener('click', function (event) {
-		var geoItem = event.target.closest('.js-geo-item');
-		if (geoItem) {
-			event.preventDefault();
-			locationInput.value = geoItem.getAttribute('data-address') || '';
-			latInput.value = geoItem.getAttribute('data-lat') || '';
-			lngInput.value = geoItem.getAttribute('data-lon') || '';
-			renderGeoResults([]);
-			return;
-		}
-
-		if (!event.target.closest('#group-location')) {
-			renderGeoResults([]);
-		}
-	});
 
 	toggleLocation();
 	toggleLimit();
@@ -244,6 +161,6 @@ var text_name = 'message';
 var load_draft = false;
 var upload_allowed = false;
 </script>
-<script src="{T_ASSETS_PATH}/javascript/editor.js"></script>
+<script src="{{ T_ASSETS_PATH }}/javascript/editor.js"></script>
 
-<!-- INCLUDE overall_footer.html -->
+{% INCLUDE 'overall_footer.html' %}

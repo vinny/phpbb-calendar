@@ -12,7 +12,9 @@ namespace vinny\calendar\acp;
 
 class main_module
 {
-	var $u_action;
+	public $u_action;
+	public $tpl_name;
+	public $page_title;
 
 	public function main($id, $mode)
 	{
@@ -61,8 +63,6 @@ class main_module
 			$config->set('vinny_calendar_map_height', min(2000, max(100, $request->variable('vinny_calendar_map_height', 768))));
 			$config->set('vinny_calendar_map_zoom', min(20, max(1, $request->variable('vinny_calendar_map_zoom', 17))));
 			$config->set('vinny_calendar_map_lang', $request->variable('vinny_calendar_map_lang', 'en', true));
-			$config->set('vinny_calendar_fc_locale', $request->variable('vinny_calendar_fc_locale', 'en', true));
-			$config->set('vinny_calendar_fc_time_format', $request->variable('vinny_calendar_fc_time_format', '24', true) === '12' ? '12' : '24');
 			$config->set('vinny_calendar_fp_theme', $request->variable('vinny_calendar_fp_theme', 'default', true));
 			$config->set('vinny_calendar_fp_time_24hr', $request->variable('vinny_calendar_fp_time_24hr', 1));
 			$config->set('vinny_calendar_fp_language', $request->variable('vinny_calendar_fp_language', 'default', true));
@@ -83,10 +83,7 @@ class main_module
 			$template->assign_block_vars('fp_langs', $lang);
 		}
 
-		foreach ($this->get_fullcalendar_locales($config['vinny_calendar_fc_locale']) as $locale)
-		{
-			$template->assign_block_vars('fc_locales', $locale);
-		}
+
 
 		foreach ($this->get_map_languages($ext_path, $config['vinny_calendar_map_lang']) as $language)
 		{
@@ -102,8 +99,7 @@ class main_module
 			'VINNY_CALENDAR_GEOAPIFY_KEY' => (string) ($config['vinny_calendar_geoapify_key'] ?? ''),
 			'VINNY_CALENDAR_MAP_WIDTH' => (int) ($config['vinny_calendar_map_width'] ?? 1024),
 			'VINNY_CALENDAR_MAP_HEIGHT' => (int) ($config['vinny_calendar_map_height'] ?? 768),
-			'VINNY_CALENDAR_MAP_ZOOM' => (int) ($config['vinny_calendar_map_zoom'] ?? 17),
-			'VINNY_CALENDAR_FC_TIME_FORMAT' => (string) ($config['vinny_calendar_fc_time_format'] ?? '24'),
+			'VINNY_CALENDAR_MAP_ZOOM' => (int) $config['vinny_calendar_map_zoom'],
 			'VINNY_CALENDAR_FP_TIME_24HR' => (int) ($config['vinny_calendar_fp_time_24hr'] ?? 1),
 		]);
 	}
@@ -425,21 +421,7 @@ class main_module
 		return $languages;
 	}
 
-	protected function get_fullcalendar_locales($current)
-	{
-		$locales = ['en', 'pt-br', 'pt', 'es', 'fr', 'de', 'it'];
-		$data = [];
-		foreach ($locales as $locale)
-		{
-			$data[] = [
-				'VALUE' => $locale,
-				'NAME' => $locale,
-				'SELECTED' => ($current === $locale),
-			];
-		}
 
-		return $data;
-	}
 
 	protected function get_map_languages($ext_path, $current)
 	{

@@ -89,11 +89,7 @@ class rsvp
 
         $total_after_insert = $this->count_participants($event['event_id']);
         if ((int) $current_event['max_participants'] > 0 && $total_after_insert > (int) $current_event['max_participants']) {
-            $sql = 'DELETE FROM ' . $this->table_prefix . 'eventboard_participants
-                WHERE event_id = ' . (int) $event['event_id'] . '
-                    AND user_id = ' . (int) $user_id;
-            $this->db->sql_query($sql);
-            $this->db->sql_transaction('commit');
+            $this->db->sql_transaction('rollback');
 
             return 'full';
         }

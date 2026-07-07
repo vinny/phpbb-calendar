@@ -1,15 +1,15 @@
-<!-- INCLUDECSS @vinny_calendar/eventboard.css -->
+{% INCLUDECSS '@vinny_calendar/eventboard.css' %}
 
-<!-- IF SEO_OG_TITLE -->
-<meta property="og:title" content="{SEO_OG_TITLE}" />
-<!-- ENDIF -->
-<!-- IF SEO_OG_DESCRIPTION -->
-<meta property="og:description" content="{SEO_OG_DESCRIPTION}" />
-<!-- ENDIF -->
-<!-- IF SEO_OG_IMAGE -->
-<meta property="og:image" content="{SEO_OG_IMAGE}" />
-<!-- ENDIF -->
-<!-- IF SEO_OG_URL -->
-<meta property="og:url" content="{SEO_OG_URL}" />
-<link rel="canonical" href="{SEO_OG_URL}" />
-<!-- ENDIF -->
+{% if SEO_OG_TITLE %}
+<meta property="og:title" content="{{ SEO_OG_TITLE }}" />
+{% endif %}
+{% if SEO_OG_DESCRIPTION %}
+<meta property="og:description" content="{{ SEO_OG_DESCRIPTION }}" />
+{% endif %}
+{% if SEO_OG_IMAGE %}
+<meta property="og:image" content="{{ SEO_OG_IMAGE }}" />
+{% endif %}
+{% if SEO_OG_URL %}
+<meta property="og:url" content="{{ SEO_OG_URL }}" />
+<link rel="canonical" href="{{ SEO_OG_URL }}" />
+{% endif %}

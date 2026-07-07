@@ -2,7 +2,7 @@
 	"name": "vinny/calendar",
 	"type": "phpbb-extension",
 	"description": "EventBoard - Calendar & Events for phpBB",
-	"homepage": "https://github.com/vinny",
+	"homepage": "https://github.com/vinny/phpbb-calendar",
 	"version": "1.0.0",
 	"license": "GPL-2.0-only",
 	"authors": [
@@ -20,13 +20,5 @@
 		"soft-require": {
 			"phpbb/phpbb": ">=3.3.0,<3.4.0@dev"
 		}
-	},
-	"autoload": {
-		"psr-4": {
-			"vinny\\calendar\\": ""
-		}
-	},
-	"require-dev": {
-		"phpbb/epv": "^0.0.12"
 	}
 }

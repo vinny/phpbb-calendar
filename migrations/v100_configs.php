@@ -27,9 +27,6 @@ class v100_configs extends \phpbb\db\migration\migration
 			['config.add', ['vinny_calendar_reminder_last_run', 0]],
 			['config.add', ['vinny_calendar_geoapify_key', '']],
 
-			['config.add', ['vinny_calendar_fc_locale', 'en']],
-			['config.add', ['vinny_calendar_fc_time_format', '24']],
-
 			['config.add', ['vinny_calendar_fp_theme', 'default']],
 			['config.add', ['vinny_calendar_fp_date_format', 'd/m/Y H:i']],
 			['config.add', ['vinny_calendar_fp_time_24hr', 1]],

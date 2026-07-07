@@ -1,76 +1,76 @@
-<!-- INCLUDE overall_header.html -->
+{% INCLUDE 'overall_header.html' %}
 
 <h2 class="topic-title">
-	{EVENT_TITLE}
+	{{ EVENT_TITLE }}
 </h2>
-<p class="author calendar-event-author">{L_EVENT_ORGANIZED_BY} <strong>{ORGANIZER_FULL}</strong> &raquo; <time>{EVENT_CREATED_AT}</time></p>
+<p class="author calendar-event-author">{{ lang('EVENT_ORGANIZED_BY') }} <strong>{{ ORGANIZER_FULL|raw }}</strong> &raquo; <time>{{ EVENT_CREATED_AT }}</time></p>
 
 <div class="action-bar bar-top">
 	<div class="topic-actions">
-		<!-- IF not S_IS_OWNER -->
-			<!-- IF S_IS_COMPLETED -->
-				<span class="button button-secondary">{L_EVENT_ENDED}</span>
-			<!-- ELSEIF S_HAS_JOINED -->
-				<form action="{U_LEAVE_EVENT}" method="post" class="calendar-inline-form">
-					<button type="submit" name="submit_leave" class="button button-secondary">{L_EVENT_LEAVE}</button>
-					{S_FORM_TOKEN}
+		{% if not S_IS_OWNER %}
+			{% if S_IS_COMPLETED %}
+				<span class="button button-secondary">{{ lang('EVENT_ENDED') }}</span>
+			{% elseif S_HAS_JOINED %}
+				<form action="{{ U_LEAVE_EVENT }}" method="post" class="calendar-inline-form">
+					<button type="submit" name="submit_leave" class="button button-secondary">{{ lang('EVENT_LEAVE') }}</button>
+					{{ S_FORM_TOKEN }}
 				</form>
-			<!-- ELSEIF not S_USER_LOGGED_IN -->
-				<a class="button" href="{U_LOGIN_LOGOUT}">{L_LOGIN_TO_PARTICIPATE}</a>
-			<!-- ELSEIF S_CAN_JOIN -->
-				<form action="{U_JOIN_EVENT}" method="post" class="calendar-inline-form">
-					<button type="submit" name="submit_join" class="button">{L_CONFIRM_ATTENDANCE}</button>
-					{S_FORM_TOKEN}
+			{% elseif not S_USER_LOGGED_IN %}
+				<a class="button" href="{{ U_LOGIN_LOGOUT }}">{{ lang('LOGIN_TO_PARTICIPATE') }}</a>
+			{% elseif S_CAN_JOIN %}
+				<form action="{{ U_JOIN_EVENT }}" method="post" class="calendar-inline-form">
+					<button type="submit" name="submit_join" class="button">{{ lang('CONFIRM_ATTENDANCE') }}</button>
+					{{ S_FORM_TOKEN }}
 				</form>
-			<!-- ELSE -->
-				<span class="button button-secondary">{L_EVENT_FULL}</span>
-			<!-- ENDIF -->
-		<!-- ENDIF -->
+			{% else %}
+				<span class="button button-secondary">{{ lang('EVENT_FULL') }}</span>
+			{% endif %}
+		{% endif %}
 	</div>
 
 	<ul class="post-buttons">
 		<li class="dropdown-container dropdown-button-control">
-			<a class="button button-icon-only dropdown-trigger" href="#" title="{L_ADD_TO_CALENDAR}">
-				<i class="icon fa-calendar-plus-o fa-fw" aria-hidden="true"></i><span class="sr-only">{L_ADD_TO_CALENDAR}</span>
+			<a class="button button-icon-only dropdown-trigger" href="#" title="{{ lang('ADD_TO_CALENDAR') }}">
+				<i class="icon fa-calendar-plus-o fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('ADD_TO_CALENDAR') }}</span>
 			</a>
 			<div class="dropdown hidden">
 				<div class="pointer"><div class="pointer-inner"></div></div>
 				<ul class="dropdown-contents calendar-dropdown-contents">
-					<li><a href="{U_ADD_GOOGLE}" target="_blank" rel="noopener"><i class="icon fa-google fa-fw" aria-hidden="true"></i> {L_GOOGLE_CALENDAR}</a></li>
-					<li><a href="{U_ADD_OUTLOOK}" target="_blank" rel="noopener"><i class="icon fa-envelope fa-fw" aria-hidden="true"></i> {L_OUTLOOK_CALENDAR}</a></li>
-					<li><a href="{U_ADD_YAHOO}" target="_blank" rel="noopener"><i class="icon fa-yahoo fa-fw" aria-hidden="true"></i> {L_YAHOO_CALENDAR}</a></li>
+					<li><a href="{{ U_ADD_GOOGLE }}" target="_blank" rel="noopener"><i class="icon fa-google fa-fw" aria-hidden="true"></i> {{ lang('GOOGLE_CALENDAR') }}</a></li>
+					<li><a href="{{ U_ADD_OUTLOOK }}" target="_blank" rel="noopener"><i class="icon fa-envelope fa-fw" aria-hidden="true"></i> {{ lang('OUTLOOK_CALENDAR') }}</a></li>
+					<li><a href="{{ U_ADD_YAHOO }}" target="_blank" rel="noopener"><i class="icon fa-yahoo fa-fw" aria-hidden="true"></i> {{ lang('YAHOO_CALENDAR') }}</a></li>
 				</ul>
 			</div>
 		</li>
 		<li class="dropdown-container dropdown-button-control">
-			<a class="button button-icon-only dropdown-trigger" href="#" title="{L_SHARE_EVENT}">
-				<i class="icon fa-share-alt fa-fw" aria-hidden="true"></i><span class="sr-only">{L_SHARE_EVENT}</span>
+			<a class="button button-icon-only dropdown-trigger" href="#" title="{{ lang('SHARE_EVENT') }}">
+				<i class="icon fa-share-alt fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('SHARE_EVENT') }}</span>
 			</a>
 			<div class="dropdown hidden">
 				<div class="pointer"><div class="pointer-inner"></div></div>
 				<ul class="dropdown-contents calendar-dropdown-contents">
-					<li><a href="{U_SHARE_WHATSAPP}" target="_blank" rel="noopener"><i class="icon fa-whatsapp fa-fw" aria-hidden="true"></i> {L_SHARE_WHATSAPP}</a></li>
-					<li><a href="{U_SHARE_FACEBOOK}" target="_blank" rel="noopener"><i class="icon fa-facebook fa-fw" aria-hidden="true"></i> {L_SHARE_FACEBOOK}</a></li>
-					<li><a href="{U_SHARE_TWITTER}" target="_blank" rel="noopener"><i class="icon fa-twitter fa-fw" aria-hidden="true"></i> {L_SHARE_TWITTER}</a></li>
-					<li><a href="{U_SHARE_TELEGRAM}" target="_blank" rel="noopener"><i class="icon fa-telegram fa-fw" aria-hidden="true"></i> {L_SHARE_TELEGRAM}</a></li>
-					<li><a href="{U_SHARE_COPY}" data-ajax="false"><i class="icon fa-link fa-fw" aria-hidden="true"></i> {L_COPY_LINK}</a></li>
+					<li><a href="{{ U_SHARE_WHATSAPP }}" target="_blank" rel="noopener"><i class="icon fa-whatsapp fa-fw" aria-hidden="true"></i> {{ lang('SHARE_WHATSAPP') }}</a></li>
+					<li><a href="{{ U_SHARE_FACEBOOK }}" target="_blank" rel="noopener"><i class="icon fa-facebook fa-fw" aria-hidden="true"></i> {{ lang('SHARE_FACEBOOK') }}</a></li>
+					<li><a href="{{ U_SHARE_TWITTER }}" target="_blank" rel="noopener"><i class="icon fa-twitter fa-fw" aria-hidden="true"></i> {{ lang('SHARE_TWITTER') }}</a></li>
+					<li><a href="{{ U_SHARE_TELEGRAM }}" target="_blank" rel="noopener"><i class="icon fa-telegram fa-fw" aria-hidden="true"></i> {{ lang('SHARE_TELEGRAM') }}</a></li>
+					<li><a href="#" class="js-calendar-copy-link" data-copy-url="{{ U_SHARE_COPY }}"><i class="icon fa-link fa-fw" aria-hidden="true"></i> {{ lang('COPY_LINK') }}</a></li>
 				</ul>
 			</div>
 		</li>
-		<!-- IF U_EDIT -->
+		{% if U_EDIT %}
 		<li>
-			<a href="{U_EDIT}" title="{L_EDIT}" class="button button-icon-only">
-				<i class="icon fa-pencil fa-fw" aria-hidden="true"></i><span class="sr-only">{L_EDIT}</span>
+			<a href="{{ U_EDIT }}" title="{{ lang('EDIT') }}" class="button button-icon-only">
+				<i class="icon fa-pencil fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('EDIT') }}</span>
 			</a>
 		</li>
-		<!-- ENDIF -->
-		<!-- IF U_DELETE -->
+		{% endif %}
+		{% if U_DELETE %}
 		<li>
-			<a href="{U_DELETE}" data-ajax="true" title="{L_DELETE}" class="button button-icon-only">
-				<i class="icon fa-times fa-fw" aria-hidden="true"></i><span class="sr-only">{L_DELETE}</span>
+			<a href="{{ U_DELETE }}" data-ajax="true" title="{{ lang('DELETE') }}" class="button button-icon-only">
+				<i class="icon fa-times fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('DELETE') }}</span>
 			</a>
 		</li>
-		<!-- ENDIF -->
+		{% endif %}
 	</ul>
 </div>
 
@@ -79,20 +79,20 @@
 		<div class="postbody" style="width: 100%;">
 			<div class="content calendar-event-content">
 				<div class="calendar-event-summary calendar-event-summary-rows">
-					<div class="calendar-event-summary-row"><strong>{L_CATEGORY}{L_COLON}</strong><span>{CAT_NAME}</span></div>
-					<div class="calendar-event-summary-row"><strong>{L_EVENT_START}{L_COLON}</strong><span>{EVENT_START_DATE}</span></div>
-					<div class="calendar-event-summary-row"><strong>{L_EVENT_END}{L_COLON}</strong><span>{EVENT_END_DATE}</span></div>
-					<div class="calendar-event-summary-row"><strong>{L_EVENT_LOCATION}{L_COLON}</strong><span><!-- IF S_IS_ONLINE -->{L_EVENT_ONLINE}<!-- ELSE -->{EVENT_LOCATION}<!-- ENDIF --></span></div>
-					<div class="calendar-event-summary-row"><strong>{L_CAPACITY}{L_COLON}</strong><span><!-- IF MAX_PARTICIPANTS > 0 -->{TOTAL_PARTICIPANTS} / {MAX_PARTICIPANTS}<!-- ELSE -->{L_UNLIMITED_SPOTS}<!-- ENDIF --></span></div>
+					<div class="calendar-event-summary-row"><strong>{{ lang('CATEGORY') }}{{ lang('COLON') }}</strong><span>{{ CAT_NAME }}</span></div>
+					<div class="calendar-event-summary-row"><strong>{{ lang('EVENT_START') }}{{ lang('COLON') }}</strong><span>{{ EVENT_START_DATE }}</span></div>
+					<div class="calendar-event-summary-row"><strong>{{ lang('EVENT_END') }}{{ lang('COLON') }}</strong><span>{{ EVENT_END_DATE }}</span></div>
+					<div class="calendar-event-summary-row"><strong>{{ lang('EVENT_LOCATION') }}{{ lang('COLON') }}</strong><span>{% if S_IS_ONLINE %}{{ lang('EVENT_ONLINE') }}{% else %}{{ EVENT_LOCATION }}{% endif %}</span></div>
+					<div class="calendar-event-summary-row"><strong>{{ lang('CAPACITY') }}{{ lang('COLON') }}</strong><span>{% if MAX_PARTICIPANTS > 0 %}{{ TOTAL_PARTICIPANTS }} / {{ MAX_PARTICIPANTS }}{% else %}{{ lang('UNLIMITED_SPOTS') }}{% endif %}</span></div>
 				</div>
 
-				<div class="calendar-event-description">{EVENT_DESCRIPTION}</div>
+				<div class="calendar-event-description">{{ EVENT_DESCRIPTION|raw }}</div>
 
-				<!-- IF EVENT_MAP_IMAGE -->
+				{% if EVENT_MAP_IMAGE %}
 				<div class="calendar-map-panel">
-					<img src="{ROOT_PATH}images/vinny_calendar_img/{EVENT_MAP_IMAGE}" alt="{EVENT_LOCATION}">
+					<img src="{{ ROOT_PATH }}images/vinny_calendar_img/{{ EVENT_MAP_IMAGE }}" alt="{{ EVENT_LOCATION }}">
 				</div>
-				<!-- ENDIF -->
+				{% endif %}
 			</div>
 		</div>
 	</div>
@@ -100,77 +100,76 @@
 
 <div class="panel bg1 calendar-participants-panel">
 	<div class="inner">
-		<h3>{L_WHO_IS_GOING}</h3>
+		<h3>{{ lang('WHO_IS_GOING') }}</h3>
 		<p class="calendar-participants-inline">
-			<!-- BEGIN participants -->
-				{participants.USER_FULL}<!-- IF not participants.S_LAST_ROW -->, <!-- ENDIF -->
-			<!-- BEGINELSE -->
-				{L_NO_RSVPS_FOUND}
-			<!-- END participants -->
+			{% for participant in loops.participants %}
+				{{ participant.USER_FULL|raw }}{% if not participant.S_LAST_ROW %}, {% endif %}
+			{% else %}
+				{{ lang('NO_RSVPS_FOUND') }}
+			{% endfor %}
 		</p>
 	</div>
 </div>
 
-<!-- IF S_ALLOW_COMMENTS -->
+{% if S_ALLOW_COMMENTS %}
 <div class="panel">
 	<div class="inner">
-		<h3>{L_COMMENTS}</h3>
+		<h3>{{ lang('COMMENTS') }}</h3>
 
-		<!-- IF S_USER_LOGGED_IN and S_CAN_COMMENT -->
-		<form action="{U_ACTION_COMMENT}" method="post" id="postform">
+		{% if S_USER_LOGGED_IN and S_CAN_COMMENT %}
+		<form action="{{ U_ACTION_COMMENT }}" method="post" id="postform">
 			<div id="message-box" class="message-box">
-				<!-- INCLUDE posting_buttons.html -->
+				{% INCLUDE 'posting_buttons.html' %}
 				<textarea name="comment_text" id="message" rows="8" cols="76" class="inputbox" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" onfocus="initInsertions();"></textarea>
 			</div>
 			<fieldset class="submit-buttons">
-				<input type="submit" name="submit" class="button1 default-submit-action" value="{L_POST_COMMENT}">
-				{S_FORM_TOKEN}
+				<input type="submit" name="submit" class="button1 default-submit-action" value="{{ lang('POST_COMMENT') }}">
+				{{ S_FORM_TOKEN }}
 			</fieldset>
 		</form>
-		<!-- ELSEIF S_COMMENTS_CLOSED -->
-		<p>{L_EVENT_COMMENTS_CLOSED}</p>
-		<!-- ELSE -->
-		<p><a href="{U_LOGIN_LOGOUT}">{L_LOGIN_TO_COMMENT}</a></p>
-		<!-- ENDIF -->
+		{% elseif S_COMMENTS_CLOSED %}
+		<p>{{ lang('EVENT_COMMENTS_CLOSED') }}</p>
+		{% else %}
+		<p><a href="{{ U_LOGIN_LOGOUT }}">{{ lang('LOGIN_TO_COMMENT') }}</a></p>
+		{% endif %}
 	</div>
 </div>
 
 <hr>
 
-
 <div id="comments">
-	<!-- BEGIN comments -->
-	<div class="post calendar-comment-post <!-- IF comments.S_ROW_COUNT is even -->bg1<!-- ELSE -->bg2<!-- ENDIF -->" id="comment_{comments.ID}">
+	{% for comment in loops.comments %}
+	<div class="post calendar-comment-post {% if comment.S_ROW_COUNT is even %}bg1{% else %}bg2{% endif %}" id="comment_{{ comment.ID }}">
 		<div class="inner">
 			<div class="postbody" style="width: 100%;">
 				<ul class="post-buttons">
 					<li>
-						<a href="#" class="button button-icon-only js-calendar-quote" title="{L_QUOTE}" data-quote-author="{comments.AUTHOR_NAME}" data-quote-message="{comments.QUOTE_TEXT}">
-							<i class="icon fa-quote-left fa-fw" aria-hidden="true"></i><span class="sr-only">{L_QUOTE}</span>
+						<a href="#" class="button button-icon-only js-calendar-quote" title="{{ lang('QUOTE') }}" data-quote-author="{{ comment.AUTHOR_NAME|e('html_attr') }}" data-quote-message="{{ comment.QUOTE_TEXT|e('html_attr') }}">
+							<i class="icon fa-quote-left fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('QUOTE') }}</span>
 						</a>
 					</li>
-					<!-- IF comments.S_CAN_DELETE -->
+					{% if comment.S_CAN_DELETE %}
 					<li>
-						<a href="{comments.U_DELETE}" title="{L_DELETE_COMMENT}" class="button button-icon-only">
-							<i class="icon fa-times fa-fw" aria-hidden="true"></i><span class="sr-only">{L_DELETE_COMMENT}</span>
+						<a href="{{ comment.U_DELETE }}" title="{{ lang('DELETE_COMMENT') }}" class="button button-icon-only">
+							<i class="icon fa-times fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('DELETE_COMMENT') }}</span>
 						</a>
 					</li>
-					<!-- ENDIF -->
+					{% endif %}
 				</ul>
-				<p class="author">{comments.AUTHOR} &raquo; <time>{comments.DATE}</time></p>
-				<div class="content">{comments.MESSAGE}</div>
+				<p class="author">{{ comment.AUTHOR|raw }} &raquo; <time>{{ comment.DATE }}</time></p>
+				<div class="content">{{ comment.MESSAGE|raw }}</div>
 			</div>
 		</div>
 	</div>
-	<!-- BEGINELSE -->
+	{% else %}
 	<div class="panel">
 		<div class="inner">
-			<p>{L_NO_COMMENTS}</p>
+			<p>{{ lang('NO_COMMENTS') }}</p>
 		</div>
 	</div>
-	<!-- END comments -->
+	{% endfor %}
 </div>
-<!-- ENDIF -->
+{% endif %}
 
 <script>
 var form_name = 'postform';
@@ -181,22 +180,58 @@ var upload_allowed = false;
 document.addEventListener('DOMContentLoaded', function () {
 	var quoteButtons = document.querySelectorAll('.js-calendar-quote');
 	var messageField = document.getElementById('message');
-	if (!quoteButtons.length || !messageField) {
-		return;
+
+	if (quoteButtons.length && messageField) {
+		quoteButtons.forEach(function (button) {
+			button.addEventListener('click', function (e) {
+				e.preventDefault();
+				var author = button.getAttribute('data-quote-author') || '';
+				var message = button.getAttribute('data-quote-message') || '';
+				var quote = '[quote="' + author.replace(/"/g, '\\"') + '"]' + message + '[/quote]\n';
+				insert_text(quote, true);
+				messageField.focus();
+			});
+		});
 	}
 
-	quoteButtons.forEach(function (button) {
-		button.addEventListener('click', function (e) {
+	var copyLinkButton = document.querySelector('.js-calendar-copy-link');
+	if (copyLinkButton) {
+		copyLinkButton.addEventListener('click', function (e) {
 			e.preventDefault();
-			var author = button.getAttribute('data-quote-author') || '';
-			var message = button.getAttribute('data-quote-message') || '';
-			var quote = '[quote="' + author.replace(/"/g, '\\"') + '"]' + message + '[/quote]\n';
-			insert_text(quote, true);
-			messageField.focus();
+			var url = copyLinkButton.getAttribute('data-copy-url');
+			if (url) {
+				var copyFunc = function() {
+					if (navigator.clipboard && window.isSecureContext) {
+						return navigator.clipboard.writeText(url);
+					} else {
+						var textArea = document.createElement("textarea");
+						textArea.value = url;
+						textArea.style.position = "fixed";
+						document.body.appendChild(textArea);
+						textArea.focus();
+						textArea.select();
+						try {
+							document.execCommand('copy');
+						} catch (err) {
+							console.error('Fallback copy failed', err);
+						}
+						document.body.removeChild(textArea);
+						return Promise.resolve();
+					}
+				};
+
+				copyFunc().then(function () {
+					var originalHTML = copyLinkButton.innerHTML;
+					copyLinkButton.innerHTML = '<i class="icon fa-check fa-fw" aria-hidden="true"></i> Copied!';
+					setTimeout(function () {
+						copyLinkButton.innerHTML = originalHTML;
+					}, 2000);
+				});
+			}
 		});
-	});
+	}
 });
 </script>
-<script src="{T_ASSETS_PATH}/javascript/editor.js"></script>
+<script src="{{ T_ASSETS_PATH }}/javascript/editor.js"></script>
 
-<!-- INCLUDE overall_footer.html -->
+{% INCLUDE 'overall_footer.html' %}

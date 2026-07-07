@@ -75,19 +75,7 @@ $lang = array_merge($lang, array(
     'ACP_FP_LANGUAGE' => 'Calendar Language',
     'ACP_FP_LANGUAGE_EXPLAIN' => 'Select the language for the date picker interface.',
 
-    // FullCalendar Settings
-    'ACP_EVENTBOARD_FC_SETTINGS' => 'FullCalendar Settings',
-    'ACP_FC_THEME' => 'Theme System',
-    'ACP_FC_LOCALE' => 'Locale',
-    'ACP_FC_LOCALE_EXPLAIN' => 'Select the language/locale for the main calendar view.',
-    'ACP_FC_TIME_FORMAT' => 'Time Format',
-    'ACP_FC_TIME_FORMAT_EXPLAIN' => 'Choose the time format for the calendar view.',
-    'ACP_FC_TIME_FORMAT_12' => '12h (AM/PM)',
-    'ACP_FC_TIME_FORMAT_24' => '24h',
-    'FC_THEME_STANDARD' => 'Standard',
-    'FC_THEME_BOOTSTRAP' => 'Bootstrap 4',
-    'FC_THEME_BOOTSTRAP5' => 'Bootstrap 5',
-    
+
     // Config Options
     'DEFAULT' => 'Default',
     'DEFAULT_LIGHT' => 'Default (Light)',

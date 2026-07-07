@@ -40,27 +40,7 @@
 
 	</fieldset>
 
-	<fieldset>
-		<legend>{{ lang('ACP_EVENTBOARD_FC_SETTINGS') }}</legend>
 
-		<dl>
-			<dt><label for="vinny_calendar_fc_locale">{{ lang('ACP_FC_LOCALE') }}:</label><br /><span>{{ lang('ACP_FC_LOCALE_EXPLAIN') }}</span></dt>
-			<dd>
-				<select name="vinny_calendar_fc_locale" id="vinny_calendar_fc_locale">
-					{% for locale in loops.fc_locales %}
-					<option value="{{ locale.VALUE }}" {% if locale.SELECTED %}selected="selected" {% endif %}>{{ locale.NAME }}</option>
-					{% endfor %}
-				</select>
-			</dd>
-		</dl>
-		<dl>
-			<dt><label for="vinny_calendar_fc_time_format">{{ lang('ACP_FC_TIME_FORMAT') }}:</label><br /><span>{{ lang('ACP_FC_TIME_FORMAT_EXPLAIN') }}</span></dt>
-			<dd>
-				<label><input type="radio" class="radio" name="vinny_calendar_fc_time_format" value="12" {% if VINNY_CALENDAR_FC_TIME_FORMAT=='12' %}checked="checked" {% endif %} /> {{ lang('ACP_FC_TIME_FORMAT_12') }}</label>
-				<label><input type="radio" class="radio" name="vinny_calendar_fc_time_format" value="24" {% if VINNY_CALENDAR_FC_TIME_FORMAT !='12' %}checked="checked" {% endif %} /> {{ lang('ACP_FC_TIME_FORMAT_24') }}</label>
-			</dd>
-		</dl>
-	</fieldset>
 
 	<fieldset>
 		<legend>{{ lang('ACP_EVENTBOARD_MAP_SETTINGS') }}</legend>

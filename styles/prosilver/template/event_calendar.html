@@ -1,26 +1,27 @@
-<!-- INCLUDE overall_header.html -->
+{% INCLUDE 'overall_header.html' %}
 
-<script src="{ROOT_PATH}ext/vinny/calendar/assets/fullcalendar/dist/index.global.min.js"></script>
-
-<!-- IF S_FC_LOCALE != 'en' -->
-<script src="{ROOT_PATH}ext/vinny/calendar/assets/fullcalendar/packages/core/locales/{S_FC_LOCALE}.global.min.js"></script>
-<!-- ENDIF -->
+{% INCLUDECSS '@vinny_calendar/assets/fullcalendar/dist/skeleton.css' %}
+{% INCLUDECSS '@vinny_calendar/assets/fullcalendar/dist/themes/breezy/theme.css' %}
+{% INCLUDECSS '@vinny_calendar/assets/fullcalendar/dist/themes/breezy/palettes/indigo.css' %}
+{% INCLUDEJS '@vinny_calendar/assets/fullcalendar/dist/fullcalendar.global.js' %}
+{% INCLUDEJS '@vinny_calendar/assets/fullcalendar/dist/themes/breezy/global.js' %}
+{% INCLUDEJS '@vinny_calendar/assets/fullcalendar/dist/locales-all/global.js' %}
 
 <div class="calendar-layout">
 	<div class="calendar-main">
 		<div class="inner">
 			<div class="action-bar bar-top">
 				<div class="topic-actions">
-						<!-- IF U_CREATE_EVENT -->
-						<a class="button button-primary" href="{U_CREATE_EVENT}">
-							<i class="icon fa-plus fa-fw" aria-hidden="true"></i><span>{L_EVENT_CREATE}</span>
+						{% if U_CREATE_EVENT %}
+						<a class="button button-primary" href="{{ U_CREATE_EVENT }}">
+							<span>{{ lang('EVENT_CREATE') }}</span> <i class="icon fa-plus fa-fw" aria-hidden="true"></i>
 						</a>
-						<!-- ENDIF -->
-						<!-- IF S_USER_LOGGED_IN and not S_IS_BOT -->
-						<a class="button button-secondary" href="{U_MY_EVENTS}">{L_MY_EVENTS}</a>
-						<a class="button button-secondary" href="{U_MY_RSVPS}">{L_MY_RSVPS}</a>
-						<!-- ENDIF -->
-						<a class="button button-secondary" href="{U_VIEW_ALL}">{L_COMING_UP}</a>
+						{% endif %}
+						{% if S_USER_LOGGED_IN and not S_IS_BOT %}
+						<a class="button button-secondary" href="{{ U_MY_EVENTS }}">{{ lang('MY_EVENTS') }}</a>
+						<a class="button button-secondary" href="{{ U_MY_RSVPS }}">{{ lang('MY_RSVPS') }}</a>
+						{% endif %}
+						<a class="button button-secondary" href="{{ U_VIEW_ALL }}">{{ lang('COMING_UP') }}</a>
 				</div>
 			</div>
 			<div class="calendar-wrapper">
@@ -28,17 +29,17 @@
 			</div>
 			<div class="action-bar bar-bottom">
 				<div class="topic-actions calendar-bottom-actions">
-					<!-- IF S_FEED_ENABLED -->
-					<a class="button button-icon-only" href="{U_FEED_EVENTS}" title="{L_RSS_FEED}">
-						<i class="icon fa-rss fa-fw" aria-hidden="true"></i>{L_RSS_FEED}
+					{% if S_FEED_ENABLED %}
+					<a class="button button-icon-only" href="{{ U_FEED_EVENTS }}" title="{{ lang('RSS_FEED') }}">
+						<i class="icon fa-rss fa-fw" aria-hidden="true"></i>{{ lang('RSS_FEED') }}
 					</a>
-					<!-- ENDIF -->
-					<a class="button button-icon-only" href="{U_ICAL}" title="{L_EXPORT_ICS}">
-						<i class="icon fa-download fa-fw" aria-hidden="true"></i>{L_EXPORT_ICS}
+					{% endif %}
+					<a class="button button-icon-only" href="{{ U_ICAL }}" title="{{ lang('EXPORT_ICS') }}">
+						<i class="icon fa-download fa-fw" aria-hidden="true"></i>{{ lang('EXPORT_ICS') }}
 					</a>
 				</div>
 			</div>
-	</div>
+		</div>
 	</div>
 </div>
 
@@ -47,39 +48,29 @@ document.addEventListener('DOMContentLoaded', function () {
 	var calendarEl = document.getElementById('calendar');
 	var calendar = new FullCalendar.Calendar(calendarEl, {
 		initialView: 'dayGridMonth',
-		locale: '{S_FC_LOCALE}',
-		themeSystem: 'standard',
+		locale: '{{ S_USER_LANG|e('js') }}',
 		navLinks: false,
-		noEventsText: '{LA_NO_EVENTS}',
-		validRange: {
-			start: new Date().toISOString().split('T')[0]
+		noEventsText: '{{ lang('NO_EVENTS')|e('js') }}',
+		eventTimeFormat: {
+			hour: '{% if S_FC_12HR %}numeric{% else %}2-digit{% endif %}',
+			minute: '2-digit',
+			meridiem: {% if S_FC_12HR %}'short'{% else %}false{% endif %},
+			hour12: {% if S_FC_12HR %}true{% else %}false{% endif %}
 		},
-		eventTimeFormat: <!-- IF S_FC_TIME_FORMAT eq '12' -->{
-			hour: 'numeric',
-			minute: '2-digit',
-			hour12: true
-		}<!-- ELSE -->{
-			hour: '2-digit',
-			minute: '2-digit',
-			hour12: false
-		}<!-- ENDIF -->,
-		slotLabelFormat: <!-- IF S_FC_TIME_FORMAT eq '12' -->{
-			hour: 'numeric',
+		slotHeaderFormat: {
+			hour: '{% if S_FC_12HR %}numeric{% else %}2-digit{% endif %}',
 			minute: '2-digit',
 			omitZeroMinute: false,
-			hour12: true
-		}<!-- ELSE -->{
-			hour: '2-digit',
-			minute: '2-digit',
-			hour12: false
-		}<!-- ENDIF -->,
-		headerToolbar: {
-			start: 'title',
-			left: 'prev,next today',
-			center: '',
-			right: 'dayGridMonth,listMonth'
+			meridiem: {% if S_FC_12HR %}'short'{% else %}false{% endif %},
+			hour12: {% if S_FC_12HR %}true{% else %}false{% endif %}
 		},
-		events: <!-- IF CALENDAR_EVENTS_JSON -->{CALENDAR_EVENTS_JSON}<!-- ELSE -->[]<!-- ENDIF -->,
+		headerToolbar: {
+			start: 'prev,today,next',
+			left: '',
+			center: 'title',
+			right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek,multiMonthYear'
+		},
+		events: {% if CALENDAR_EVENTS_JSON %}{{ CALENDAR_EVENTS_JSON|raw }}{% else %}[]{% endif %},
 		height: 'auto',
 		aspectRatio: 1.35,
 		eventContent: function (arg) {
@@ -111,4 +102,4 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 
-<!-- INCLUDE overall_footer.html -->
+{% INCLUDE 'overall_footer.html' %}

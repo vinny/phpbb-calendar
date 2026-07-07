@@ -1,7 +1,7 @@
-<!-- IF U_EVENT_CALENDAR -->
+{% if U_EVENT_CALENDAR %}
 <li data-last-responsive="true">
-	<a href="{U_EVENT_CALENDAR}" role="menuitem">
-		<i class="icon fa-calendar fa-fw" aria-hidden="true"></i><span>{L_EVENT_CALENDAR}</span>
+	<a href="{{ U_EVENT_CALENDAR }}" role="menuitem">
+		<i class="icon fa-calendar fa-fw" aria-hidden="true"></i><span>{{ lang('EVENT_CALENDAR') }}</span>
 	</a>
 </li>
-<!-- ENDIF -->
+{% endif %}

@@ -112,6 +112,18 @@ class main
 			];
 		}
 
+		$user_dateformat = !empty($this->user->data['user_dateformat']) ? $this->user->data['user_dateformat'] : ($this->config['default_dateformat'] ?? 'Y-m-d H:i');
+		// Remove escaped characters to avoid false positives (e.g., \h, \d, \e, \a)
+		$clean_format = preg_replace('/\\\\./', '', $user_dateformat);
+		$is_12hour = (
+			(strpos($clean_format, 'a') !== false ||
+			strpos($clean_format, 'A') !== false ||
+			strpos($clean_format, 'g') !== false ||
+			strpos($clean_format, 'h') !== false) &&
+			strpos($clean_format, 'H') === false &&
+			strpos($clean_format, 'G') === false
+		);
+
 		$this->template->assign_vars([
 			'U_CREATE_EVENT' => $this->auth->acl_get('u_eventboard_create') ? $this->helper->route('vinny_calendar_create') : '',
 			'U_MY_EVENTS' => $this->helper->route('vinny_calendar_my_events'),
@@ -122,8 +134,7 @@ class main
 			'S_FEED_ENABLED' => (int) ($this->config['vinny_calendar_enable_feed'] ?? 0),
 			'S_ALLOW_COMMENTS' => (int) ($this->config['vinny_calendar_allow_comments'] ?? 0),
 			'CALENDAR_EVENTS_JSON' => json_encode($events),
-			'S_FC_LOCALE' => $this->config['vinny_calendar_fc_locale'] ?? 'en',
-			'S_FC_TIME_FORMAT' => $this->config['vinny_calendar_fc_time_format'] ?? '24',
+			'S_FC_12HR' => $is_12hour,
 		]);
 
 		return $this->helper->render('event_calendar.html', $this->user->lang('EVENT_CALENDAR'));
