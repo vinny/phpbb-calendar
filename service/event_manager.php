@@ -51,6 +51,14 @@ class event_manager
         $this->db->sql_query($sql);
 
         $event_id = (int) $this->db->sql_nextid();
+
+        $sql = 'INSERT INTO ' . $this->table_prefix . 'eventboard_participants ' . $this->db->sql_build_array('INSERT', [
+            'event_id' => $event_id,
+            'user_id' => (int) $data['user_id'],
+            'joined_at' => time(),
+        ]);
+        $this->db->sql_query($sql);
+
         $map_image = $this->map_image->generate($event_id, $data['lat'], $data['lng']);
 
         if ($map_image !== '') {
