@@ -48,6 +48,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	var calendarEl = document.getElementById('calendar');
 	var calendar = new FullCalendar.Calendar(calendarEl, {
 		initialView: 'dayGridMonth',
+		eventDisplay: 'block',
 		locale: '{{ S_USER_LANG|e('js') }}',
 		navLinks: false,
 		noEventsText: '{{ lang('NO_EVENTS')|e('js') }}',
@@ -68,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function () {
 			start: 'prev,today,next',
 			left: '',
 			center: 'title',
-			right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek,multiMonthYear'
+			right: 'dayGridMonth,timeGridWeek,listWeek,multiMonthYear'
 		},
 		events: {% if CALENDAR_EVENTS_JSON %}{{ CALENDAR_EVENTS_JSON|raw }}{% else %}[]{% endif %},
 		height: 'auto',
@@ -77,18 +78,19 @@ document.addEventListener('DOMContentLoaded', function () {
 			var viewType = arg.view.type;
 			var iconClass = arg.event.extendedProps.icon || 'fa-calendar';
 			var title = arg.event.title;
-			var color = arg.event.backgroundColor;
+			var color = arg.event.extendedProps.cat_color || '#3788d8';
 			var url = arg.event.url;
 			var timeText = arg.timeText;
+			var escapedTitle = title.replace(/"/g, '&quot;');
 
 			if (viewType.startsWith('list')) {
 				return {
-					html: '<a href="' + url + '" class="calendar-event-link"><i class="icon ' + iconClass + ' fa-fw" aria-hidden="true" style="color:' + color + ';"></i> ' + title + '</a>'
+					html: '<a href="' + url + '" class="calendar-event-link" title="' + escapedTitle + '"><i class="icon ' + iconClass + ' fa-fw" aria-hidden="true" style="color:' + color + ' !important;"></i> ' + title + '</a>'
 				};
 			}
 
 			return {
-				html: '<span class="calendar-grid-event">' + (timeText ? '<strong>' + timeText + '</strong> ' : '') + '<i class="icon ' + iconClass + ' fa-fw" aria-hidden="true"></i> ' + title + '</span>'
+				html: '<span class="calendar-grid-event" title="' + escapedTitle + '">' + (timeText ? '<strong>' + timeText + '</strong> ' : '') + '<i class="icon ' + iconClass + ' fa-fw" aria-hidden="true" style="color:' + color + ' !important;"></i> ' + title + '</span>'
 			};
 		},
 		eventClick: function (info) {

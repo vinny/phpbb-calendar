@@ -101,14 +101,16 @@ class main
 		$events = [];
 		foreach ($this->event_query->get_public_calendar_events() as $row)
 		{
+			$color = '#' . ($row['cat_color'] ?: '3788d8');
 			$events[] = [
 				'title' => html_entity_decode($row['title']),
 				'start' => $this->format_fullcalendar_value((int) $row['start_at']),
 				'end' => $this->format_fullcalendar_value((int) $row['end_at']),
 				'url' => $this->calendar_link->route('vinny_calendar_view', $row, ['id' => (int) $row['event_id']]),
-				'backgroundColor' => '#' . ($row['cat_color'] ?: '3788d8'),
-				'borderColor' => '#' . ($row['cat_color'] ?: '3788d8'),
+				'backgroundColor' => $color,
+				'borderColor' => $color,
 				'icon' => $row['cat_icon'] ?: 'fa-calendar',
+				'cat_color' => $color,
 			];
 		}
 
