@@ -24,12 +24,18 @@
 					</dd>
 				</dl>
 				<dl>
-					<dt><label for="event_start">{{ lang('EVENT_START') }}{{ lang('COLON') }}</label></dt>
-					<dd><input type="text" name="event_start" id="event_start" value="{{ EVENT_START }}" class="inputbox medium flatpickr-input" required></dd>
-				</dl>
-				<dl>
-					<dt><label for="event_end">{{ lang('EVENT_END') }}{{ lang('COLON') }}</label></dt>
-					<dd><input type="text" name="event_end" id="event_end" value="{{ EVENT_END }}" class="inputbox medium flatpickr-input"></dd>
+					<dt><label for="event_start">{{ lang('EVENT_DATE_RANGE') }}{{ lang('COLON') }}</label></dt>
+					<dd class="calendar-datetime-range">
+						<div class="calendar-datetime-input-wrapper">
+							<i class="icon fa-calendar fa-fw calendar-input-icon" aria-hidden="true"></i>
+							<input type="text" name="event_start" id="event_start" value="{{ EVENT_START }}" class="inputbox flatpickr-input" required placeholder="{{ lang('EVENT_START') }}">
+						</div>
+						<span class="calendar-datetime-separator">{{ lang('FLATPICKR_RANGE_SEPARATOR')|trim }}</span>
+						<div class="calendar-datetime-input-wrapper">
+							<i class="icon fa-calendar fa-fw calendar-input-icon" aria-hidden="true"></i>
+							<input type="text" name="event_end" id="event_end" value="{{ EVENT_END }}" class="inputbox flatpickr-input" placeholder="{{ lang('EVENT_END') }}">
+						</div>
+					</dd>
 				</dl>
 				<dl>
 					<dt><label>{{ lang('EVENT_FORMAT') }}{{ lang('COLON') }}</label></dt>

@@ -25,6 +25,7 @@ $lang = array_merge($lang, array(
     'EVENT_DESCRIPTION' => 'Description',
     'EVENT_START' => 'Start Date',
     'EVENT_END' => 'End Date',
+    'EVENT_DATE_RANGE' => 'Event Dates',
     'EVENT_LOCATION' => 'Location',
     'EVENT_JOIN' => 'Join',
     'EVENT_LEAVE' => 'Leave Event',

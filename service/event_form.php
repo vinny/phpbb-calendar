@@ -171,32 +171,9 @@ class event_form
 			return false;
 		}
 
-		$date = \DateTimeImmutable::createFromFormat('!Y-m-d H:i', $value, $this->get_user_timezone());
-		$errors = \DateTimeImmutable::getLastErrors();
+		$timestamp = $this->user->get_timestamp_from_format('Y-m-d H:i', $value);
 
-		if (!$date || ($errors !== false && ($errors['warning_count'] || $errors['error_count'])))
-		{
-			return false;
-		}
-
-		return $date->getTimestamp();
-	}
-
-	protected function get_user_timezone()
-	{
-		if (isset($this->user->timezone) && $this->user->timezone instanceof \DateTimeZone)
-		{
-			return $this->user->timezone;
-		}
-
-		try
-		{
-			return new \DateTimeZone((string) ($this->config['board_timezone'] ?? date_default_timezone_get()));
-		}
-		catch (\Exception $e)
-		{
-			return new \DateTimeZone(date_default_timezone_get());
-		}
+		return ($timestamp !== false) ? (int) $timestamp : false;
 	}
 
 	protected function prepare_description(&$desc, &$uid, &$bitfield, &$options)

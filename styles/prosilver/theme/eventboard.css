@@ -430,3 +430,49 @@
 	position: relative;
 	z-index: 10;
 }
+
+.calendar-datetime-range {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	flex-wrap: wrap;
+}
+
+.calendar-datetime-input-wrapper {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	width: 220px;
+}
+
+.calendar-datetime-input-wrapper .calendar-input-icon {
+	position: absolute;
+	left: 8px;
+	color: #6c757d;
+	pointer-events: none;
+	z-index: 2;
+}
+
+.calendar-datetime-input-wrapper input {
+	padding-left: 28px !important;
+	width: 100%;
+}
+
+.calendar-datetime-separator {
+	color: #6c757d;
+	font-weight: 600;
+}
+
+@media (max-width: 500px) {
+	.calendar-datetime-range {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 8px;
+	}
+	.calendar-datetime-separator {
+		display: none;
+	}
+	.calendar-datetime-input-wrapper {
+		width: 100%;
+	}
+}

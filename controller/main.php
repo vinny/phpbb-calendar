@@ -934,24 +934,10 @@ class main
 
 		return $date->setTimezone($this->get_user_timezone())->format('Y-m-d\TH:i:s');
 	}
-
 	protected function get_user_timezone()
 	{
-		if (isset($this->user->timezone) && $this->user->timezone instanceof \DateTimeZone)
-		{
-			return $this->user->timezone;
-		}
-
-		try
-		{
-			return new \DateTimeZone((string) ($this->config['board_timezone'] ?? date_default_timezone_get()));
-		}
-		catch (\Exception $e)
-		{
-			return new \DateTimeZone(date_default_timezone_get());
-		}
+		return $this->user->create_timezone();
 	}
-
 	protected function build_page_number($total, $per_page, $start)
 	{
 		if (!$total)
