@@ -53,7 +53,7 @@ class map_image
         $width = (int) ($this->config['vinny_calendar_map_width'] ?? 1024);
         $height = (int) ($this->config['vinny_calendar_map_height'] ?? 768);
         $zoom = (int) ($this->config['vinny_calendar_map_zoom'] ?? 17);
-        $map_lang = $this->user->lang('MAP_LANG') ?: 'en';
+        $map_lang = $this->user->lang('CALENDAR_MAP_LANG') ?: 'en';
 
         $url = 'https://maps.geoapify.com/v1/staticmap'
             . '?style=osm-carto'

@@ -40,8 +40,8 @@
 				</dl>
 				<dl id="group-location"{% if S_FORMAT_ONLINE %} style="display: none;"{% endif %}>
 					<dt><label for="event_location">{{ lang('EVENT_LOCATION') }}{{ lang('COLON') }}</label></dt>
-					<dd style="position: relative;" data-calendar-geo-autocomplete data-input-id="event_location" data-lat-id="event_lat" data-lng-id="event_lng" data-endpoint="{{ U_GEO_PROXY }}" data-placeholder="{{ lang('EVENT_GEO_SEARCH_PLACEHOLDER') }}">
-						<input type="text" name="event_location" id="event_location" value="{{ EVENT_LOCATION }}" class="inputbox full" placeholder="{{ lang('EVENT_GEO_SEARCH_PLACEHOLDER') }}" autocomplete="off">
+					<dd style="position: relative;"{% if S_GEOAPIFY_ENABLED %} data-calendar-geo-autocomplete data-input-id="event_location" data-lat-id="event_lat" data-lng-id="event_lng" data-endpoint="{{ U_GEO_PROXY }}" data-placeholder="{{ lang('EVENT_GEO_SEARCH_PLACEHOLDER') }}"{% endif %}>
+						<input type="text" name="event_location" id="event_location" value="{{ EVENT_LOCATION }}" class="inputbox full" placeholder="{% if S_GEOAPIFY_ENABLED %}{{ lang('EVENT_GEO_SEARCH_PLACEHOLDER') }}{% else %}{{ lang('EVENT_LOCATION') }}{% endif %}" autocomplete="off">
 						<input type="hidden" name="event_lat" id="event_lat" value="{{ EVENT_LAT }}">
 						<input type="hidden" name="event_lng" id="event_lng" value="{{ EVENT_LNG }}">
 						{% if EVENT_MAP_IMAGE_SRC %}
@@ -97,7 +97,9 @@
 </form>
 
 {% INCLUDEJS '@vinny_calendar/assets/flatpickr/dist/flatpickr.min.js' %}
+{% if S_GEOAPIFY_ENABLED %}
 {% INCLUDEJS '@vinny_calendar/calendar_geo_autocomplete.js' %}
+{% endif %}
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 	flatpickr('input.flatpickr-input', {

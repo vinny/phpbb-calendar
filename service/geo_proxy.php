@@ -29,7 +29,7 @@ class geo_proxy
 		$text = trim((string) $text);
 		$text = mb_substr($text, 0, 120);
 		$api_key = (string) ($this->config['vinny_calendar_geoapify_key'] ?? '');
-		$map_lang = (string) ($this->user->lang('MAP_LANG') ?: 'en');
+		$map_lang = (string) ($this->user->lang('CALENDAR_MAP_LANG') ?: 'en');
 
 		if ($text === '' || mb_strlen($text) < 2 || $api_key === '')
 		{

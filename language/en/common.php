@@ -254,5 +254,5 @@ $lang = array_merge($lang, array(
     'FLATPICKR_MINUTE_ARIA_LABEL' => 'Minute',
 
 	// Full list: https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes
-	'MAP_LANG'			=> 'en',
+	'CALENDAR_MAP_LANG'			=> 'en',
 ));
