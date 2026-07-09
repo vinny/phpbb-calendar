@@ -23,21 +23,25 @@ class v100_permissions extends \phpbb\db\migration\migration
 			['permission.add', ['u_eventboard_view', true]],
 			['permission.add', ['u_eventboard_create', true]],
 			['permission.add', ['u_eventboard_delete', true]],
+			['permission.add', ['u_eventboard_comment', true]],
 
 			// ADMINISTRATORS
 			['permission.permission_set', ['ADMINISTRATORS', 'u_eventboard_view', 'group']],
 			['permission.permission_set', ['ADMINISTRATORS', 'u_eventboard_create', 'group']],
 			['permission.permission_set', ['ADMINISTRATORS', 'u_eventboard_delete', 'group']],
+			['permission.permission_set', ['ADMINISTRATORS', 'u_eventboard_comment', 'group']],
 
 			// GLOBAL_MODERATORS
 			['permission.permission_set', ['GLOBAL_MODERATORS', 'u_eventboard_view', 'group']],
 			['permission.permission_set', ['GLOBAL_MODERATORS', 'u_eventboard_create', 'group']],
 			['permission.permission_set', ['GLOBAL_MODERATORS', 'u_eventboard_delete', 'group']],
+			['permission.permission_set', ['GLOBAL_MODERATORS', 'u_eventboard_comment', 'group']],
 
 			// REGISTERED
 			['permission.permission_set', ['REGISTERED', 'u_eventboard_view', 'group']],
 			['permission.permission_set', ['REGISTERED', 'u_eventboard_create', 'group']],
 			['permission.permission_set', ['REGISTERED', 'u_eventboard_delete', 'group']],
+			['permission.permission_set', ['REGISTERED', 'u_eventboard_comment', 'group']],
 
 			// GUESTS
 			['permission.permission_set', ['GUESTS', 'u_eventboard_view', 'group']],

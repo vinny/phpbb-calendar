@@ -3,80 +3,105 @@
 <h2 class="topic-title">
 	{{ EVENT_TITLE }}
 </h2>
-<p class="author calendar-event-author">{{ lang('EVENT_ORGANIZED_BY') }} <strong>{{ ORGANIZER_FULL|raw }}</strong> &raquo; <time>{{ EVENT_CREATED_AT }}</time></p>
-
-<div class="action-bar bar-top">
-	<div class="topic-actions">
-		{% if not S_IS_OWNER %}
-			{% if S_IS_COMPLETED %}
-				<span class="button button-secondary">{{ lang('EVENT_ENDED') }}</span>
-			{% elseif S_HAS_JOINED %}
-				<form action="{{ U_LEAVE_EVENT }}" method="post" class="calendar-inline-form">
-					<button type="submit" name="submit_leave" class="button button-secondary">{{ lang('EVENT_LEAVE') }}</button>
-					{{ S_FORM_TOKEN }}
-				</form>
-			{% elseif not S_USER_LOGGED_IN %}
-				<a class="button" href="{{ U_LOGIN_LOGOUT }}">{{ lang('LOGIN_TO_PARTICIPATE') }}</a>
-			{% elseif S_CAN_JOIN %}
-				<form action="{{ U_JOIN_EVENT }}" method="post" class="calendar-inline-form">
-					<button type="submit" name="submit_join" class="button">{{ lang('CONFIRM_ATTENDANCE') }}</button>
-					{{ S_FORM_TOKEN }}
-				</form>
-			{% else %}
-				<span class="button button-secondary">{{ lang('EVENT_FULL') }}</span>
-			{% endif %}
-		{% endif %}
-	</div>
-
-	<ul class="post-buttons">
-		<li class="dropdown-container dropdown-button-control">
-			<a class="button button-icon-only dropdown-trigger" href="#" title="{{ lang('ADD_TO_CALENDAR') }}">
-				<i class="icon fa-calendar-plus-o fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('ADD_TO_CALENDAR') }}</span>
-			</a>
-			<div class="dropdown hidden">
-				<div class="pointer"><div class="pointer-inner"></div></div>
-				<ul class="dropdown-contents calendar-dropdown-contents">
-					<li><a href="{{ U_ADD_GOOGLE }}" target="_blank" rel="noopener"><i class="icon fa-google fa-fw" aria-hidden="true"></i> {{ lang('GOOGLE_CALENDAR') }}</a></li>
-					<li><a href="{{ U_ADD_OUTLOOK }}" target="_blank" rel="noopener"><i class="icon fa-envelope fa-fw" aria-hidden="true"></i> {{ lang('OUTLOOK_CALENDAR') }}</a></li>
-					<li><a href="{{ U_ADD_YAHOO }}" target="_blank" rel="noopener"><i class="icon fa-yahoo fa-fw" aria-hidden="true"></i> {{ lang('YAHOO_CALENDAR') }}</a></li>
-				</ul>
-			</div>
-		</li>
-		<li class="dropdown-container dropdown-button-control">
-			<a class="button button-icon-only dropdown-trigger" href="#" title="{{ lang('SHARE_EVENT') }}">
-				<i class="icon fa-share-alt fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('SHARE_EVENT') }}</span>
-			</a>
-			<div class="dropdown hidden">
-				<div class="pointer"><div class="pointer-inner"></div></div>
-				<ul class="dropdown-contents calendar-dropdown-contents">
-					<li><a href="{{ U_SHARE_WHATSAPP }}" target="_blank" rel="noopener"><i class="icon fa-whatsapp fa-fw" aria-hidden="true"></i> {{ lang('SHARE_WHATSAPP') }}</a></li>
-					<li><a href="{{ U_SHARE_FACEBOOK }}" target="_blank" rel="noopener"><i class="icon fa-facebook fa-fw" aria-hidden="true"></i> {{ lang('SHARE_FACEBOOK') }}</a></li>
-					<li><a href="{{ U_SHARE_TWITTER }}" target="_blank" rel="noopener"><i class="icon fa-twitter fa-fw" aria-hidden="true"></i> {{ lang('SHARE_TWITTER') }}</a></li>
-					<li><a href="{{ U_SHARE_TELEGRAM }}" target="_blank" rel="noopener"><i class="icon fa-telegram fa-fw" aria-hidden="true"></i> {{ lang('SHARE_TELEGRAM') }}</a></li>
-					<li><a href="#" class="js-calendar-copy-link" data-copy-url="{{ U_SHARE_COPY }}"><i class="icon fa-link fa-fw" aria-hidden="true"></i> {{ lang('COPY_LINK') }}</a></li>
-				</ul>
-			</div>
-		</li>
-		{% if U_EDIT %}
-		<li>
-			<a href="{{ U_EDIT }}" title="{{ lang('EDIT') }}" class="button button-icon-only">
-				<i class="icon fa-pencil fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('EDIT') }}</span>
-			</a>
-		</li>
-		{% endif %}
-		{% if U_DELETE %}
-		<li>
-			<a href="{{ U_DELETE }}" data-ajax="true" title="{{ lang('DELETE') }}" class="button button-icon-only">
-				<i class="icon fa-times fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('DELETE') }}</span>
-			</a>
-		</li>
-		{% endif %}
-	</ul>
-</div>
-
-<div class="post bg1 calendar-event-post">
+<div class="post bg1 calendar-event-post has-profile">
 	<div class="inner">
-		<div class="postbody" style="width: 100%;">
+
+	<dl class="postprofile" id="profile_event">
+		<dt class="{% if ORGANIZER_AVATAR %}has-profile-rank{% else %}has-profile-rank no-avatar{% endif %}">
+			<div class="avatar-container">
+				{% if ORGANIZER_AVATAR %}
+					<a href="{{ U_ORGANIZER_PROFILE }}" class="avatar">{{ ORGANIZER_AVATAR|raw }}</a>
+				{% endif %}
+			</div>
+			{{ ORGANIZER_FULL|raw }}
+		</dt>
+	</dl>
+
+	<div class="postbody">
+		<div id="post_content">
+			<ul class="post-buttons">
+				{% if S_USER_LOGGED_IN and not S_IS_OWNER %}
+					{% if S_IS_COMPLETED %}
+						<li>
+							<span class="button button-icon-only button-secondary" title="{{ lang('EVENT_ENDED') }}">
+								<i class="icon fa-calendar-times-o fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('EVENT_ENDED') }}</span>
+							</span>
+						</li>
+					{% elseif S_HAS_JOINED %}
+						<li>
+							<form action="{{ U_LEAVE_EVENT }}" method="post" class="calendar-inline-form">
+								<button type="submit" name="submit_leave" class="button button-icon-only" title="{{ lang('EVENT_LEAVE') }}">
+									<i class="icon fa-sign-out fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('EVENT_LEAVE') }}</span>
+								</button>
+								{{ S_FORM_TOKEN }}
+							</form>
+						</li>
+					{% elseif S_CAN_JOIN %}
+						<li>
+							<form action="{{ U_JOIN_EVENT }}" method="post" class="calendar-inline-form">
+								<button type="submit" name="submit_join" class="button button-icon-only" title="{{ lang('CONFIRM_ATTENDANCE') }}">
+									<i class="icon fa-calendar-check-o fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('CONFIRM_ATTENDANCE') }}</span>
+								</button>
+								{{ S_FORM_TOKEN }}
+							</form>
+						</li>
+					{% else %}
+						<li>
+							<span class="button button-icon-only button-secondary" title="{{ lang('EVENT_FULL') }}">
+								<i class="icon fa-ban fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('EVENT_FULL') }}</span>
+							</span>
+						</li>
+					{% endif %}
+				{% endif %}
+
+				<li class="dropdown-container dropdown-button-control">
+					<a class="button button-icon-only dropdown-trigger" href="#" title="{{ lang('ADD_TO_CALENDAR') }}">
+						<i class="icon fa-calendar-plus-o fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('ADD_TO_CALENDAR') }}</span>
+					</a>
+					<div class="dropdown hidden">
+						<div class="pointer"><div class="pointer-inner"></div></div>
+						<ul class="dropdown-contents calendar-dropdown-contents">
+							<li><a href="{{ U_ADD_GOOGLE }}" target="_blank" rel="noopener"><i class="icon fa-google fa-fw" aria-hidden="true"></i> {{ lang('GOOGLE_CALENDAR') }}</a></li>
+							<li><a href="{{ U_ADD_OUTLOOK }}" target="_blank" rel="noopener"><i class="icon fa-envelope fa-fw" aria-hidden="true"></i> {{ lang('OUTLOOK_CALENDAR') }}</a></li>
+							<li><a href="{{ U_ADD_YAHOO }}" target="_blank" rel="noopener"><i class="icon fa-yahoo fa-fw" aria-hidden="true"></i> {{ lang('YAHOO_CALENDAR') }}</a></li>
+						</ul>
+					</div>
+				</li>
+				<li class="dropdown-container dropdown-button-control">
+					<a class="button button-icon-only dropdown-trigger" href="#" title="{{ lang('SHARE_EVENT') }}">
+						<i class="icon fa-share-alt fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('SHARE_EVENT') }}</span>
+					</a>
+					<div class="dropdown hidden">
+						<div class="pointer"><div class="pointer-inner"></div></div>
+						<ul class="dropdown-contents calendar-dropdown-contents">
+							<li><a href="{{ U_SHARE_WHATSAPP }}" target="_blank" rel="noopener"><i class="icon fa-whatsapp fa-fw" aria-hidden="true"></i> {{ lang('SHARE_WHATSAPP') }}</a></li>
+							<li><a href="{{ U_SHARE_FACEBOOK }}" target="_blank" rel="noopener"><i class="icon fa-facebook fa-fw" aria-hidden="true"></i> {{ lang('SHARE_FACEBOOK') }}</a></li>
+							<li><a href="{{ U_SHARE_TWITTER }}" target="_blank" rel="noopener"><i class="icon fa-twitter fa-fw" aria-hidden="true"></i> {{ lang('SHARE_TWITTER') }}</a></li>
+							<li><a href="{{ U_SHARE_TELEGRAM }}" target="_blank" rel="noopener"><i class="icon fa-telegram fa-fw" aria-hidden="true"></i> {{ lang('SHARE_TELEGRAM') }}</a></li>
+							<li><a href="#" class="js-calendar-copy-link" data-copy-url="{{ U_SHARE_COPY }}"><i class="icon fa-link fa-fw" aria-hidden="true"></i> {{ lang('COPY_LINK') }}</a></li>
+						</ul>
+					</div>
+				</li>
+				{% if U_EDIT %}
+				<li>
+					<a href="{{ U_EDIT }}" title="{{ lang('EDIT_EVENT') }}" class="button button-icon-only">
+						<i class="icon fa-pencil fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('EDIT_EVENT') }}</span>
+					</a>
+				</li>
+				{% endif %}
+				{% if U_DELETE %}
+				<li>
+					<a href="{{ U_DELETE }}" data-ajax="true" title="{{ lang('DELETE') }}" class="button button-icon-only">
+						<i class="icon fa-times fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('DELETE') }}</span>
+					</a>
+				</li>
+				{% endif %}
+			</ul>
+
+			<p class="author">
+				<span class="responsive-hide">{{ lang('EVENT_ORGANIZED_BY') }} <strong>{{ ORGANIZER_FULL|raw }}</strong> &raquo; </span><time datetime="{{ EVENT_CREATED_AT }}">{{ EVENT_CREATED_AT }}</time>
+			</p>
+
 			<div class="content calendar-event-content">
 				<div class="calendar-event-summary calendar-event-summary-rows">
 					<div class="calendar-event-summary-row"><strong>{{ lang('CATEGORY') }}{{ lang('COLON') }}</strong><span>{{ CAT_NAME }}</span></div>
@@ -94,6 +119,7 @@
 				</div>
 				{% endif %}
 			</div>
+		</div>
 		</div>
 	</div>
 </div>
@@ -129,8 +155,6 @@
 		</form>
 		{% elseif S_COMMENTS_CLOSED %}
 		<p>{{ lang('EVENT_COMMENTS_CLOSED') }}</p>
-		{% else %}
-		<p><a href="{{ U_LOGIN_LOGOUT }}">{{ lang('LOGIN_TO_COMMENT') }}</a></p>
 		{% endif %}
 	</div>
 </div>

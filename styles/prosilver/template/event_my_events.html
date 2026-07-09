@@ -3,16 +3,22 @@
 <h2 class="forum-title">{{ lang('MY_EVENTS') }}</h2>
 
 <div class="action-bar bar-top">
-	<div class="topic-actions">
-		{% if U_CREATE_EVENT %}
-		<a class="button" href="{{ U_CREATE_EVENT }}">
-			<span>{{ lang('EVENT_CREATE') }}</span> <i class="icon fa-plus fa-fw" aria-hidden="true"></i>
-		</a>
-		{% endif %}
-	</div>
+	{% if U_CREATE_EVENT %}
+	<a class="button button-primary" href="{{ U_CREATE_EVENT }}" title="{{ lang('EVENT_CREATE') }}">
+		<span>{{ lang('EVENT_CREATE') }}</span> <i class="icon fa-plus fa-fw" aria-hidden="true"></i>
+	</a>
+	{% endif %}
+
+	<a class="button{% if not S_SHOW_COMPLETED %} active{% endif %}" href="{{ U_MY_EVENTS_ACTIVE }}">{{ lang('ACTIVE_EVENTS') }}</a>
+	<a class="button{% if S_SHOW_COMPLETED %} active{% endif %}" href="{{ U_MY_EVENTS_COMPLETED }}">{{ lang('COMPLETED') }}</a>
+
 	<div class="pagination">
-		<a class="button{% if not S_SHOW_COMPLETED %} active{% endif %}" href="{{ U_MY_EVENTS_ACTIVE }}">{{ lang('ACTIVE_EVENTS') }}</a>
-		<a class="button{% if S_SHOW_COMPLETED %} active{% endif %}" href="{{ U_MY_EVENTS_COMPLETED }}">{{ lang('COMPLETED') }}</a>
+		{% if TOTAL_EVENTS %}{{ TOTAL_EVENTS }}{% endif %}
+		{% if loops.pagination|length %}
+			{% INCLUDE 'pagination.html' %}
+		{% else %}
+			&bull; {{ PAGE_NUMBER }}
+		{% endif %}
 	</div>
 </div>
 
@@ -26,7 +32,7 @@
 					<dd class="lastpost">{{ lang('STATUS') }}</dd>
 					{% else %}
 					<dd class="posts">{{ lang('SIGNUPS') }}</dd>
-					<dd class="lastpost calendar-actions-head">{{ lang('ACTIONS') }}</dd>
+					<dd class="lastpost calendar-actions">{{ lang('ACTIONS') }}</dd>
 					{% endif %}
 				</dl>
 			</li>
@@ -40,33 +46,28 @@
 							<i class="icon {{ event.CAT_ICON }} fa-fw icon-md" aria-hidden="true"></i>
 						</span>
 						<div class="list-inner">
+							{% if not S_SHOW_COMPLETED %}
+							<div class="responsive-show calendar-mobile-actions-right" style="display: none;">
+								{% if event.U_EDIT %}
+								<a href="{{ event.U_EDIT }}" title="{{ lang('EDIT_EVENT') }}" class="button button-icon-only">
+									<i class="icon fa-pencil fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('EDIT_EVENT') }}</span>
+								</a>
+								{% endif %}
+								{% if event.U_DELETE %}
+								<a href="{{ event.U_DELETE }}" data-ajax="true" title="{{ lang('DELETE') }}" class="button button-icon-only">
+									<i class="icon fa-times fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('DELETE') }}</span>
+								</a>
+								{% endif %}
+							</div>
+							{% endif %}
+
 							<a href="{{ event.U_VIEW }}" class="topictitle">{{ event.TITLE }}</a>
 							<div class="calendar-topic-meta topic-poster">
 								<time>{{ event.DATE_FULL }}</time>
-							</div>
-							<div class="responsive-show calendar-mobile-meta" style="display: none;">
 								{% if event.MAX_PARTICIPANTS == 0 %}
-								<span>{{ lang('SIGNUPS') }}{{ lang('COLON') }} {{ lang('UNLIMITED_SPOTS') }}</span>
+								<span class="responsive-show" style="display: none;">{{ lang('UNLIMITED_SPOTS') }}</span>
 								{% else %}
-								<span>{{ lang('SIGNUPS') }}{{ lang('COLON') }} {{ event.NUM_PARTICIPANTS }} / {{ event.MAX_PARTICIPANTS }}</span>
-								{% endif %}
-								{% if not S_SHOW_COMPLETED %}
-								<ul class="post-buttons calendar-mobile-actions">
-									{% if event.U_EDIT %}
-									<li>
-										<a href="{{ event.U_EDIT }}" title="{{ lang('EDIT') }}" class="button button-icon-only">
-											<i class="icon fa-pencil fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('EDIT') }}</span>
-										</a>
-									</li>
-									{% endif %}
-									{% if event.U_DELETE %}
-									<li>
-										<a href="{{ event.U_DELETE }}" data-ajax="true" title="{{ lang('DELETE') }}" class="button button-icon-only">
-											<i class="icon fa-times fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('DELETE') }}</span>
-										</a>
-									</li>
-									{% endif %}
-								</ul>
+								<span class="responsive-show" style="display: none;">{{ lang('SIGNUPS') }}{{ lang('COLON') }} {{ event.NUM_PARTICIPANTS }} / {{ event.MAX_PARTICIPANTS }}</span>
 								{% endif %}
 							</div>
 						</div>
@@ -81,12 +82,12 @@
 						{{ event.NUM_PARTICIPANTS }} / {{ event.MAX_PARTICIPANTS }}
 						{% endif %}
 					</dd>
-					<dd class="lastpost calendar-actions-cell responsive-hide">
+					<dd class="lastpost calendar-actions responsive-hide">
 						<ul class="post-buttons">
 							{% if event.U_EDIT %}
 							<li>
-								<a href="{{ event.U_EDIT }}" title="{{ lang('EDIT') }}" class="button button-icon-only">
-									<i class="icon fa-pencil fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('EDIT') }}</span>
+								<a href="{{ event.U_EDIT }}" title="{{ lang('EDIT_EVENT') }}" class="button button-icon-only">
+									<i class="icon fa-pencil fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('EDIT_EVENT') }}</span>
 								</a>
 							</li>
 							{% endif %}
@@ -115,14 +116,10 @@
 
 <div class="action-bar bar-bottom">
 	<div class="pagination">
-		{% if TOTAL_EVENTS > 0 %}
-			{{ TOTAL_EVENTS }} {{ lang('EVENTS_LOWER') }}
-		{% endif %}
+		{% if TOTAL_EVENTS %}{{ TOTAL_EVENTS }}{% endif %}
 		{% if loops.pagination|length %}
 			{% INCLUDE 'pagination.html' %}
-		{% elseif PAGINATION %}
-			&bull; {{ PAGINATION }}
-		{% elseif TOTAL_EVENTS > 0 %}
+		{% else %}
 			&bull; {{ PAGE_NUMBER }}
 		{% endif %}
 	</div>

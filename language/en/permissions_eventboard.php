@@ -21,4 +21,5 @@ $lang = array_merge($lang, array(
     'ACL_U_EVENTBOARD_VIEW'     => 'Can view the events page',
     'ACL_U_EVENTBOARD_CREATE'   => 'Can add events',
     'ACL_U_EVENTBOARD_DELETE'   => 'Can delete own events',
+    'ACL_U_EVENTBOARD_COMMENT'  => 'Can use the comments system (read, post, delete own comments)',
 ));

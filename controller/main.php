@@ -161,7 +161,7 @@ class main
 		$this->pagination->generate_template_pagination($base_url, 'pagination', 'start', $total, $per_page, $start);
 
 		$this->template->assign_vars([
-			'TOTAL_EVENTS' => $total,
+			'TOTAL_EVENTS' => $total ? $this->user->lang('EVENTS_COUNT', $total) : '',
 			'PAGE_NUMBER' => $this->build_page_number($total, $per_page, $start),
 		]);
 
@@ -210,7 +210,7 @@ class main
 			'CAT_DESC' => $category['cat_desc'],
 			'CAT_COLOR' => ltrim($category['cat_color'], '#'),
 			'CAT_ICON' => $category['cat_icon'],
-			'TOTAL_EVENTS' => $total,
+			'TOTAL_EVENTS' => $total ? $this->user->lang('EVENTS_COUNT', $total) : '',
 			'PAGE_NUMBER' => $this->build_page_number($total, $per_page, $start),
 		]);
 
@@ -253,7 +253,7 @@ class main
 			'ACTIVE_EVENTS_COUNT' => (int) $stats['active'],
 			'TOTAL_SIGNUPS_COUNT' => (int) $stats['signups'],
 			'TOTAL_CREATED_EVENTS_COUNT' => (int) $stats['created'],
-			'TOTAL_EVENTS' => $total,
+			'TOTAL_EVENTS' => $total ? $this->user->lang('EVENTS_COUNT', $total) : '',
 			'PAGE_NUMBER' => $this->build_page_number($total, $per_page, $start),
 			'S_SHOW_COMPLETED' => $completed,
 			'U_CREATE_EVENT' => $this->helper->route('vinny_calendar_create'),
@@ -296,7 +296,7 @@ class main
 
 		$this->template->assign_vars([
 			'TOTAL_RSVPS_COUNT' => $this->event_query->count_user_rsvps($user_id),
-			'TOTAL_EVENTS' => $total,
+			'TOTAL_EVENTS' => $total ? $this->user->lang('EVENTS_COUNT', $total) : '',
 			'PAGE_NUMBER' => $this->build_page_number($total, $per_page, $start),
 		]);
 
@@ -374,7 +374,7 @@ class main
 			'EVENT_MAP_IMAGE' => $event['map_image'],
 			'TOTAL_PARTICIPANTS' => $total_participants,
 			'MAX_PARTICIPANTS' => (int) $event['max_participants'],
-			'S_ALLOW_COMMENTS' => (int) ($this->config['vinny_calendar_allow_comments'] ?? 0),
+			'S_ALLOW_COMMENTS' => (int) ($this->config['vinny_calendar_allow_comments'] ?? 0) && $this->auth->acl_get('u_eventboard_comment'),
 			'S_USER_LOGGED_IN' => ($user_id !== ANONYMOUS),
 			'S_IS_OWNER' => $is_owner,
 			'S_HAS_JOINED' => $has_joined,
@@ -383,6 +383,13 @@ class main
 			'S_CAN_COMMENT' => ($user_id !== ANONYMOUS && !$is_completed),
 			'S_COMMENTS_CLOSED' => $is_completed,
 			'ORGANIZER_FULL' => get_username_string('full', $event['user_id'], $event['username'], $event['user_colour']),
+			'ORGANIZER_AVATAR' => phpbb_get_user_avatar([
+				'user_avatar' => $event['user_avatar'],
+				'user_avatar_type' => $event['user_avatar_type'],
+				'user_avatar_width' => $event['user_avatar_width'],
+				'user_avatar_height' => $event['user_avatar_height'],
+			]),
+			'U_ORGANIZER_PROFILE' => get_username_string('profile', $event['user_id'], $event['username'], $event['user_colour']),
 			'EVENT_CREATED_AT' => $this->user->format_date($event['created_at']),
 			'U_JOIN_EVENT' => $this->calendar_link->route('vinny_calendar_join', $event, ['id' => (int) $event['event_id']]),
 			'U_LEAVE_EVENT' => $this->calendar_link->route('vinny_calendar_leave', $event, ['id' => (int) $event['event_id']]),
@@ -714,6 +721,11 @@ class main
 		$this->guard_enabled();
 		$this->guard_view_permission();
 		$this->guard_login();
+
+		if (!$this->auth->acl_get('u_eventboard_comment'))
+		{
+			trigger_error('NOT_AUTHORISED');
+		}
 		$this->ensure_posting_helpers();
 		$this->check_action_form();
 
@@ -750,6 +762,11 @@ class main
 		$this->guard_enabled();
 		$this->guard_view_permission();
 		$this->guard_login();
+
+		if (!$this->auth->acl_get('u_eventboard_comment'))
+		{
+			trigger_error('NOT_AUTHORISED');
+		}
 
 		$comment = $this->comment_service->get_comment_with_event((int) $id);
 		if (!$comment)
@@ -812,15 +829,16 @@ class main
 	{
 		return [
 			'TITLE' => $row['title'],
-			'DESCRIPTION' => $this->event_display->plain_text($row['description'], $row['desc_uid'], $row['desc_bitfield'], $row['desc_options']),
 			'LOCATION' => $row['location'] ?: $this->user->lang('EVENT_ONLINE'),
 			'CAT_NAME' => $row['cat_name'],
 			'CAT_COLOR' => ltrim($row['cat_color'], '#'),
 			'CAT_ICON' => $row['cat_icon'],
 			'NUM_PARTICIPANTS' => (int) ($row['num_participants'] ?? 0),
+			'MAX_PARTICIPANTS' => (int) ($row['max_participants'] ?? 0),
 			'DATE_FULL' => $this->user->format_date($row['start_at']),
 			'S_IS_ONLINE' => $this->event_display->is_online($row),
 			'U_VIEW' => $this->calendar_link->route('vinny_calendar_view', $row, ['id' => (int) $row['event_id']]),
+			'U_CATEGORY' => $this->helper->route('vinny_calendar_category', ['id' => (int) $row['cat_id']]),
 		];
 	}
 
@@ -946,7 +964,7 @@ class main
 		$current = (int) floor($start / $per_page) + 1;
 		$pages = (int) ceil($total / $per_page);
 
-		return $current . ' / ' . $pages;
+		return $this->user->lang('PAGE_OF', $current, $pages);
 	}
 
 	protected function assign_breadcrumbs($label, $url, $translate = true)

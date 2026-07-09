@@ -153,13 +153,17 @@ $lang = array_merge($lang, array(
     'CATEGORY_HAS_EVENTS' => 'This category cannot be deleted because it has events assigned to it.',
 
     // Upcoming Events Page
-    'ATTENDING' => 'attending',
+    'ATTENDING' => 'Attending',
     'DETAILS' => 'Details',
     'NO_UPCOMING_EVENTS' => 'No upcoming events found.',
     'PAGINATION_SHOWING' => 'Showing',
     'PAGINATION_TO' => 'to',
     'PAGINATION_OF' => 'of',
     'EVENTS_LOWER' => 'events',
+    'EVENTS_COUNT' => array(
+        1 => '%d event',
+        2 => '%d events',
+    ),
     'MY_EVENTS' => 'My Events',
     'MY_RSVPS' => 'My RSVPs',
     'ACTIVE_EVENTS' => 'Active Events',

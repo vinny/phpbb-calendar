@@ -82,6 +82,7 @@ class main_listener implements EventSubscriberInterface
         $permissions['u_eventboard_view'] = ['lang' => 'ACL_U_EVENTBOARD_VIEW', 'cat' => 'eventboard'];
         $permissions['u_eventboard_create'] = ['lang' => 'ACL_U_EVENTBOARD_CREATE', 'cat' => 'eventboard'];
         $permissions['u_eventboard_delete'] = ['lang' => 'ACL_U_EVENTBOARD_DELETE', 'cat' => 'eventboard'];
+        $permissions['u_eventboard_comment'] = ['lang' => 'ACL_U_EVENTBOARD_COMMENT', 'cat' => 'eventboard'];
         $event['permissions'] = $permissions;
     }
 }

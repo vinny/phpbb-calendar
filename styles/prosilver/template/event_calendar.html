@@ -7,39 +7,37 @@
 {% INCLUDEJS '@vinny_calendar/assets/fullcalendar/dist/themes/breezy/global.js' %}
 {% INCLUDEJS '@vinny_calendar/assets/fullcalendar/dist/locales-all/global.js' %}
 
-<div class="calendar-layout">
-	<div class="calendar-main">
-		<div class="inner">
-			<div class="action-bar bar-top">
-				<div class="topic-actions">
-						{% if U_CREATE_EVENT %}
-						<a class="button button-primary" href="{{ U_CREATE_EVENT }}">
-							<span>{{ lang('EVENT_CREATE') }}</span> <i class="icon fa-plus fa-fw" aria-hidden="true"></i>
-						</a>
-						{% endif %}
-						{% if S_USER_LOGGED_IN and not S_IS_BOT %}
-						<a class="button button-secondary" href="{{ U_MY_EVENTS }}">{{ lang('MY_EVENTS') }}</a>
-						<a class="button button-secondary" href="{{ U_MY_RSVPS }}">{{ lang('MY_RSVPS') }}</a>
-						{% endif %}
-						<a class="button button-secondary" href="{{ U_VIEW_ALL }}">{{ lang('COMING_UP') }}</a>
-				</div>
-			</div>
-			<div class="calendar-wrapper">
-				<div id="calendar"></div>
-			</div>
-			<div class="action-bar bar-bottom">
-				<div class="topic-actions calendar-bottom-actions">
-					{% if S_FEED_ENABLED %}
-					<a class="button button-icon-only" href="{{ U_FEED_EVENTS }}" title="{{ lang('RSS_FEED') }}">
-						<i class="icon fa-rss fa-fw" aria-hidden="true"></i>{{ lang('RSS_FEED') }}
-					</a>
-					{% endif %}
-					<a class="button button-icon-only" href="{{ U_ICAL }}" title="{{ lang('EXPORT_ICS') }}">
-						<i class="icon fa-download fa-fw" aria-hidden="true"></i>{{ lang('EXPORT_ICS') }}
-					</a>
-				</div>
-			</div>
-		</div>
+<br>
+
+<div class="action-bar bar-top">
+	<div class="topic-actions">
+			{% if U_CREATE_EVENT %}
+			<a class="button button-primary" href="{{ U_CREATE_EVENT }}">
+				<span>{{ lang('EVENT_CREATE') }}</span> <i class="icon fa-plus fa-fw" aria-hidden="true"></i>
+			</a>
+			{% endif %}
+			{% if S_USER_LOGGED_IN and not S_IS_BOT %}
+			<a class="button button-secondary" href="{{ U_MY_EVENTS }}">{{ lang('MY_EVENTS') }}</a>
+			<a class="button button-secondary" href="{{ U_MY_RSVPS }}">{{ lang('MY_RSVPS') }}</a>
+			{% endif %}
+			<a class="button button-secondary" href="{{ U_VIEW_ALL }}">{{ lang('COMING_UP') }}</a>
+	</div>
+</div>
+
+<div id="calendar"></div>
+
+<hr>
+
+<div class="action-bar bar-bottom">
+	<div class="rightside">
+		{% if S_FEED_ENABLED %}
+		<a class="button button-icon-only" href="{{ U_FEED_EVENTS }}" title="{{ lang('RSS_FEED') }}">
+			<i class="icon fa-rss fa-fw" aria-hidden="true"></i>{{ lang('RSS_FEED') }}
+		</a>
+		{% endif %}
+		<a class="button button-icon-only" href="{{ U_ICAL }}" title="{{ lang('EXPORT_ICS') }}">
+			<i class="icon fa-download fa-fw" aria-hidden="true"></i>{{ lang('EXPORT_ICS') }}
+		</a>
 	</div>
 </div>
 
