@@ -178,9 +178,9 @@ class event_form
 
 	protected function prepare_description(&$desc, &$uid, &$bitfield, &$options)
 	{
-		$allow_bbcode = $this->user->optionget('bbcode') ? true : false;
-		$allow_urls = $this->user->optionget('viewimg') ? true : false;
-		$allow_smilies = $this->user->optionget('smilies') ? true : false;
+		$allow_bbcode = ($this->config['allow_bbcode'] && $this->user->optionget('bbcode')) ? true : false;
+		$allow_urls = ($this->config['allow_post_links']) ? true : false;
+		$allow_smilies = ($this->config['allow_smilies'] && $this->user->optionget('smilies')) ? true : false;
 
 		if ($this->request->is_set_post('disable_bbcode'))
 		{

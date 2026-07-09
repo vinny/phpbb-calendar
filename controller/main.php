@@ -66,7 +66,8 @@ class main
 		\vinny\calendar\service\rsvp $rsvp,
 		$root_path,
 		$php_ext
-	) {
+	)
+	{
 		$this->config = $config;
 		$this->template = $template;
 		$this->user = $user;
@@ -397,12 +398,12 @@ class main
 			'U_DELETE' => $this->can_manage_event($event) ? $this->calendar_link->route('vinny_calendar_delete', $event, ['id' => (int) $event['event_id']]) : '',
 			'U_ACTION_COMMENT' => $this->calendar_link->route('vinny_calendar_comment', $event, ['id' => (int) $event['event_id']]),
 			'U_LOGIN_LOGOUT' => append_sid($this->root_path . 'ucp.' . $this->php_ext, 'mode=login'),
-			'S_SMILIES_ALLOWED' => true,
-			'S_BBCODE_ALLOWED' => true,
-			'S_BBCODE_QUOTE' => true,
-			'S_BBCODE_IMG' => true,
-			'S_LINKS_ALLOWED' => true,
-			'S_BBCODE_FLASH' => false,
+			'S_SMILIES_ALLOWED' => (bool) ($this->config['allow_smilies'] && $this->user->optionget('smilies')),
+			'S_BBCODE_ALLOWED' => (bool) ($this->config['allow_bbcode'] && $this->user->optionget('bbcode')),
+			'S_BBCODE_QUOTE' => (bool) ($this->config['allow_bbcode'] && $this->user->optionget('bbcode')),
+			'S_BBCODE_IMG' => (bool) ($this->config['allow_bbcode'] && $this->user->optionget('bbcode')),
+			'S_LINKS_ALLOWED' => (bool) $this->config['allow_post_links'],
+			'S_BBCODE_FLASH' => (bool) ($this->config['allow_bbcode'] && $this->user->optionget('bbcode') && $this->config['allow_post_flash']),
 			'U_ADD_GOOGLE' => $calendar_targets['google'],
 			'U_ADD_OUTLOOK' => $calendar_targets['outlook'],
 			'U_ADD_YAHOO' => $calendar_targets['yahoo'],
@@ -749,7 +750,12 @@ class main
 
 		$uid = $bitfield = '';
 		$options = 7;
-		generate_text_for_storage($message, $uid, $bitfield, $options, true, true, true);
+
+		$allow_bbcode = ($this->config['allow_bbcode'] && $this->user->optionget('bbcode')) ? true : false;
+		$allow_smilies = ($this->config['allow_smilies'] && $this->user->optionget('smilies')) ? true : false;
+		$allow_urls = ($this->config['allow_post_links']) ? true : false;
+
+		generate_text_for_storage($message, $uid, $bitfield, $options, $allow_bbcode, $allow_urls, $allow_smilies);
 
 		$comment_id = $this->comment_service->create_comment((int) $id, (int) $this->user->data['user_id'], $message, $uid, $bitfield, $options);
 		$this->comment_service->notify_new_comment($event, $comment_id, (int) $this->user->data['user_id']);
@@ -796,12 +802,12 @@ class main
 			'S_FP_DATE_FORMAT' => $this->get_flatpickr_alt_format(),
 			'U_GEO_PROXY' => $this->helper->route('vinny_calendar_geo_proxy'),
 			'S_GEOAPIFY_ENABLED' => ((string) ($this->config['vinny_calendar_geoapify_key'] ?? '') !== ''),
-			'S_BBCODE_ALLOWED' => true,
-			'S_SMILIES_ALLOWED' => true,
-			'S_LINKS_ALLOWED' => true,
-			'S_BBCODE_IMG' => true,
-			'S_BBCODE_URL' => true,
-			'S_BBCODE_FLASH' => false,
+			'S_BBCODE_ALLOWED' => (bool) ($this->config['allow_bbcode'] && $this->user->optionget('bbcode')),
+			'S_SMILIES_ALLOWED' => (bool) ($this->config['allow_smilies'] && $this->user->optionget('smilies')),
+			'S_LINKS_ALLOWED' => (bool) $this->config['allow_post_links'],
+			'S_BBCODE_IMG' => (bool) ($this->config['allow_bbcode'] && $this->user->optionget('bbcode')),
+			'S_BBCODE_URL' => (bool) $this->config['allow_post_links'],
+			'S_BBCODE_FLASH' => (bool) ($this->config['allow_bbcode'] && $this->user->optionget('bbcode') && $this->config['allow_post_flash']),
 			'S_LIMIT_ENABLED' => false,
 			'S_PUBLIC_ENABLED' => true,
 			'S_FORMAT_IN_PERSON' => true,
