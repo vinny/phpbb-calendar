@@ -103,7 +103,7 @@
 			</p>
 
 			<div class="content calendar-event-content">
-				<div class="calendar-event-summary calendar-event-summary-rows">
+				<div class="calendar-event-summary-rows">
 					<div class="calendar-event-summary-row"><strong>{{ lang('CATEGORY') }}{{ lang('COLON') }}</strong><span>{{ CAT_NAME }}</span></div>
 					<div class="calendar-event-summary-row"><strong>{{ lang('EVENT_START') }}{{ lang('COLON') }}</strong><span>{{ EVENT_START_DATE }}</span></div>
 					<div class="calendar-event-summary-row"><strong>{{ lang('EVENT_END') }}{{ lang('COLON') }}</strong><span>{{ EVENT_END_DATE }}</span></div>
@@ -246,7 +246,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 				copyFunc().then(function () {
 					var originalHTML = copyLinkButton.innerHTML;
-					copyLinkButton.innerHTML = '<i class="icon fa-check fa-fw" aria-hidden="true"></i> Copied!';
+					copyLinkButton.innerHTML = '<i class="icon fa-check fa-fw" aria-hidden="true"></i> {{ lang('COPIED')|escape('js') }}';
 					setTimeout(function () {
 						copyLinkButton.innerHTML = originalHTML;
 					}, 2000);

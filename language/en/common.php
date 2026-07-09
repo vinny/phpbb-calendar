@@ -77,6 +77,7 @@ $lang = array_merge($lang, array(
     'PRO_TIP' => 'Pro Tip',
     'PRO_TIP_TEXT' => 'Adding an image to your description increases engagement by 40%.',
     'MAP_PREVIEW' => 'Map Preview',
+    'COPIED' => 'Copied!',
 
     // Missing Keys added in MVP Phase
     'EVENT_DELETED' => 'Event deleted successfully.',
