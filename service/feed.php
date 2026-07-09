@@ -12,7 +12,15 @@ namespace vinny\calendar\service;
 
 class feed
 {
-    public function build_rss(array $events, $feed_title, $feed_link, $feed_desc, $board_url, callable $event_url_builder)
+    /** @var \phpbb\user */
+    protected $user;
+
+    public function __construct(\phpbb\user $user)
+    {
+        $this->user = $user;
+    }
+
+    public function build_atom(array $events, $feed_title, $feed_link, $feed_desc, $board_url, callable $event_url_builder)
     {
         $parts = parse_url($board_url);
         $root_url = $parts['scheme'] . '://' . $parts['host'];
@@ -20,36 +28,66 @@ class feed
             $root_url .= ':' . $parts['port'];
         }
 
-        $items = '';
+        $xml_lang = htmlspecialchars($this->user->lang_name, ENT_XML1, 'UTF-8');
+
+        $entries = '';
+        $dt = $this->user->create_datetime();
+
         foreach ($events as $row) {
             $view_url = htmlspecialchars($root_url . $event_url_builder($row), ENT_XML1, 'UTF-8');
             $title = htmlspecialchars(html_entity_decode($row['title']), ENT_XML1, 'UTF-8');
-            $desc = htmlspecialchars(strip_tags(html_entity_decode($row['description'])), ENT_XML1, 'UTF-8');
+
+            // Format HTML content
+            $desc_html = generate_text_for_display($row['description'], $row['desc_uid'], $row['desc_bitfield'], $row['desc_options']);
+
+            $start_date_str = $this->user->format_date($row['start_at']);
+            $end_date_str = $this->user->format_date($row['end_at']);
+            $location_str = !empty($row['location']) ? htmlspecialchars($row['location'], ENT_QUOTES, 'UTF-8') : '';
+
+            $meta_html = '<p><strong>' . $this->user->lang('EVENT_START') . ':</strong> ' . $start_date_str . '<br />';
+            $meta_html .= '<strong>' . $this->user->lang('EVENT_END') . ':</strong> ' . $end_date_str . '<br />';
+            if (!empty($location_str)) {
+                $meta_html .= '<strong>' . $this->user->lang('EVENT_LOCATION') . ':</strong> ' . $location_str . '<br />';
+            }
+            $meta_html .= '</p><hr />';
+
+            $full_content = $meta_html . $desc_html;
+
             $category = htmlspecialchars($row['cat_name'] ?: 'Event', ENT_XML1, 'UTF-8');
             $author = htmlspecialchars($row['username'], ENT_XML1, 'UTF-8');
 
-            $items .= "<item>
-                <title>$title</title>
-                <link>$view_url</link>
-                <guid>$view_url</guid>
-                <pubDate>" . date('r', $row['start_at']) . "</pubDate>
-                <description>$desc</description>
-                <category>$category</category>
-                <dc:creator>$author</dc:creator>
-            </item>";
+            // Format dates (using created_at to avoid future dates)
+            $published_time = !empty($row['created_at']) ? (int) $row['created_at'] : time();
+            $dt->setTimestamp($published_time);
+            $published_str = $dt->format(\DateTime::ATOM);
+
+            $entries .= '        <entry>
+            <author><name><![CDATA[' . $author . ']]></name></author>
+            <updated>' . $published_str . '</updated>
+            <published>' . $published_str . '</published>
+            <id>' . $view_url . '</id>
+            <link href="' . $view_url . '" />
+            <title type="html"><![CDATA[' . $title . ']]></title>
+            <category term="' . $category . '" label="' . $category . '" />
+            <content type="html" xml:base="' . $view_url . '"><![CDATA[' . $full_content . ']]></content>
+        </entry>
+';
         }
 
+        $feed_updated = $this->user->create_datetime()->setTimestamp(time())->format(\DateTime::ATOM);
+
         return '<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
-    <channel>
-        <title>' . htmlspecialchars($feed_title, ENT_XML1, 'UTF-8') . '</title>
-        <link>' . htmlspecialchars($feed_link, ENT_XML1, 'UTF-8') . '</link>
-        <description>' . htmlspecialchars($feed_desc, ENT_XML1, 'UTF-8') . '</description>
-        <lastBuildDate>' . date('r') . '</lastBuildDate>
-        ' . $items . '
-    </channel>
-</rss>';
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="' . $xml_lang . '">
+    <link rel="self" type="application/atom+xml" href="' . htmlspecialchars($feed_link, ENT_XML1, 'UTF-8') . '" />
+    <title>' . htmlspecialchars($feed_title, ENT_XML1, 'UTF-8') . '</title>
+    <subtitle>' . htmlspecialchars($feed_desc, ENT_XML1, 'UTF-8') . '</subtitle>
+    <link href="' . htmlspecialchars($feed_link, ENT_XML1, 'UTF-8') . '" />
+    <updated>' . $feed_updated . '</updated>
+    <id>' . htmlspecialchars($feed_link, ENT_XML1, 'UTF-8') . '</id>
+' . $entries . '</feed>';
     }
+
+
 
     public function build_ical(array $events, $calendar_name, $timezone, $host, callable $event_url_builder)
     {

@@ -49,10 +49,6 @@ class event_access
 
     public function ensure_private_token(array $event)
     {
-        if ($this->is_public($event)) {
-            return '';
-        }
-
         $token = $this->normalize_token($event['access_token'] ?? '');
         return $token ?: $this->generate_private_token();
     }

@@ -24,44 +24,84 @@ class event_query
         $this->table_prefix = $table_prefix;
     }
 
-    public function get_public_calendar_events()
+    public function get_public_calendar_events($user_id = 0)
     {
+        $user_id = (int) $user_id;
+        $join_part = '';
+        $where = 'e.visibility = 0';
+
+        if ($user_id > 1) {
+            $join_part = ' LEFT JOIN ' . $this->table_prefix . 'eventboard_participants p ON (e.event_id = p.event_id AND p.user_id = ' . $user_id . ')';
+            $where = '(e.visibility = 0 OR e.user_id = ' . $user_id . ' OR p.user_id IS NOT NULL)';
+        }
+
         $sql = 'SELECT e.event_id, e.title, e.start_at, e.end_at, e.visibility, e.access_token, c.cat_color, c.cat_icon
             FROM ' . $this->table_prefix . 'eventboard_events e
             LEFT JOIN ' . $this->table_prefix . 'eventboard_categories c ON (e.cat_id = c.cat_id)
-            WHERE e.visibility = 0';
+            ' . $join_part . '
+            WHERE ' . $where;
 
         return $this->fetch_all($sql);
     }
 
-    public function get_upcoming_public_events($limit, $start = 0)
+    public function get_upcoming_public_events($limit, $start = 0, $user_id = 0)
     {
+        $user_id = (int) $user_id;
+        $join_part = '';
+        $where = 'e.visibility = 0';
+
+        if ($user_id > 1) {
+            $join_part = ' LEFT JOIN ' . $this->table_prefix . 'eventboard_participants p ON (e.event_id = p.event_id AND p.user_id = ' . $user_id . ')';
+            $where = '(e.visibility = 0 OR e.user_id = ' . $user_id . ' OR p.user_id IS NOT NULL)';
+        }
+
         $sql = 'SELECT e.*, c.cat_name, c.cat_color, c.cat_icon,
             (SELECT COUNT(p.id) FROM ' . $this->table_prefix . 'eventboard_participants p WHERE p.event_id = e.event_id) as num_participants
             FROM ' . $this->table_prefix . 'eventboard_events e
             LEFT JOIN ' . $this->table_prefix . 'eventboard_categories c ON (e.cat_id = c.cat_id)
-            WHERE e.visibility = 0
+            ' . $join_part . '
+            WHERE ' . $where . '
                 AND e.start_at >= ' . time() . '
             ORDER BY e.start_at ASC';
 
         return $this->fetch_all($sql, $limit, $start);
     }
 
-    public function count_upcoming_public_events()
+    public function count_upcoming_public_events($user_id = 0)
     {
-        return $this->fetch_count(
-            'SELECT COUNT(event_id) as total
-            FROM ' . $this->table_prefix . 'eventboard_events
-            WHERE visibility = 0
-                AND start_at >= ' . time()
-        );
+        $user_id = (int) $user_id;
+        $join_part = '';
+        $where = 'e.visibility = 0';
+
+        if ($user_id > 1) {
+            $join_part = ' LEFT JOIN ' . $this->table_prefix . 'eventboard_participants p ON (e.event_id = p.event_id AND p.user_id = ' . $user_id . ')';
+            $where = '(e.visibility = 0 OR e.user_id = ' . $user_id . ' OR p.user_id IS NOT NULL)';
+        }
+
+        $sql = 'SELECT COUNT(e.event_id) as total
+            FROM ' . $this->table_prefix . 'eventboard_events e
+            ' . $join_part . '
+            WHERE ' . $where . '
+                AND e.start_at >= ' . time();
+
+        return $this->fetch_count($sql);
     }
 
-    public function get_category_filters($active_only = true, $limit = null)
+    public function get_category_filters($active_only = true, $limit = null, $user_id = 0)
     {
+        $user_id = (int) $user_id;
         $join_condition = 'c.cat_id = e.cat_id';
+        
         if ($active_only) {
-            $join_condition .= ' AND e.visibility = 0 AND e.start_at >= ' . time();
+            $join_condition .= ' AND e.start_at >= ' . time();
+            if ($user_id > 1) {
+                $join_condition .= ' AND (e.visibility = 0 OR e.user_id = ' . $user_id . ' OR EXISTS(
+                    SELECT 1 FROM ' . $this->table_prefix . 'eventboard_participants p
+                    WHERE p.event_id = e.event_id AND p.user_id = ' . $user_id . '
+                ))';
+            } else {
+                $join_condition .= ' AND e.visibility = 0';
+            }
         }
 
         $sql = 'SELECT c.cat_id, c.cat_name, c.cat_color, c.cat_icon, COUNT(e.event_id) as event_count
@@ -152,25 +192,45 @@ class event_query
         return $this->fetch_row($sql);
     }
 
-    public function count_public_category_events($category_id)
+    public function count_public_category_events($category_id, $user_id = 0)
     {
-        return $this->fetch_count(
-            'SELECT COUNT(event_id) as total
-            FROM ' . $this->table_prefix . 'eventboard_events
-            WHERE cat_id = ' . (int) $category_id . '
-                AND visibility = 0
-                AND start_at >= ' . time()
-        );
+        $user_id = (int) $user_id;
+        $join_part = '';
+        $where = 'e.visibility = 0';
+
+        if ($user_id > 1) {
+            $join_part = ' LEFT JOIN ' . $this->table_prefix . 'eventboard_participants p ON (e.event_id = p.event_id AND p.user_id = ' . $user_id . ')';
+            $where = '(e.visibility = 0 OR e.user_id = ' . $user_id . ' OR p.user_id IS NOT NULL)';
+        }
+
+        $sql = 'SELECT COUNT(e.event_id) as total
+            FROM ' . $this->table_prefix . 'eventboard_events e
+            ' . $join_part . '
+            WHERE e.cat_id = ' . (int) $category_id . '
+                AND ' . $where . '
+                AND e.start_at >= ' . time();
+
+        return $this->fetch_count($sql);
     }
 
-    public function get_public_category_events($category_id, $limit, $start = 0)
+    public function get_public_category_events($category_id, $limit, $start = 0, $user_id = 0)
     {
+        $user_id = (int) $user_id;
+        $join_part = '';
+        $where = 'e.visibility = 0';
+
+        if ($user_id > 1) {
+            $join_part = ' LEFT JOIN ' . $this->table_prefix . 'eventboard_participants p ON (e.event_id = p.event_id AND p.user_id = ' . $user_id . ')';
+            $where = '(e.visibility = 0 OR e.user_id = ' . $user_id . ' OR p.user_id IS NOT NULL)';
+        }
+
         $sql = 'SELECT e.*, c.cat_name, c.cat_color, c.cat_icon,
                 (SELECT COUNT(p.id) FROM ' . $this->table_prefix . 'eventboard_participants p WHERE p.event_id = e.event_id) as num_participants
             FROM ' . $this->table_prefix . 'eventboard_events e
             LEFT JOIN ' . $this->table_prefix . 'eventboard_categories c ON (e.cat_id = c.cat_id)
+            ' . $join_part . '
             WHERE e.cat_id = ' . (int) $category_id . '
-                AND e.visibility = 0
+                AND ' . $where . '
                 AND e.start_at >= ' . time() . '
             ORDER BY e.start_at ASC';
 

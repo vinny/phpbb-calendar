@@ -26,6 +26,12 @@ class main_listener implements EventSubscriberInterface
     /** @var \phpbb\config\config */
     protected $config;
 
+    /** @var \phpbb\auth\auth */
+    protected $auth;
+
+    /** @var \vinny\calendar\service\calendar_link */
+    protected $calendar_link;
+
     /**
      * Constructor
      *
@@ -33,13 +39,17 @@ class main_listener implements EventSubscriberInterface
      * @param \phpbb\controller\helper $helper
      * @param \phpbb\template\template $template
      * @param \phpbb\config\config $config
+     * @param \phpbb\auth\auth $auth
+     * @param \vinny\calendar\service\calendar_link $calendar_link
      */
-    public function __construct(\phpbb\user $user, \phpbb\controller\helper $helper, \phpbb\template\template $template, \phpbb\config\config $config)
+    public function __construct(\phpbb\user $user, \phpbb\controller\helper $helper, \phpbb\template\template $template, \phpbb\config\config $config, \phpbb\auth\auth $auth, \vinny\calendar\service\calendar_link $calendar_link)
     {
         $this->user = $user;
         $this->helper = $helper;
         $this->template = $template;
         $this->config = $config;
+        $this->auth = $auth;
+        $this->calendar_link = $calendar_link;
     }
 
     static public function getSubscribedEvents()
@@ -67,8 +77,16 @@ class main_listener implements EventSubscriberInterface
             return;
         }
 
+        $feed_enabled = !empty($this->config['vinny_calendar_enable_feed']) && $this->auth->acl_get('u_eventboard_view');
+        $feed_url = '';
+        if ($feed_enabled) {
+            $feed_url = $this->calendar_link->absolute_url(generate_board_url(), $this->helper->route('vinny_calendar_feed'));
+        }
+
         $this->template->assign_vars([
             'U_EVENT_CALENDAR' => $this->helper->route('vinny_calendar_controller'),
+            'S_CALENDAR_FEED_ENABLED' => $feed_enabled,
+            'U_CALENDAR_FEED' => $feed_url,
         ]);
     }
 

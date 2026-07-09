@@ -29,6 +29,8 @@ services:
 
     vinny.calendar.service.feed:
         class: vinny\calendar\service\feed
+        arguments:
+            - '@user'
 
     vinny.calendar.service.calendar_link:
         class: vinny\calendar\service\calendar_link
@@ -174,5 +176,7 @@ services:
             - '@controller.helper'
             - '@template'
             - '@config'
+            - '@auth'
+            - '@vinny.calendar.service.calendar_link'
         tags:
             - { name: event.listener }

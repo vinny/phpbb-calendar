@@ -56,7 +56,11 @@ class calendar_link
 	public function absolute_route($board_url, $route, array $event, array $params = [])
 	{
 		$route_url = $this->route($route, $event, $params);
+		return $this->absolute_url($board_url, $route_url);
+	}
 
+	public function absolute_url($board_url, $route_url)
+	{
 		if (preg_match('#^https?://#i', $route_url)) {
 			return $route_url;
 		}

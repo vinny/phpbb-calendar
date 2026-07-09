@@ -100,7 +100,7 @@ class main
 		$this->assign_breadcrumbs('EVENT_CALENDAR', $this->helper->route('vinny_calendar_controller'));
 
 		$events = [];
-		foreach ($this->event_query->get_public_calendar_events() as $row)
+		foreach ($this->event_query->get_public_calendar_events((int) $this->user->data['user_id']) as $row)
 		{
 			$color = '#' . ($row['cat_color'] ?: '3788d8');
 			$events[] = [
@@ -140,14 +140,14 @@ class main
 
 		$start = $this->request->variable('start', 0);
 		$per_page = 10;
-		$total = $this->event_query->count_upcoming_public_events();
+		$total = $this->event_query->count_upcoming_public_events((int) $this->user->data['user_id']);
 
-		foreach ($this->event_query->get_upcoming_public_events($per_page, $start) as $row)
+		foreach ($this->event_query->get_upcoming_public_events($per_page, $start, (int) $this->user->data['user_id']) as $row)
 		{
 			$this->template->assign_block_vars('events', $this->build_list_event_vars($row));
 		}
 
-		foreach ($this->event_query->get_category_filters(true) as $category)
+		foreach ($this->event_query->get_category_filters(true, null, (int) $this->user->data['user_id']) as $category)
 		{
 			$this->template->assign_block_vars('categories', [
 				'NAME' => $category['cat_name'],
@@ -184,14 +184,14 @@ class main
 
 		$start = $this->request->variable('start', 0);
 		$per_page = 10;
-		$total = $this->event_query->count_public_category_events((int) $id);
+		$total = $this->event_query->count_public_category_events((int) $id, (int) $this->user->data['user_id']);
 
-		foreach ($this->event_query->get_public_category_events((int) $id, $per_page, $start) as $row)
+		foreach ($this->event_query->get_public_category_events((int) $id, $per_page, $start, (int) $this->user->data['user_id']) as $row)
 		{
 			$this->template->assign_block_vars('events', $this->build_list_event_vars($row));
 		}
 
-		foreach ($this->event_query->get_category_filters(true) as $item)
+		foreach ($this->event_query->get_category_filters(true, null, (int) $this->user->data['user_id']) as $item)
 		{
 			$this->template->assign_block_vars('categories', [
 				'NAME' => $item['cat_name'],
@@ -315,9 +315,9 @@ class main
 		{
 			trigger_error('EVENT_NOT_FOUND');
 		}
-		$this->assign_breadcrumbs($event['title'], $this->calendar_link->route('vinny_calendar_view', $event, ['id' => (int) $event['event_id']]), false);
-
 		$this->assert_event_visible($event);
+
+		$this->assign_breadcrumbs($event['title'], $this->calendar_link->route('vinny_calendar_view', $event, ['id' => (int) $event['event_id']]), false);
 
 		$user_id = (int) $this->user->data['user_id'];
 		$is_owner = ((int) $event['user_id'] === $user_id);
@@ -422,12 +422,12 @@ class main
 		$this->guard_enabled();
 		$this->guard_view_permission();
 		$this->guard_login();
-		$this->assign_breadcrumbs('EVENT_CREATE', $this->helper->route('vinny_calendar_create'));
-
 		if (!$this->auth->acl_get('u_eventboard_create'))
 		{
 			trigger_error('NOT_AUTHORISED');
 		}
+
+		$this->assign_breadcrumbs('EVENT_CREATE', $this->helper->route('vinny_calendar_create'));
 
 		$categories = $this->event_query->get_category_list();
 		if (empty($categories))
@@ -479,12 +479,12 @@ class main
 		{
 			trigger_error('EVENT_NOT_FOUND');
 		}
-		$this->assign_breadcrumbs('EDIT_EVENT', $this->calendar_link->route('vinny_calendar_edit', $event, ['id' => (int) $event['event_id']]));
-
 		if (!$this->can_manage_event($event))
 		{
 			trigger_error('NOT_AUTHORISED');
 		}
+
+		$this->assign_breadcrumbs('EDIT_EVENT', $this->calendar_link->route('vinny_calendar_edit', $event, ['id' => (int) $event['event_id']]));
 
 		$form_key = 'vinny_calendar_event';
 		add_form_key($form_key);
@@ -629,10 +629,10 @@ class main
 		$this->ensure_content_helpers();
 
 		$board_url = generate_board_url();
-		$feed = $this->feed_service->build_rss(
+		$feed = $this->feed_service->build_atom(
 			$this->event_query->get_public_feed_events(30),
 			$this->config['sitename'] . ' - ' . $this->user->lang('EVENT_CALENDAR'),
-			$this->helper->route('vinny_calendar_feed'),
+			$this->calendar_link->absolute_url($board_url, $this->helper->route('vinny_calendar_feed')),
 			$this->user->lang('EVENT_CALENDAR'),
 			$board_url,
 			function ($event)
@@ -641,7 +641,7 @@ class main
 			}
 		);
 
-		return new Response($feed, 200, ['Content-Type' => 'application/rss+xml; charset=UTF-8']);
+		return new Response($feed, 200, ['Content-Type' => 'application/atom+xml; charset=UTF-8']);
 	}
 
 	public function ical()
