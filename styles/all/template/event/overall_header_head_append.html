@@ -1,0 +1,16 @@
+{% if S_IN_CALENDAR %}
+{% INCLUDECSS '@vinny_calendar/eventboard.css' %}
+
+{% if CALENDAR_OG_TITLE %}
+<meta property="og:title" content="{{ CALENDAR_OG_TITLE }}" />
+{% endif %}
+{% if CALENDAR_OG_DESCRIPTION %}
+<meta property="og:description" content="{{ CALENDAR_OG_DESCRIPTION }}" />
+{% endif %}
+{% if CALENDAR_OG_IMAGE %}
+<meta property="og:image" content="{{ CALENDAR_OG_IMAGE }}" />
+{% endif %}
+{% if CALENDAR_OG_URL %}
+<meta property="og:url" content="{{ CALENDAR_OG_URL }}" />
+{% endif %}
+{% endif %}

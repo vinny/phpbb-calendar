@@ -115,6 +115,8 @@ class main
 			];
 		}
 
+		$canonical_url = $this->calendar_link->absolute_url(generate_board_url(), $this->helper->route('vinny_calendar_controller'));
+
 		$this->template->assign_vars([
 			'U_CREATE_EVENT' => $this->auth->acl_get('u_eventboard_create') ? $this->helper->route('vinny_calendar_create') : '',
 			'U_MY_EVENTS' => $this->helper->route('vinny_calendar_my_events'),
@@ -125,6 +127,10 @@ class main
 			'S_FEED_ENABLED' => (int) ($this->config['vinny_calendar_enable_feed'] ?? 0),
 			'CALENDAR_EVENTS_JSON' => json_encode($events),
 			'S_FC_12HR' => $this->is_user_12hour(),
+			'U_CANONICAL' => $canonical_url,
+			'CALENDAR_OG_TITLE' => $this->user->lang('PUBLIC_CALENDAR') ?: $this->user->lang('EVENT_CALENDAR'),
+			'CALENDAR_OG_DESCRIPTION' => $this->user->lang('PUBLIC_CALENDAR_EXPLAIN'),
+			'CALENDAR_OG_URL' => $canonical_url,
 		]);
 
 		return $this->helper->render('event_calendar.html', $this->user->lang('EVENT_CALENDAR'));
@@ -149,9 +155,15 @@ class main
 		$base_url = $this->helper->route('vinny_calendar_upcoming');
 		$this->pagination->generate_template_pagination($base_url, 'pagination', 'start', $total, $per_page, $start);
 
+		$canonical_url = $this->calendar_link->absolute_url(generate_board_url(), $this->helper->route('vinny_calendar_upcoming'));
+
 		$this->template->assign_vars([
 			'TOTAL_EVENTS' => $total ? $this->user->lang('EVENTS_COUNT', $total) : '',
 			'PAGE_NUMBER' => $this->build_page_number($total, $per_page, $start),
+			'U_CANONICAL' => $canonical_url,
+			'CALENDAR_OG_TITLE' => $this->user->lang('COMING_UP'),
+			'CALENDAR_OG_DESCRIPTION' => $this->user->lang('COMING_UP'),
+			'CALENDAR_OG_URL' => $canonical_url,
 		]);
 
 		return $this->helper->render('event_upcoming.html', $this->user->lang('COMING_UP'));
@@ -182,11 +194,17 @@ class main
 		$base_url = $this->helper->route('vinny_calendar_category', ['id' => (int) $id]);
 		$this->pagination->generate_template_pagination($base_url, 'pagination', 'start', $total, $per_page, $start);
 
+		$canonical_url = $this->calendar_link->absolute_url(generate_board_url(), $this->helper->route('vinny_calendar_category', ['id' => (int) $id]));
+
 		$this->template->assign_vars([
 			'CAT_NAME' => $category['cat_name'],
 			'CAT_DESC' => $category['cat_desc'],
 			'TOTAL_EVENTS' => $total ? $this->user->lang('EVENTS_COUNT', $total) : '',
 			'PAGE_NUMBER' => $this->build_page_number($total, $per_page, $start),
+			'U_CANONICAL' => $canonical_url,
+			'CALENDAR_OG_TITLE' => $category['cat_name'],
+			'CALENDAR_OG_DESCRIPTION' => $this->truncate_desc($category['cat_desc'] ?: $category['cat_name']),
+			'CALENDAR_OG_URL' => $canonical_url,
 		]);
 
 		return $this->helper->render('event_category_view.html', $category['cat_name']);
@@ -342,6 +360,11 @@ class main
 			'MAX_PARTICIPANTS' => (int) $event['max_participants'],
 			'S_ALLOW_COMMENTS' => (int) ($this->config['vinny_calendar_allow_comments'] ?? 0) && $this->auth->acl_get('u_eventboard_comment'),
 			'S_USER_LOGGED_IN' => ($user_id !== ANONYMOUS),
+			'U_CANONICAL' => $event_url,
+			'CALENDAR_OG_TITLE' => $event['title'],
+			'CALENDAR_OG_DESCRIPTION' => $this->truncate_desc($event_plain_description),
+			'CALENDAR_OG_URL' => $event_url,
+			'CALENDAR_OG_IMAGE' => $event['map_image'] ? generate_board_url() . '/images/vinny_calendar_img/' . $event['map_image'] : '',
 			'S_IS_OWNER' => $is_owner,
 			'S_HAS_JOINED' => $has_joined,
 			'S_CAN_JOIN' => $can_join,
@@ -833,6 +856,10 @@ class main
 		{
 			trigger_error('EVENTBOARD_DISABLED');
 		}
+
+		$this->template->assign_vars([
+			'S_IN_CALENDAR' => true,
+		]);
 	}
 
 	protected function guard_view_permission()
@@ -935,6 +962,17 @@ class main
 		$pages = (int) ceil($total / $per_page);
 
 		return $this->user->lang('PAGE_OF', $current, $pages);
+	}
+
+	protected function truncate_desc($string, $max_length = 150)
+	{
+		$string = trim(strip_tags(html_entity_decode($string, ENT_QUOTES, 'UTF-8')));
+		$ellipsis = $this->user->lang('ELLIPSIS') ?: '...';
+		if (mb_strlen($string, 'UTF-8') > $max_length)
+		{
+			return mb_substr($string, 0, $max_length - mb_strlen($ellipsis, 'UTF-8'), 'UTF-8') . $ellipsis;
+		}
+		return $string;
 	}
 
 	protected function assign_breadcrumbs($label, $url, $translate = true)
