@@ -18,14 +18,18 @@ class event_manager
     /** @var \vinny\calendar\service\map_image */
     protected $map_image;
 
+    /** @var \phpbb\notification\manager */
+    protected $notification_manager;
+
     /** @var string */
     protected $table_prefix;
 
-    public function __construct(\phpbb\db\driver\driver_interface $db, \vinny\calendar\service\map_image $map_image, $table_prefix)
+    public function __construct(\phpbb\db\driver\driver_interface $db, \vinny\calendar\service\map_image $map_image, $table_prefix, \phpbb\notification\manager $notification_manager)
     {
         $this->db = $db;
         $this->map_image = $map_image;
         $this->table_prefix = $table_prefix;
+        $this->notification_manager = $notification_manager;
     }
 
     public function create_event(array $data)
@@ -124,5 +128,9 @@ class event_manager
         $sql = 'DELETE FROM ' . $this->table_prefix . 'eventboard_comments
             WHERE event_id = ' . (int) $event_id;
         $this->db->sql_query($sql);
+
+        $this->notification_manager->delete_notifications('vinny.calendar.notification.type.participant_added', (int) $event_id);
+        $this->notification_manager->delete_notifications('vinny.calendar.notification.type.event_reminder', (int) $event_id);
+        $this->notification_manager->delete_notifications('vinny.calendar.notification.type.new_comment', false, (int) $event_id);
     }
 }

@@ -78,6 +78,7 @@ services:
             - '@dbal.conn'
             - '@vinny.calendar.service.map_image'
             - '%core.table_prefix%'
+            - '@notification_manager'
 
     vinny.calendar.service.rsvp:
         class: vinny\calendar\service\rsvp
