@@ -58,7 +58,6 @@ $lang = array_merge($lang, array(
 	'EVENT_ENDED' => 'This event has ended.',
 	'COMMENTS' => 'Comments',
 	'POST_COMMENT' => 'Post a Comment',
-	'NO_COMMENTS' => 'No comments yet. Be the first to start the discussion!',
 	'SUBMIT' => 'Submit',
 	'MESSAGE_EMPTY' => 'You cannot submit an empty comment.',
 	'DELETE_COMMENT' => 'Delete comment',

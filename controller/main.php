@@ -308,7 +308,7 @@ class main
 		$is_owner = ((int) $event['user_id'] === $user_id);
 		$has_joined = $this->rsvp->has_joined((int) $event['event_id'], $user_id);
 		$total_participants = $this->rsvp->count_participants((int) $event['event_id']);
-		$is_completed = ((int) $event['start_at'] <= time());
+		$is_completed = ((int) $event['end_at'] <= time());
 		$can_join = !$is_owner && !$has_joined && !$is_completed && $user_id !== ANONYMOUS;
 		if ((int) $event['max_participants'] > 0 && $total_participants >= (int) $event['max_participants'])
 		{
@@ -360,6 +360,12 @@ class main
 			'MAX_PARTICIPANTS' => (int) $event['max_participants'],
 			'S_ALLOW_COMMENTS' => (int) ($this->config['vinny_calendar_allow_comments'] ?? 0) && $this->auth->acl_get('u_eventboard_comment'),
 			'S_USER_LOGGED_IN' => ($user_id !== ANONYMOUS),
+			'S_SMILIES_ALLOWED' => (bool) ($this->config['allow_smilies'] && $this->user->optionget('smilies')),
+			'S_BBCODE_ALLOWED' => (bool) ($this->config['allow_bbcode'] && $this->user->optionget('bbcode')),
+			'S_BBCODE_QUOTE' => (bool) ($this->config['allow_bbcode'] && $this->user->optionget('bbcode')),
+			'S_BBCODE_IMG' => (bool) ($this->config['allow_bbcode'] && $this->user->optionget('bbcode')),
+			'S_LINKS_ALLOWED' => (bool) $this->config['allow_post_links'],
+			'S_BBCODE_FLASH' => (bool) ($this->config['allow_bbcode'] && $this->user->optionget('bbcode') && $this->config['allow_post_flash']),
 			'U_CANONICAL' => $event_url,
 			'CALENDAR_OG_TITLE' => $event['title'],
 			'CALENDAR_OG_DESCRIPTION' => $this->truncate_desc($event_plain_description),
@@ -370,7 +376,6 @@ class main
 			'S_CAN_JOIN' => $can_join,
 			'S_IS_COMPLETED' => $is_completed,
 			'S_CAN_COMMENT' => ($user_id !== ANONYMOUS && !$is_completed),
-			'S_COMMENTS_CLOSED' => $is_completed,
 			'ORGANIZER_FULL' => get_username_string('full', $event['user_id'], $event['username'], $event['user_colour']),
 			'ORGANIZER_AVATAR' => phpbb_get_user_avatar([
 				'user_avatar' => $event['user_avatar'],
@@ -724,7 +729,7 @@ class main
 		}
 
 		$this->assert_event_visible($event);
-		if ((int) $event['start_at'] <= time())
+		if ((int) $event['end_at'] <= time())
 		{
 			trigger_error('EVENT_COMMENTS_CLOSED');
 		}

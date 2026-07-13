@@ -165,7 +165,7 @@ class event_query
 
     public function get_event_for_comment($event_id)
     {
-        $sql = 'SELECT event_id, user_id, title, start_at, visibility, access_token
+        $sql = 'SELECT event_id, user_id, title, start_at, end_at, visibility, access_token
             FROM ' . $this->table_prefix . 'eventboard_events
             WHERE event_id = ' . (int) $event_id;
 
