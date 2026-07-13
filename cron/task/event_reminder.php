@@ -22,6 +22,7 @@ class event_reminder extends \phpbb\cron\task\base
 	{
 		$this->config = $config;
 		$this->event_reminder = $event_reminder;
+		$this->set_name('vinny.calendar.cron.task.event_reminder');
 	}
 
 	public function is_runnable()

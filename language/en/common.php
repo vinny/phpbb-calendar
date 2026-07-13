@@ -129,10 +129,10 @@ $lang = array_merge($lang, array(
 	// Notifications
 	'VINNY_CALENDAR_NOTIFICATION_PARTICIPANT_ADDED' => 'Someone joins your event',
 	'VINNY_CALENDAR_NOTIFICATION_PARTICIPANT_ADDED_TITLE' => '<strong>%1$s</strong> has joined your event: <strong>%2$s</strong>',
-	'VINNY_CALENDAR_NOTIFICATION_NEW_COMMENT' => 'Someone posts a comment on an event',
-	'VINNY_CALENDAR_NOTIFICATION_NEW_COMMENT_TITLE' => '<strong>%1$s</strong> commented on the event: <strong>%2$s</strong>',
-	'VINNY_CALENDAR_NOTIFICATION_EVENT_REMINDER' => 'An event reminder is sent',
-	'VINNY_CALENDAR_NOTIFICATION_EVENT_REMINDER_TITLE' => 'Your event <strong>%1$s</strong> starts in <strong>%2$d minutes</strong>',
+	'VINNY_CALENDAR_NOTIFICATION_NEW_COMMENT' => 'Someone posts a comment on an event you organize or are participating in',
+	'VINNY_CALENDAR_NOTIFICATION_NEW_COMMENT_TITLE' => '<strong>%1$s</strong> commented on the event you organize or are participating in: <strong>%2$s</strong>',
+	'VINNY_CALENDAR_NOTIFICATION_EVENT_REMINDER' => 'An event you organize or are participating in is starting',
+	'VINNY_CALENDAR_NOTIFICATION_EVENT_REMINDER_TITLE' => 'An event you organize or are participating in, <strong>%1$s</strong>, starts in <strong>%2$d minutes</strong>',
 	'NOTIFICATION_GROUP_EVENTS' => 'EventBoard Notifications',
 
 	// Flatpickr inline language translations

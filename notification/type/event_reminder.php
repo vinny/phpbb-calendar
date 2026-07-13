@@ -68,6 +68,11 @@ class event_reminder extends \phpbb\notification\type\base
 		return $this->check_user_notification_options($users, $options);
 	}
 
+	public function users_to_query()
+	{
+		return [];
+	}
+
 	public function get_title()
 	{
 		return $this->language->lang(
