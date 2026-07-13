@@ -121,6 +121,9 @@ $lang = array_merge($lang, array(
 	// Category View Page
 	'UPCOMING_EVENTS' => 'Upcoming',
 	'CONFIRM_DELETE_EVENT' => 'Are you sure you want to delete this event? This will also remove all participants and comments.',
+	'CONFIRM_DELETE_COMMENT' => 'Are you sure you want to delete this comment?',
+	'COMMENT_DELETED' => 'Comment deleted successfully.',
+	'RETURN_TO_EVENT' => 'Return to the event page',
 	'RETURN_TO_MY_EVENTS' => 'Return to My Events',
 	'EDIT_EVENT' => 'Edit Event',
 	'STATUS' => 'Status',

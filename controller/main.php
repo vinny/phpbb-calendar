@@ -333,10 +333,17 @@ class main
 				'ID' => (int) $row['comment_id'],
 				'AUTHOR' => get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']),
 				'AUTHOR_NAME' => $row['username'],
+				'AVATAR' => phpbb_get_user_avatar([
+					'user_avatar' => $row['user_avatar'],
+					'user_avatar_type' => $row['user_avatar_type'],
+					'user_avatar_width' => $row['user_avatar_width'],
+					'user_avatar_height' => $row['user_avatar_height'],
+				]),
+				'U_PROFILE' => get_username_string('profile', $row['user_id'], $row['username'], $row['user_colour']),
 				'DATE' => $this->user->format_date($row['created_at']),
 				'MESSAGE' => generate_text_for_display($row['message'], $row['uid'] ?? '', $row['bitfield'] ?? '', $row['options'] ?? 7),
 				'QUOTE_TEXT' => $comment_text['text'],
-				'S_CAN_DELETE' => ($row['user_id'] == $user_id) || $this->can_manage_event($event),
+				'S_CAN_DELETE' => ((int) $row['user_id'] === $user_id && $this->auth->acl_get('u_eventboard_comment')) || $this->auth->acl_get('a_') || $this->auth->acl_get('m_'),
 				'U_DELETE' => $this->calendar_link->private_route('vinny_calendar_delete_comment', (int) $row['comment_id'], (int) $event['visibility'], $event['access_token'], ['id' => (int) $row['comment_id']]),
 			]);
 		}
@@ -375,6 +382,7 @@ class main
 			'S_HAS_JOINED' => $has_joined,
 			'S_CAN_JOIN' => $can_join,
 			'S_IS_COMPLETED' => $is_completed,
+			'S_IS_ADMIN_OR_MOD' => $this->auth->acl_get('a_') || $this->auth->acl_get('m_'),
 			'S_CAN_COMMENT' => ($user_id !== ANONYMOUS && !$is_completed),
 			'ORGANIZER_FULL' => get_username_string('full', $event['user_id'], $event['username'], $event['user_colour']),
 			'ORGANIZER_AVATAR' => phpbb_get_user_avatar([
@@ -729,7 +737,7 @@ class main
 		}
 
 		$this->assert_event_visible($event);
-		if ((int) $event['end_at'] <= time())
+		if ((int) $event['end_at'] <= time() && !$this->auth->acl_gets('a_', 'm_'))
 		{
 			trigger_error('EVENT_COMMENTS_CLOSED');
 		}
@@ -772,18 +780,44 @@ class main
 			trigger_error('COMMENT_NOT_FOUND');
 		}
 
-		$can_delete = ((int) $comment['user_id'] === (int) $this->user->data['user_id'])
+		$event = [
+			'event_id' => (int) $comment['event_id'],
+			'user_id' => (int) $comment['event_owner_id'],
+			'visibility' => (int) $comment['visibility'],
+			'access_token' => $comment['access_token'],
+		];
+		$this->assert_event_visible($event);
+
+		$can_delete = ((int) $comment['user_id'] === (int) $this->user->data['user_id'] && $this->auth->acl_get('u_eventboard_comment'))
 			|| $this->auth->acl_get('a_')
-			|| $this->auth->acl_get('m_')
-			|| ((int) $comment['event_owner_id'] === (int) $this->user->data['user_id']);
+			|| $this->auth->acl_get('m_');
 
 		if (!$can_delete)
 		{
 			trigger_error('NOT_AUTHORISED');
 		}
 
-		$this->comment_service->delete_comment((int) $id);
-		redirect($this->calendar_link->private_route('vinny_calendar_view', (int) $comment['event_id'], (int) $comment['visibility'], $comment['access_token'], ['id' => (int) $comment['event_id']]) . '#comments');
+		$redirect_url = $this->calendar_link->private_route('vinny_calendar_view', (int) $comment['event_id'], (int) $comment['visibility'], $comment['access_token'], ['id' => (int) $comment['event_id']]) . '#comments';
+
+		if (confirm_box(true))
+		{
+			$this->comment_service->delete_comment((int) $id);
+
+			if ($this->request->is_ajax())
+			{
+				$json_response = new \phpbb\json_response;
+				$json_response->send([
+					'success' => true,
+				]);
+			}
+
+			redirect($redirect_url);
+		}
+
+		confirm_box(false, $this->user->lang('CONFIRM_DELETE_COMMENT'), build_hidden_fields([
+			'id' => (int) $id,
+			't' => $this->calendar_link->current_access_token(),
+		]));
 	}
 
 	protected function assign_form_defaults(array $vars)
@@ -842,6 +876,12 @@ class main
 
 	protected function can_manage_event(array $event)
 	{
+		$is_completed = isset($event['end_at']) && ((int) $event['end_at'] <= time());
+		if ($is_completed)
+		{
+			return $this->auth->acl_get('a_') || $this->auth->acl_get('m_');
+		}
+
 		return $this->auth->acl_get('a_')
 			|| $this->auth->acl_get('m_')
 			|| ((int) $event['user_id'] === (int) $this->user->data['user_id']);

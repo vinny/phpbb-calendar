@@ -19,6 +19,7 @@
 
 	<div class="postbody">
 		<div id="post_content">
+			{% if not S_IS_COMPLETED or S_IS_ADMIN_OR_MOD %}
 			<ul class="post-buttons">
 				{% if S_USER_LOGGED_IN and not S_IS_OWNER %}
 					{% if S_IS_COMPLETED %}
@@ -97,6 +98,7 @@
 				</li>
 				{% endif %}
 			</ul>
+			{% endif %}
 
 			<p class="author">
 				<span class="responsive-hide">{{ lang('EVENT_ORGANIZED_BY') }} <strong>{{ ORGANIZER_FULL|raw }}</strong> &raquo; </span><time datetime="{{ EVENT_CREATED_AT }}">{{ EVENT_CREATED_AT }}</time>
@@ -138,7 +140,7 @@
 </div>
 
 {% if S_ALLOW_COMMENTS %}
-{% if S_USER_LOGGED_IN and S_CAN_COMMENT and not S_IS_COMPLETED %}
+{% if S_USER_LOGGED_IN and S_CAN_COMMENT and (not S_IS_COMPLETED or S_IS_ADMIN_OR_MOD) %}
 <div class="panel">
 	<div class="inner">
 		<h3>{{ lang('COMMENTS') }}</h3>
@@ -161,27 +163,42 @@
 
 <div id="comments">
 	{% for comment in loops.comments %}
-	<div class="post calendar-comment-post {% if comment.S_ROW_COUNT is even %}bg1{% else %}bg2{% endif %}" id="comment_{{ comment.ID }}">
+	<div class="post calendar-comment-post {% if comment.S_ROW_COUNT is even %}bg1{% else %}bg2{% endif %} has-profile" id="comment_{{ comment.ID }}">
 		<div class="inner">
-			<div class="postbody" style="width: 100%;">
-				{% if not S_IS_COMPLETED %}
-				<ul class="post-buttons">
-					<li>
-						<a href="#" class="button button-icon-only js-calendar-quote" title="{{ lang('QUOTE') }}" data-quote-author="{{ comment.AUTHOR_NAME|e('html_attr') }}" data-quote-message="{{ comment.QUOTE_TEXT|e('html_attr') }}">
-							<i class="icon fa-quote-left fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('QUOTE') }}</span>
-						</a>
-					</li>
-					{% if comment.S_CAN_DELETE %}
-					<li>
-						<a href="{{ comment.U_DELETE }}" title="{{ lang('DELETE_COMMENT') }}" class="button button-icon-only">
-							<i class="icon fa-times fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('DELETE_COMMENT') }}</span>
-						</a>
-					</li>
+			<dl class="postprofile" id="profile_comment_{{ comment.ID }}">
+				<dt class="{% if comment.AVATAR %}has-avatar{% else %}no-avatar{% endif %}">
+					<div class="avatar-container">
+						{% if comment.AVATAR %}
+							<a href="{{ comment.U_PROFILE }}" class="avatar">{{ comment.AVATAR|raw }}</a>
+						{% endif %}
+					</div>
+					{{ comment.AUTHOR|raw }}
+				</dt>
+			</dl>
+
+			<div class="postbody">
+				<div id="post_content_comment_{{ comment.ID }}">
+					{% if not S_IS_COMPLETED or S_IS_ADMIN_OR_MOD %}
+					<ul class="post-buttons">
+						{% if comment.S_CAN_DELETE %}
+						<li>
+							<a href="{{ comment.U_DELETE }}" data-ajax="post_visibility" title="{{ lang('DELETE_COMMENT') }}" class="button button-icon-only">
+								<i class="icon fa-times fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('DELETE_COMMENT') }}</span>
+							</a>
+						</li>
+						{% endif %}
+						<li>
+							<a href="#" class="button button-icon-only js-calendar-quote" title="{{ lang('QUOTE') }}" data-quote-author="{{ comment.AUTHOR_NAME|e('html_attr') }}" data-quote-message="{{ comment.QUOTE_TEXT|e('html_attr') }}">
+								<i class="icon fa-quote-left fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('QUOTE') }}</span>
+							</a>
+						</li>
+					</ul>
 					{% endif %}
-				</ul>
-				{% endif %}
-				<p class="author">{{ comment.AUTHOR|raw }} &raquo; <time>{{ comment.DATE }}</time></p>
-				<div class="content">{{ comment.MESSAGE|raw }}</div>
+					<p class="author">
+						<span class="responsive-hide">{{ lang('POST_BY_AUTHOR') }} <strong>{{ comment.AUTHOR|raw }}</strong> &raquo; </span><time datetime="{{ comment.DATE }}">{{ comment.DATE }}</time>
+					</p>
+					<div class="content">{{ comment.MESSAGE|raw }}</div>
+				</div>
 			</div>
 		</div>
 	</div>
