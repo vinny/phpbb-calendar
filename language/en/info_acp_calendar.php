@@ -61,6 +61,13 @@ $lang = array_merge($lang, array(
     'COLOUR_SWATCH' => 'Color Swatch',
     'ACP_EVENT_TOTAL' => 'Total events',
     'ACP_EVENT_VISIBILITY' => 'Visibility',
+    'CATEGORY_NAME_EXPLAIN' => 'Name of the event category (e.g., Meetups, Gaming).',
+    'CATEGORY_COLOR_EXPLAIN' => 'Hex color code used to display the category in the calendar (e.g., 3788d8).',
+    'CATEGORY_ICON_EXPLAIN' => 'FontAwesome icon class name (e.g., fa-users, fa-gamepad).',
+    'CAT_EVENT_COUNT' => 'Event Count',
+    'CATEGORY_HAS_EVENTS' => 'This category cannot be deleted because it has events assigned to it',
+    'PUBLIC' => 'Public',
+    'PRIVATE' => 'Private',
     
     // Logs
     'LOG_EVENTBOARD_CONFIG_UPDATED' => '<strong>Updated EventBoard settings</strong>',

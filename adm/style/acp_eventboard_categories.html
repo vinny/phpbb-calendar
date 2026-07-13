@@ -84,7 +84,7 @@
 				{% if category.S_CAN_DELETE %}
 				<a href="{{ category.U_DELETE }}" data-ajax="row_delete">{{ ICON_DELETE }}</a>
 				{% else %}
-				<span title="{{ lang('CATEGORY_HAS_EVENTS') }}" aria-disabled="true" style="opacity: .35; cursor: not-allowed;">{{ ICON_DELETE }}</span>
+				<span title="{{ lang('CATEGORY_HAS_EVENTS') }}" aria-disabled="true" style="opacity: .35; cursor: not-allowed;">{{ ICON_DELETE|replace({'title=': 'data-title='})|raw }}</span>
 				{% endif %}
 			</td>
 		</tr>

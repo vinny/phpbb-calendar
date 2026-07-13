@@ -24,7 +24,8 @@ class main_module
 		$user->add_lang_ext('vinny/calendar', 'info_acp_calendar');
 
 		$this->tpl_name = 'acp_eventboard_' . $mode;
-		$this->page_title = $user->lang('ACP_EVENTBOARD') . ' - ' . $user->lang('ACP_EVENTBOARD_' . strtoupper($mode));
+		$mode_lang = ($mode === 'manage_events') ? 'ACP_EVENTBOARD_MANAGE' : 'ACP_EVENTBOARD_' . strtoupper($mode);
+		$this->page_title = $user->lang('ACP_EVENTBOARD') . ' - ' . $user->lang($mode_lang);
 
 		switch ($mode)
 		{
@@ -332,7 +333,7 @@ class main_module
 				'TITLE' => $row['title'],
 				'CATEGORY' => $row['cat_name'],
 				'START_TIME' => $user->format_date($row['start_at']),
-				'VISIBILITY' => ((int) $row['visibility'] === 0) ? $user->lang('YES') : $user->lang('NO'),
+				'VISIBILITY' => ((int) $row['visibility'] === 0) ? $user->lang('PUBLIC') : $user->lang('PRIVATE'),
 				'AUTHOR' => get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']),
 				'PARTICIPANT_COUNT' => (int) $row['participant_count'],
 				'U_VIEW' => $helper->route('vinny_calendar_view', $event_route),
