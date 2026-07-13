@@ -123,7 +123,6 @@ class main
 			'U_FEED_EVENTS' => $this->helper->route('vinny_calendar_feed'),
 			'U_ICAL' => $this->helper->route('vinny_calendar_ical'),
 			'S_FEED_ENABLED' => (int) ($this->config['vinny_calendar_enable_feed'] ?? 0),
-			'S_ALLOW_COMMENTS' => (int) ($this->config['vinny_calendar_allow_comments'] ?? 0),
 			'CALENDAR_EVENTS_JSON' => json_encode($events),
 			'S_FC_12HR' => $this->is_user_12hour(),
 		]);
@@ -145,17 +144,6 @@ class main
 		foreach ($this->event_query->get_upcoming_public_events($per_page, $start, (int) $this->user->data['user_id']) as $row)
 		{
 			$this->template->assign_block_vars('events', $this->build_list_event_vars($row));
-		}
-
-		foreach ($this->event_query->get_category_filters(true, null, (int) $this->user->data['user_id']) as $category)
-		{
-			$this->template->assign_block_vars('categories', [
-				'NAME' => $category['cat_name'],
-				'ICON' => $category['cat_icon'],
-				'COLOR' => ltrim($category['cat_color'], '#'),
-				'COUNT' => (int) $category['event_count'],
-				'U_VIEW' => $this->helper->route('vinny_calendar_category', ['id' => (int) $category['cat_id']]),
-			]);
 		}
 
 		$base_url = $this->helper->route('vinny_calendar_upcoming');
@@ -191,26 +179,12 @@ class main
 			$this->template->assign_block_vars('events', $this->build_list_event_vars($row));
 		}
 
-		foreach ($this->event_query->get_category_filters(true, null, (int) $this->user->data['user_id']) as $item)
-		{
-			$this->template->assign_block_vars('categories', [
-				'NAME' => $item['cat_name'],
-				'ICON' => $item['cat_icon'],
-				'COLOR' => ltrim($item['cat_color'], '#'),
-				'COUNT' => (int) $item['event_count'],
-				'S_ACTIVE' => ((int) $item['cat_id'] === (int) $id),
-				'U_VIEW' => $this->helper->route('vinny_calendar_category', ['id' => (int) $item['cat_id']]),
-			]);
-		}
-
 		$base_url = $this->helper->route('vinny_calendar_category', ['id' => (int) $id]);
 		$this->pagination->generate_template_pagination($base_url, 'pagination', 'start', $total, $per_page, $start);
 
 		$this->template->assign_vars([
 			'CAT_NAME' => $category['cat_name'],
 			'CAT_DESC' => $category['cat_desc'],
-			'CAT_COLOR' => ltrim($category['cat_color'], '#'),
-			'CAT_ICON' => $category['cat_icon'],
 			'TOTAL_EVENTS' => $total ? $this->user->lang('EVENTS_COUNT', $total) : '',
 			'PAGE_NUMBER' => $this->build_page_number($total, $per_page, $start),
 		]);
@@ -229,7 +203,6 @@ class main
 		$start = $this->request->variable('start', 0);
 		$per_page = 10;
 		$user_id = (int) $this->user->data['user_id'];
-		$stats = $this->event_query->get_owned_event_stats($user_id);
 		$total = $this->event_query->count_owned_events($user_id, $completed);
 
 		foreach ($this->event_query->get_owned_events($user_id, $completed, $per_page, $start) as $row)
@@ -251,9 +224,6 @@ class main
 		$this->pagination->generate_template_pagination($base_url, 'pagination', 'start', $total, $per_page, $start);
 
 		$this->template->assign_vars([
-			'ACTIVE_EVENTS_COUNT' => (int) $stats['active'],
-			'TOTAL_SIGNUPS_COUNT' => (int) $stats['signups'],
-			'TOTAL_CREATED_EVENTS_COUNT' => (int) $stats['created'],
 			'TOTAL_EVENTS' => $total ? $this->user->lang('EVENTS_COUNT', $total) : '',
 			'PAGE_NUMBER' => $this->build_page_number($total, $per_page, $start),
 			'S_SHOW_COMPLETED' => $completed,
@@ -296,7 +266,6 @@ class main
 		$this->pagination->generate_template_pagination($base_url, 'pagination', 'start', $total, $per_page, $start);
 
 		$this->template->assign_vars([
-			'TOTAL_RSVPS_COUNT' => $this->event_query->count_user_rsvps($user_id),
 			'TOTAL_EVENTS' => $total ? $this->user->lang('EVENTS_COUNT', $total) : '',
 			'PAGE_NUMBER' => $this->build_page_number($total, $per_page, $start),
 		]);
@@ -365,8 +334,6 @@ class main
 		$this->template->assign_vars([
 			'EVENT_TITLE' => $event['title'],
 			'CAT_NAME' => $event['cat_name'],
-			'CAT_COLOR' => ltrim($event['cat_color'], '#'),
-			'CAT_ICON' => $event['cat_icon'],
 			'EVENT_START_DATE' => $this->user->format_date($event['start_at']),
 			'EVENT_END_DATE' => $this->user->format_date($event['end_at']),
 			'S_IS_ONLINE' => $this->event_display->is_online($event),
@@ -397,13 +364,6 @@ class main
 			'U_EDIT' => $this->can_manage_event($event) ? $this->calendar_link->route('vinny_calendar_edit', $event, ['id' => (int) $event['event_id']]) : '',
 			'U_DELETE' => $this->can_manage_event($event) ? $this->calendar_link->route('vinny_calendar_delete', $event, ['id' => (int) $event['event_id']]) : '',
 			'U_ACTION_COMMENT' => $this->calendar_link->route('vinny_calendar_comment', $event, ['id' => (int) $event['event_id']]),
-			'U_LOGIN_LOGOUT' => append_sid($this->root_path . 'ucp.' . $this->php_ext, 'mode=login'),
-			'S_SMILIES_ALLOWED' => (bool) ($this->config['allow_smilies'] && $this->user->optionget('smilies')),
-			'S_BBCODE_ALLOWED' => (bool) ($this->config['allow_bbcode'] && $this->user->optionget('bbcode')),
-			'S_BBCODE_QUOTE' => (bool) ($this->config['allow_bbcode'] && $this->user->optionget('bbcode')),
-			'S_BBCODE_IMG' => (bool) ($this->config['allow_bbcode'] && $this->user->optionget('bbcode')),
-			'S_LINKS_ALLOWED' => (bool) $this->config['allow_post_links'],
-			'S_BBCODE_FLASH' => (bool) ($this->config['allow_bbcode'] && $this->user->optionget('bbcode') && $this->config['allow_post_flash']),
 			'U_ADD_GOOGLE' => $calendar_targets['google'],
 			'U_ADD_OUTLOOK' => $calendar_targets['outlook'],
 			'U_ADD_YAHOO' => $calendar_targets['yahoo'],
