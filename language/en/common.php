@@ -68,6 +68,7 @@ $lang = array_merge($lang, array(
 	'SHARE_EVENT' => 'Share this Event',
 	'EVENT_ACCESS_DENIED' => 'You do not have access to this event.',
 	'EVENT_OWNER_CANNOT_RSVP' => 'The event organizer cannot RSVP to their own event.',
+	'EVENT_OWNER_CANNOT_LEAVE' => 'The event organizer cannot leave their own event.',
 
 	// Event View Strings
 	'EVENT_ORGANIZED_BY' => 'Organized by',

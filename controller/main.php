@@ -247,9 +247,6 @@ class main
 		$user_id = (int) $this->user->data['user_id'];
 		$total = $this->event_query->count_rsvp_events($user_id);
 
-		$form_key = 'vinny_calendar_event_action';
-		add_form_key($form_key);
-
 		foreach ($this->event_query->get_rsvp_events($user_id, $per_page, $start) as $row)
 		{
 			$this->template->assign_block_vars('events', [
@@ -257,8 +254,9 @@ class main
 				'CAT_COLOR' => ltrim($row['cat_color'], '#'),
 				'CAT_ICON' => $row['cat_icon'],
 				'DATE_FULL' => $this->user->format_date($row['start_at']),
+				'NUM_PARTICIPANTS' => (int) ($row['num_participants'] ?? 0),
+				'MAX_PARTICIPANTS' => (int) ($row['max_participants'] ?? 0),
 				'U_VIEW' => $this->calendar_link->route('vinny_calendar_view', $row, ['id' => (int) $row['event_id']]),
-				'U_LEAVE' => $this->calendar_link->route('vinny_calendar_leave', $row, ['id' => (int) $row['event_id']]),
 			]);
 		}
 
@@ -572,6 +570,12 @@ class main
 		}
 
 		$this->assert_event_visible($event);
+
+		if ((int) $event['user_id'] === (int) $this->user->data['user_id'])
+		{
+			trigger_error('EVENT_OWNER_CANNOT_LEAVE');
+		}
+
 		$this->rsvp->leave((int) $id, (int) $this->user->data['user_id']);
 		redirect($this->calendar_link->route('vinny_calendar_view', $event, ['id' => (int) $event['event_id']]));
 	}

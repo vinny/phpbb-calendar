@@ -19,7 +19,7 @@
 			<li class="header">
 				<dl class="row-item">
 					<dt><div class="list-inner">{{ lang('EVENT_DETAILS') }}</div></dt>
-					<dd class="lastpost calendar-actions">{{ lang('ACTIONS') }}</dd>
+					<dd class="posts">{{ lang('SIGNUPS') }}</dd>
 				</dl>
 			</li>
 		</ul>
@@ -32,30 +32,23 @@
 							<i class="icon {{ event.CAT_ICON }} fa-fw icon-md" aria-hidden="true"></i>
 						</span>
 						<div class="list-inner">
-							{% if event.U_LEAVE %}
-							<div class="responsive-show calendar-mobile-actions-right" style="display: none;">
-								<form action="{{ event.U_LEAVE }}" method="post" class="calendar-inline-form">
-									<button type="submit" name="submit_leave" title="{{ lang('LEAVE') }}" class="button button-icon-only">
-										<i class="icon fa-sign-out fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('LEAVE') }}</span>
-									</button>
-									{{ S_FORM_TOKEN }}
-								</form>
-							</div>
-							{% endif %}
-
 							<a href="{{ event.U_VIEW }}" class="topictitle">{{ event.TITLE }}</a>
 							<div class="topic-poster">
 								<time>{{ event.DATE_FULL }}</time>
+								{% if event.MAX_PARTICIPANTS == 0 %}
+								<span class="responsive-show" style="display: none;">{{ lang('SIGNUPS') }}{{ lang('COLON') }} {{ lang('UNLIMITED_SPOTS') }}</span>
+								{% else %}
+								<span class="responsive-show" style="display: none;">{{ lang('SIGNUPS') }}{{ lang('COLON') }} {{ event.NUM_PARTICIPANTS }} / {{ event.MAX_PARTICIPANTS }}</span>
+								{% endif %}
 							</div>
 						</div>
 					</dt>
-					<dd class="lastpost calendar-actions responsive-hide">
-						<form action="{{ event.U_LEAVE }}" method="post" class="calendar-inline-form">
-							<button type="submit" name="submit_leave" title="{{ lang('LEAVE') }}" class="button button-icon-only">
-								<i class="icon fa-sign-out fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('LEAVE') }}</span>
-							</button>
-							{{ S_FORM_TOKEN }}
-						</form>
+					<dd class="posts responsive-hide">
+						{% if event.MAX_PARTICIPANTS == 0 %}
+						{{ lang('UNLIMITED_SPOTS') }}
+						{% else %}
+						{{ event.NUM_PARTICIPANTS }} / {{ event.MAX_PARTICIPANTS }}
+						{% endif %}
 					</dd>
 				</dl>
 			</li>

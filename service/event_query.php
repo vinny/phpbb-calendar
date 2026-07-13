@@ -304,18 +304,19 @@ class event_query
         );
     }
 
-    public function get_rsvp_events($user_id, $limit, $start = 0)
-    {
-        $sql = 'SELECT e.*, c.cat_name, c.cat_color, c.cat_icon
-            FROM ' . $this->table_prefix . 'eventboard_events e
-            JOIN ' . $this->table_prefix . 'eventboard_participants p ON (e.event_id = p.event_id)
-            LEFT JOIN ' . $this->table_prefix . 'eventboard_categories c ON (e.cat_id = c.cat_id)
-            WHERE p.user_id = ' . (int) $user_id . '
-                AND e.start_at >= ' . time() . '
-            ORDER BY e.start_at ASC';
+	public function get_rsvp_events($user_id, $limit, $start = 0)
+	{
+		$sql = 'SELECT e.*, c.cat_name, c.cat_color, c.cat_icon,
+			(SELECT COUNT(participants.id) FROM ' . $this->table_prefix . 'eventboard_participants participants WHERE participants.event_id = e.event_id) as num_participants
+			FROM ' . $this->table_prefix . 'eventboard_events e
+			JOIN ' . $this->table_prefix . 'eventboard_participants p ON (e.event_id = p.event_id)
+			LEFT JOIN ' . $this->table_prefix . 'eventboard_categories c ON (e.cat_id = c.cat_id)
+			WHERE p.user_id = ' . (int) $user_id . '
+				AND e.start_at >= ' . time() . '
+			ORDER BY e.start_at ASC';
 
-        return $this->fetch_all($sql, $limit, $start);
-    }
+		return $this->fetch_all($sql, $limit, $start);
+	}
 
     public function get_public_feed_events($limit)
     {
