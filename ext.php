@@ -1,9 +1,10 @@
 <?php
+
 /**
  *
- * EventBoard Calendar extension for the phpBB Forum Software package.
+ * EventBoard extension for the phpBB Forum Software package.
  *
- * @copyright (c) 2026 Vinny <https://github.com/vinny>
+ * @copyright (c) 2026 _Vinny_ <https://github.com/vinny>
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */

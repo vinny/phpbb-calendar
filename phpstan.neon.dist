@@ -1,0 +1,16 @@
+parameters:
+	level: 2
+	paths:
+		- controller
+		- service
+		- cron
+		- event
+		- migrations
+		- notification
+		- ext.php
+	excludePaths:
+		- vendor
+	scanDirectories:
+		- ../../../../phpBB/phpbb
+		- ../../../../phpBB/vendor
+		- ../../../../phpBB/includes

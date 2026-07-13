@@ -37,7 +37,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
 		function setActive(index) {
 			var links = dropdown.querySelectorAll('li a');
-			if (!links.length) return;
+			if (!links.length) {
+				return;
+			}
 
 			links.forEach(function (a, i) {
 				if (i === index) {
@@ -60,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
 			var ul = document.createElement('ul');
 			ul.className = 'calendar-geo-dropdown-contents';
 
-			items.forEach(function (item, index) {
+			items.forEach(function (item) {
 				var li = document.createElement('li');
 				var a = document.createElement('a');
 				a.href = '#';

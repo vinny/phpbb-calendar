@@ -1,10 +1,11 @@
 <?php
+
 /**
  *
  * EventBoard extension for the phpBB Forum Software package.
  *
  * @copyright (c) 2026 _Vinny_ <https://github.com/vinny>
- * @license GPL-2.0-only
+ * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
 
@@ -39,5 +40,6 @@ class event_reminder extends \phpbb\cron\task\base
 	{
 		$this->config->set('vinny_calendar_reminder_last_run', time());
 		$this->event_reminder->dispatch_due_reminders();
+		return null;
 	}
 }

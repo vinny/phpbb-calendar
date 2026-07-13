@@ -1,10 +1,11 @@
 <?php
+
 /**
  *
  * EventBoard extension for the phpBB Forum Software package.
  *
  * @copyright (c) 2026 _Vinny_ <https://github.com/vinny>
- * @license GPL-2.0-only
+ * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
 
@@ -548,7 +549,7 @@ class main
 
 			if ($this->request->is_ajax())
 			{
-				$json_response = new \phpbb\json_response;
+				$json_response = new \phpbb\json_response();
 				$json_response->send([
 					'MESSAGE_TITLE' => $this->user->lang('INFORMATION'),
 					'MESSAGE_TEXT' => $this->user->lang('EVENT_DELETED') . '<br /><br /><a href="' . $redirect_url . '">' . $this->user->lang('RETURN_TO_MY_EVENTS') . '</a>',
@@ -635,8 +636,7 @@ class main
 			$this->calendar_link->absolute_url($board_url, $this->helper->route('vinny_calendar_feed')),
 			$this->user->lang('EVENT_CALENDAR'),
 			$board_url,
-			function ($event)
-			{
+			function ($event) {
 				return $this->calendar_link->route('vinny_calendar_view', $event, ['id' => (int) $event['event_id']]);
 			}
 		);
@@ -656,8 +656,7 @@ class main
 			$this->config['sitename'] . ' - ' . $this->user->lang('EVENT_CALENDAR'),
 			$this->config['board_timezone'] ?? 'UTC',
 			$this->request->server('HTTP_HOST', 'localhost'),
-			function ($event)
-			{
+			function ($event) {
 				return $this->calendar_link->absolute_route(generate_board_url(), 'vinny_calendar_view', $event, ['id' => (int) $event['event_id']]);
 			}
 		);
@@ -687,8 +686,7 @@ class main
 			$event['title'],
 			$this->config['board_timezone'] ?? 'UTC',
 			$this->request->server('HTTP_HOST', 'localhost'),
-			function ($row)
-			{
+			function ($row) {
 				return $this->calendar_link->absolute_route(generate_board_url(), 'vinny_calendar_view', $row, ['id' => (int) $row['event_id']]);
 			}
 		);
@@ -703,7 +701,7 @@ class main
 	public function proxy()
 	{
 		$this->guard_enabled();
-		
+
 		if ((int) $this->user->data['user_id'] === ANONYMOUS || !empty($this->user->data['is_bot']))
 		{
 			return new JsonResponse(['features' => []], 403);
@@ -805,7 +803,7 @@ class main
 
 			if ($this->request->is_ajax())
 			{
-				$json_response = new \phpbb\json_response;
+				$json_response = new \phpbb\json_response();
 				$json_response->send([
 					'success' => true,
 				]);

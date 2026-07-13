@@ -1,10 +1,11 @@
 <?php
+
 /**
  *
  * EventBoard extension for the phpBB Forum Software package.
  *
  * @copyright (c) 2026 _Vinny_ <https://github.com/vinny>
- * @license GPL-2.0-only
+ * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
 
@@ -34,7 +35,7 @@ class event_reminder extends \phpbb\notification\type\base
 		return 'vinny.calendar.notification.type.event_reminder';
 	}
 
-	static public $notification_option = [
+	public static $notification_option = [
 		'lang'	=> 'VINNY_CALENDAR_NOTIFICATION_EVENT_REMINDER',
 		'group'	=> 'NOTIFICATION_GROUP_EVENTS',
 	];
@@ -58,7 +59,8 @@ class event_reminder extends \phpbb\notification\type\base
 	{
 		$users = [(int) $data['organizer_id']];
 
-		if (!empty($data['notify_users']) && is_array($data['notify_users'])) {
+		if (!empty($data['notify_users']) && is_array($data['notify_users']))
+		{
 			$users = array_merge($users, $data['notify_users']);
 		}
 
@@ -86,7 +88,8 @@ class event_reminder extends \phpbb\notification\type\base
 	{
 		$params = ['id' => (int) $this->get_data('event_id')];
 
-		if ((int) $this->get_data('event_visibility') === 1 && $this->get_data('event_access_token') !== '') {
+		if ((int) $this->get_data('event_visibility') === 1 && $this->get_data('event_access_token') !== '')
+		{
 			$params['t'] = $this->get_data('event_access_token');
 		}
 

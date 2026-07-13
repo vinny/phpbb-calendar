@@ -1,0 +1,14 @@
+{
+  "extends": "stylelint-config-standard",
+  "ignoreFiles": [
+    "styles/all/theme/assets/**",
+    "styles/all/template/assets/**",
+    "vendor/**",
+    "node_modules/**"
+  ],
+  "rules": {
+    "selector-class-pattern": null,
+    "custom-property-pattern": null,
+    "import-notation": "string"
+  }
+}

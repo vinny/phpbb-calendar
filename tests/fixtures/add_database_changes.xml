@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dataset>
+    <phpbb_eventboard_categories cat_id="1" cat_name="Test Category" cat_color="#ff0000" cat_icon="fa-calendar" cat_desc="Test description" />
+</dataset>

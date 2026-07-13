@@ -1,0 +1,32 @@
+{
+  "name": "calendar",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run lint && npm run stylelint && npm run lint:php && npm run lint:twig && npm run phpstan && npm run test:unit",
+    "lint": "npx eslint .",
+    "stylelint": "npx stylelint \"**/*.css\"",
+    "lint:php": "php vendor/bin/phpcs",
+    "lint:twig": "php vendor/bin/twigcs styles",
+    "phpstan": "php vendor/bin/phpstan analyse",
+    "test:unit": "cd ../../../.. && php ext/vendor/bin/phpunit -c ext/ext/vinny/calendar/phpunit.xml.dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vinny/phpbb-calendar.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/vinny/phpbb-calendar/issues"
+  },
+  "homepage": "https://github.com/vinny/phpbb-calendar#readme",
+  "devDependencies": {
+    "eslint": "^10.7.0",
+    "stylelint": "^17.14.0",
+    "stylelint-config-standard": "^40.0.0"
+  }
+}

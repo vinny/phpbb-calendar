@@ -1,10 +1,11 @@
 <?php
+
 /**
  *
  * EventBoard extension for the phpBB Forum Software package.
  *
  * @copyright (c) 2026 _Vinny_ <https://github.com/vinny>
- * @license GPL-2.0-only
+ * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
 
@@ -29,7 +30,8 @@ class event_display
 	{
 		$desc_clean = strip_tags(generate_text_for_display($text, $uid, $bitfield, $options));
 
-		if (mb_strlen($desc_clean) > $limit) {
+		if (mb_strlen($desc_clean) > $limit)
+		{
 			return mb_substr($desc_clean, 0, $limit) . '...';
 		}
 

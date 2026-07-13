@@ -1,10 +1,11 @@
 <?php
+
 /**
  *
  * EventBoard extension for the phpBB Forum Software package.
  *
  * @copyright (c) 2026 _Vinny_ <https://github.com/vinny>
- * @license GPL-2.0-only
+ * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
 
@@ -61,18 +62,21 @@ class calendar_link
 
 	public function absolute_url($board_url, $route_url)
 	{
-		if (preg_match('#^https?://#i', $route_url)) {
+		if (preg_match('#^https?://#i', $route_url))
+		{
 			return $route_url;
 		}
 
 		$parts = parse_url($board_url);
 		$root_url = $parts['scheme'] . '://' . $parts['host'];
-		if (!empty($parts['port'])) {
+		if (!empty($parts['port']))
+		{
 			$root_url .= ':' . $parts['port'];
 		}
 
 		$board_path = isset($parts['path']) ? rtrim($parts['path'], '/') : '';
-		if ($board_path !== '' && strpos($route_url, $board_path . '/') === 0) {
+		if ($board_path !== '' && strpos($route_url, $board_path . '/') === 0)
+		{
 			return $root_url . $route_url;
 		}
 

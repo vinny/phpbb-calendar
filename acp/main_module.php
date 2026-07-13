@@ -1,10 +1,11 @@
 <?php
+
 /**
  *
  * EventBoard extension for the phpBB Forum Software package.
  *
  * @copyright (c) 2026 _Vinny_ <https://github.com/vinny>
- * @license GPL-2.0-only
+ * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
 
@@ -31,15 +32,15 @@ class main_module
 		{
 			case 'settings':
 				$this->settings($config, $request, $template, $user, $phpbb_container);
-			break;
+				break;
 
 			case 'categories':
 				$this->categories($request, $template, $user, $phpbb_container);
-			break;
+				break;
 
 			case 'manage_events':
 				$this->manage_events($request, $template, $user, $phpbb_container);
-			break;
+				break;
 		}
 	}
 
@@ -64,7 +65,8 @@ class main_module
 			$config->set('vinny_calendar_map_height', min(2000, max(100, $request->variable('vinny_calendar_map_height', 768))));
 			$config->set('vinny_calendar_map_zoom', min(20, max(1, $request->variable('vinny_calendar_map_zoom', 17))));
 
-			add_log('admin', 'LOG_EVENTBOARD_CONFIG_UPDATED');
+			$phpbb_log = $container->get('log');
+			$phpbb_log->add('admin', $user->data['user_id'], $user->ip, 'LOG_EVENTBOARD_CONFIG_UPDATED');
 			trigger_error($user->lang('CONFIG_UPDATED') . adm_back_link($this->u_action));
 		}
 
@@ -86,6 +88,7 @@ class main_module
 		global $table_prefix;
 
 		$db = $container->get('dbal.conn');
+		$phpbb_log = $container->get('log');
 		$table_categories = $table_prefix . 'eventboard_categories';
 		$table_events = $table_prefix . 'eventboard_events';
 		$action = $request->variable('action', '');
@@ -158,7 +161,7 @@ class main_module
 						{
 							$sql = 'INSERT INTO ' . $table_categories . ' ' . $db->sql_build_array('INSERT', $sql_ary);
 							$db->sql_query($sql);
-							add_log('admin', 'LOG_EVENTBOARD_CATEGORY_ADDED', $cat_name);
+							$phpbb_log->add('admin', $user->data['user_id'], $user->ip, 'LOG_EVENTBOARD_CATEGORY_ADDED', false, [$cat_name]);
 							trigger_error($user->lang('CATEGORY_ADDED') . adm_back_link($this->u_action));
 						}
 
@@ -166,7 +169,7 @@ class main_module
 							SET ' . $db->sql_build_array('UPDATE', $sql_ary) . '
 							WHERE cat_id = ' . (int) $cat_id;
 						$db->sql_query($sql);
-						add_log('admin', 'LOG_EVENTBOARD_CATEGORY_UPDATED', $cat_name);
+						$phpbb_log->add('admin', $user->data['user_id'], $user->ip, 'LOG_EVENTBOARD_CATEGORY_UPDATED', false, [$cat_name]);
 						trigger_error($user->lang('CATEGORY_UPDATED') . adm_back_link($this->u_action));
 					}
 
@@ -190,7 +193,7 @@ class main_module
 					'CAT_COLOR' => ltrim($category['cat_color'], '#'),
 					'CAT_ICON' => $category['cat_icon'],
 				]);
-			return;
+				return;
 
 			case 'delete':
 				$sql = 'SELECT c.cat_name, COUNT(e.event_id) AS event_count
@@ -217,11 +220,11 @@ class main_module
 					$sql = 'DELETE FROM ' . $table_categories . '
 						WHERE cat_id = ' . (int) $cat_id;
 					$db->sql_query($sql);
-					add_log('admin', 'LOG_EVENTBOARD_CATEGORY_REMOVED', $category['cat_name']);
+					$phpbb_log->add('admin', $user->data['user_id'], $user->ip, 'LOG_EVENTBOARD_CATEGORY_REMOVED', false, [$category['cat_name']]);
 
 					if ($request->is_ajax())
 					{
-						$json_response = new \phpbb\json_response;
+						$json_response = new \phpbb\json_response();
 						$json_response->send([
 							'SUCCESS' => true,
 						]);
@@ -234,7 +237,7 @@ class main_module
 					'c' => $cat_id,
 					'action' => 'delete',
 				]));
-			return;
+				return;
 		}
 
 		$sql = 'SELECT c.*, COUNT(e.event_id) AS event_count
@@ -291,7 +294,7 @@ class main_module
 
 				if ($request->is_ajax())
 				{
-					$json_response = new \phpbb\json_response;
+					$json_response = new \phpbb\json_response();
 					$json_response->send([
 						'SUCCESS' => true,
 					]);
@@ -307,17 +310,16 @@ class main_module
 			]));
 		}
 
-		$where = $completed ? 'e.start_at < ' . time() : 'e.start_at >= ' . time();
-		$total_events = $this->fetch_count($db, 'SELECT COUNT(event_id) AS total FROM ' . $table_events . ' e WHERE ' . $where);
-		$total_active = $this->fetch_count($db, 'SELECT COUNT(event_id) AS total FROM ' . $table_events . ' WHERE start_at >= ' . time());
-		$total_completed = $this->fetch_count($db, 'SELECT COUNT(event_id) AS total FROM ' . $table_events . ' WHERE start_at < ' . time());
+		$total_events = $this->fetch_count($db, 'SELECT COUNT(event_id) AS total FROM ' . $table_events . ' e WHERE ' . ($completed ? 'e.start_at < ' . (int) time() : 'e.start_at >= ' . (int) time()));
+		$total_active = $this->fetch_count($db, 'SELECT COUNT(event_id) AS total FROM ' . $table_events . ' WHERE start_at >= ' . (int) time());
+		$total_completed = $this->fetch_count($db, 'SELECT COUNT(event_id) AS total FROM ' . $table_events . ' WHERE start_at < ' . (int) time());
 
 		$sql = 'SELECT e.*, u.username, u.user_colour, c.cat_name,
 				(SELECT COUNT(p.id) FROM ' . $table_participants . ' p WHERE p.event_id = e.event_id) AS participant_count
 			FROM ' . $table_events . ' e
 			LEFT JOIN ' . $table_users . ' u ON (u.user_id = e.user_id)
 			LEFT JOIN ' . $table_categories . ' c ON (c.cat_id = e.cat_id)
-			WHERE ' . $where . '
+			WHERE ' . ($completed ? 'e.start_at < ' . (int) time() : 'e.start_at >= ' . (int) time()) . '
 			ORDER BY e.start_at ' . ($completed ? 'DESC' : 'ASC');
 		$result = $db->sql_query_limit($sql, $per_page, $start);
 
@@ -356,7 +358,7 @@ class main_module
 		]);
 	}
 
-	
+
 
 	protected function fetch_count($db, $sql)
 	{
