@@ -957,9 +957,10 @@ class main
 			return 'd/m/Y ' . $time_format;
 		}
 
-		$updated = preg_replace('/(?:H|G|h|g):i(?:\s*(?:K|A))?/', $time_format, $format, 1);
+		$has_time = preg_match('/(?:[HGhg]):i(?:\s*(?:[KA]))?/i', $format);
+		$updated = preg_replace('/(?:[HGhg]):i(?:\s*(?:[KA]))?/i', $time_format, $format, 1);
 
-		return ($updated === $format) ? trim($format . ' ' . $time_format) : $updated;
+		return $has_time ? $updated : trim($format . ' ' . $time_format);
 	}
 
 	protected function is_user_12hour()
