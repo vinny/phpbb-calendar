@@ -237,3 +237,34 @@
 		padding-right: 85px !important;
 	}
 }
+
+.calendar-blink {
+	animation: calendar-pulse-animation 1.5s ease-in-out infinite;
+}
+
+@keyframes calendar-pulse-animation {
+	0% {
+		opacity: 0.25;
+	}
+
+	50% {
+		opacity: 1;
+	}
+
+	100% {
+		opacity: 0.25;
+	}
+}
+
+.calendar-event-ended {
+	background-color: #e2e7eb !important;
+	border-color: #c2c7cc !important;
+}
+
+.calendar-event-ended .fc-event-title,
+.calendar-event-ended .calendar-grid-event,
+.calendar-event-ended .calendar-event-link,
+.calendar-event-ended strong,
+.calendar-event-ended i {
+	color: #536482 !important;
+}

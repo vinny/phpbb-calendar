@@ -59,6 +59,7 @@ $lang = array_merge($lang, array(
 	'EVENT_DELETED' => 'Event deleted successfully.',
 	'EVENT_NOT_FOUND' => 'The requested event could not be found.',
 	'EVENT_ENDED' => 'This event has ended.',
+	'EVENT_OCCURRING' => 'This event is occurring now.',
 	'COMMENTS' => 'Comments',
 	'POST_COMMENT' => 'Post a Comment',
 	'SUBMIT' => 'Submit',

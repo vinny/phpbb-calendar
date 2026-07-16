@@ -80,15 +80,31 @@ document.addEventListener('DOMContentLoaded', function () {
 			var url = arg.event.url;
 			var timeText = arg.timeText;
 			var escapedTitle = title.replace(/"/g, '&quot;');
+			var isEnded = arg.event.extendedProps.is_ended;
+			var isOccurring = arg.event.extendedProps.is_occurring;
+
+			var statusIndicator = '';
+			if (isOccurring) {
+				statusIndicator = '<i class="icon fa-circle fa-fw calendar-blink" aria-hidden="true" style="color: #ff0000 !important;" title="{{ lang('EVENT_OCCURRING')|e('js') }}"></i> ';
+			}
+
+			var timeHtml = '';
+			if (isEnded) {
+				timeHtml = '<i class="icon fa-hourglass-o fa-fw" aria-hidden="true" title="{{ lang('EVENT_ENDED')|e('js') }}"></i> ';
+			} else if (timeText) {
+				timeHtml = '<strong>' + timeText + '</strong> ';
+			}
+
+			var iconColor = isEnded ? '#536482' : color;
 
 			if (viewType.startsWith('list')) {
 				return {
-					html: '<a href="' + url + '" class="calendar-event-link" title="' + escapedTitle + '"><i class="icon ' + iconClass + ' fa-fw" aria-hidden="true" style="color:' + color + ' !important;"></i> ' + title + '</a>'
+					html: '<a href="' + url + '" class="calendar-event-link" title="' + escapedTitle + '">' + statusIndicator + '<i class="icon ' + iconClass + ' fa-fw" aria-hidden="true" style="color:' + iconColor + ' !important;"></i> ' + title + '</a>'
 				};
 			}
 
 			return {
-				html: '<span class="calendar-grid-event" title="' + escapedTitle + '">' + (timeText ? '<strong>' + timeText + '</strong> ' : '') + '<i class="icon ' + iconClass + ' fa-fw" aria-hidden="true" style="color:' + color + ' !important;"></i> ' + title + '</span>'
+				html: '<span class="calendar-grid-event" title="' + escapedTitle + '">' + statusIndicator + timeHtml + '<i class="icon ' + iconClass + ' fa-fw" aria-hidden="true" style="color:' + iconColor + ' !important;"></i> ' + title + '</span>'
 			};
 		},
 		eventClick: function (info) {

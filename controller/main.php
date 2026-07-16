@@ -101,18 +101,42 @@ class main
 		$this->assign_breadcrumbs('EVENT_CALENDAR', $this->helper->route('vinny_calendar_controller'));
 
 		$events = [];
+		$now = time();
 		foreach ($this->event_query->get_public_calendar_events((int) $this->user->data['user_id']) as $row)
 		{
 			$color = '#' . ($row['cat_color'] ?: '3788d8');
+			$is_ended = $now > (int) $row['end_at'];
+			$is_occurring = $now >= (int) $row['start_at'] && $now <= (int) $row['end_at'];
+
+			if ($is_ended)
+			{
+				$bg_color = '#e2e7eb';
+				$border_color = '#c2c7cc';
+				$text_color = '#536482';
+				$class_name = 'calendar-event-ended';
+			}
+			else
+			{
+				$bg_color = $color;
+				$border_color = $color;
+				$text_color = '#ffffff';
+				$class_name = $is_occurring ? 'calendar-event-occurring' : '';
+			}
+
 			$events[] = [
 				'title' => html_entity_decode($row['title']),
 				'start' => $this->format_fullcalendar_value((int) $row['start_at']),
 				'end' => $this->format_fullcalendar_value((int) $row['end_at']),
 				'url' => $this->calendar_link->route('vinny_calendar_view', $row, ['id' => (int) $row['event_id']]),
-				'backgroundColor' => $color,
-				'borderColor' => $color,
+				'backgroundColor' => $bg_color,
+				'borderColor' => $border_color,
+				'textColor' => $text_color,
+				'color' => $is_ended ? '#8a95a0' : $color,
+				'className' => $class_name,
 				'icon' => $row['cat_icon'] ?: 'fa-calendar',
 				'cat_color' => $color,
+				'is_ended' => $is_ended,
+				'is_occurring' => $is_occurring,
 			];
 		}
 
