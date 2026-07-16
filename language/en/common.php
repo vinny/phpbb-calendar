@@ -119,11 +119,15 @@ $lang = array_merge($lang, array(
 	'ACTIONS' => 'Actions',
 	'NO_EVENTS_FOUND' => 'No events found',
 	'UNLIMITED_SPOTS' => 'Unlimited',
+	'HAPPENING_NOW' => 'Happening Now',
+	'NO_HAPPENING_NOW' => 'No events happening right now.',
+	'TOTAL_EVENTS' => 'Total events <strong>%d</strong>',
 
 	'CATEGORIES' => 'Categories',
 
 	// Category View Page
 	'UPCOMING_EVENTS' => 'Upcoming',
+	'UPCOMING_EVENTS_LIST' => 'Upcoming Events',
 	'CONFIRM_DELETE_EVENT' => 'Are you sure you want to delete this event? This will also remove all participants and comments.',
 	'CONFIRM_DELETE_COMMENT' => 'Are you sure you want to delete this comment?',
 	'COMMENT_DELETED' => 'Comment deleted successfully.',

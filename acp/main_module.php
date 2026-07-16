@@ -64,6 +64,9 @@ class main_module
 			$config->set('vinny_calendar_map_width', min(2000, max(100, $request->variable('vinny_calendar_map_width', 1024))));
 			$config->set('vinny_calendar_map_height', min(2000, max(100, $request->variable('vinny_calendar_map_height', 768))));
 			$config->set('vinny_calendar_map_zoom', min(20, max(1, $request->variable('vinny_calendar_map_zoom', 17))));
+			$config->set('vinny_calendar_display_occurring', $request->variable('vinny_calendar_display_occurring', 0));
+			$config->set('vinny_calendar_display_upcoming', $request->variable('vinny_calendar_display_upcoming', 0));
+			$config->set('vinny_calendar_display_stats', $request->variable('vinny_calendar_display_stats', 0));
 
 			$phpbb_log = $container->get('log');
 			$phpbb_log->add('admin', $user->data['user_id'], $user->ip, 'LOG_EVENTBOARD_CONFIG_UPDATED');
@@ -80,6 +83,9 @@ class main_module
 			'VINNY_CALENDAR_MAP_WIDTH' => (int) ($config['vinny_calendar_map_width'] ?? 1024),
 			'VINNY_CALENDAR_MAP_HEIGHT' => (int) ($config['vinny_calendar_map_height'] ?? 768),
 			'VINNY_CALENDAR_MAP_ZOOM' => (int) $config['vinny_calendar_map_zoom'],
+			'VINNY_CALENDAR_DISPLAY_OCCURRING' => (int) ($config['vinny_calendar_display_occurring'] ?? 1),
+			'VINNY_CALENDAR_DISPLAY_UPCOMING' => (int) ($config['vinny_calendar_display_upcoming'] ?? 1),
+			'VINNY_CALENDAR_DISPLAY_STATS' => (int) ($config['vinny_calendar_display_stats'] ?? 1),
 		]);
 	}
 

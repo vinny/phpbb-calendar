@@ -38,9 +38,31 @@
 			<dd><input type="number" id="vinny_calendar_reminder_minutes" name="vinny_calendar_reminder_minutes" value="{{ VINNY_CALENDAR_REMINDER_MINUTES }}" min="0" max="60" /></dd>
 		</dl>
 
+		<dl>
+			<dt><label for="vinny_calendar_display_occurring">{{ lang('EVENTBOARD_DISPLAY_OCCURRING') }}:</label><br /><span>{{ lang('EVENTBOARD_DISPLAY_OCCURRING_EXPLAIN') }}</span></dt>
+			<dd>
+				<label><input type="radio" class="radio" name="vinny_calendar_display_occurring" value="1" {% if VINNY_CALENDAR_DISPLAY_OCCURRING %}checked="checked" {% endif %} /> {{ lang('YES') }}</label>
+				<label><input type="radio" class="radio" name="vinny_calendar_display_occurring" value="0" {% if not VINNY_CALENDAR_DISPLAY_OCCURRING %}checked="checked" {% endif %} /> {{ lang('NO') }}</label>
+			</dd>
+		</dl>
+
+		<dl>
+			<dt><label for="vinny_calendar_display_upcoming">{{ lang('EVENTBOARD_DISPLAY_UPCOMING') }}:</label><br /><span>{{ lang('EVENTBOARD_DISPLAY_UPCOMING_EXPLAIN') }}</span></dt>
+			<dd>
+				<label><input type="radio" class="radio" name="vinny_calendar_display_upcoming" value="1" {% if VINNY_CALENDAR_DISPLAY_UPCOMING %}checked="checked" {% endif %} /> {{ lang('YES') }}</label>
+				<label><input type="radio" class="radio" name="vinny_calendar_display_upcoming" value="0" {% if not VINNY_CALENDAR_DISPLAY_UPCOMING %}checked="checked" {% endif %} /> {{ lang('NO') }}</label>
+			</dd>
+		</dl>
+
+		<dl>
+			<dt><label for="vinny_calendar_display_stats">{{ lang('EVENTBOARD_DISPLAY_STATS') }}:</label><br /><span>{{ lang('EVENTBOARD_DISPLAY_STATS_EXPLAIN') }}</span></dt>
+			<dd>
+				<label><input type="radio" class="radio" name="vinny_calendar_display_stats" value="1" {% if VINNY_CALENDAR_DISPLAY_STATS %}checked="checked" {% endif %} /> {{ lang('YES') }}</label>
+				<label><input type="radio" class="radio" name="vinny_calendar_display_stats" value="0" {% if not VINNY_CALENDAR_DISPLAY_STATS %}checked="checked" {% endif %} /> {{ lang('NO') }}</label>
+			</dd>
+		</dl>
+
 	</fieldset>
-
-
 
 	<fieldset>
 		<legend>{{ lang('ACP_EVENTBOARD_MAP_SETTINGS') }}</legend>

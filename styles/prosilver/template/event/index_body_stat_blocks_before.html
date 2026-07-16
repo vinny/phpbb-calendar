@@ -1,0 +1,11 @@
+{% if S_DISPLAY_UPCOMING_EVENTS and S_HAS_UPCOMING_EVENTS %}
+<div class="stat-block calendar-upcoming-events">
+	<h3>{{ lang('UPCOMING_EVENTS_LIST') }}</h3>
+	<p>
+		{% for event in loops.upcoming_events_list %}
+		{% if not loop.first %} &bull; {% endif %}
+		<a href="{{ event.U_VIEW }}"><i class="icon {{ event.CAT_ICON }} fa-fw" aria-hidden="true"></i> {{ event.TITLE }}</a> ({{ event.START_DATE }})
+		{% endfor %}
+	</p>
+</div>
+{% endif %}

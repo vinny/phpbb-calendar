@@ -100,6 +100,42 @@ class event_query
 		return $this->fetch_count($sql);
 	}
 
+	public function get_occurring_public_events($user_id = 0)
+	{
+		$user_id = (int) $user_id;
+		$now = (int) time();
+
+		if ($user_id > 1)
+		{
+			$sql = 'SELECT e.*, c.cat_name, c.cat_color, c.cat_icon
+				FROM ' . $this->table_prefix . 'eventboard_events e
+				LEFT JOIN ' . $this->table_prefix . 'eventboard_categories c ON (e.cat_id = c.cat_id)
+				LEFT JOIN ' . $this->table_prefix . 'eventboard_participants p ON (e.event_id = p.event_id AND p.user_id = ' . (int) $user_id . ')
+				WHERE (e.visibility = 0 OR e.user_id = ' . (int) $user_id . ' OR p.user_id IS NOT NULL)
+					AND e.start_at <= ' . $now . '
+					AND e.end_at >= ' . $now . '
+				ORDER BY e.start_at ASC';
+		}
+		else
+		{
+			$sql = 'SELECT e.*, c.cat_name, c.cat_color, c.cat_icon
+				FROM ' . $this->table_prefix . 'eventboard_events e
+				LEFT JOIN ' . $this->table_prefix . 'eventboard_categories c ON (e.cat_id = c.cat_id)
+				WHERE e.visibility = 0
+					AND e.start_at <= ' . $now . '
+					AND e.end_at >= ' . $now . '
+				ORDER BY e.start_at ASC';
+		}
+
+		return $this->fetch_all($sql);
+	}
+
+	public function get_total_events_count()
+	{
+		$sql = 'SELECT COUNT(event_id) as total FROM ' . $this->table_prefix . 'eventboard_events WHERE visibility = 0';
+		return $this->fetch_count($sql);
+	}
+
 	public function get_category_filters($active_only = true, $limit = null, $user_id = 0)
 	{
 		$user_id = (int) $user_id;
