@@ -120,12 +120,20 @@ class participant_added extends \phpbb\notification\type\base
 		return $this->helper->route('vinny_calendar_view', ['id' => $this->get_data('event_id')]);
 	}
 
+	/** @var \vinny\calendar\service\calendar_link */
+	protected $calendar_link;
+
+	public function set_calendar_link(\vinny\calendar\service\calendar_link $calendar_link)
+	{
+		$this->calendar_link = $calendar_link;
+	}
+
 	/**
 	 * Get email template.
 	 */
 	public function get_email_template()
 	{
-		return false;
+		return '@vinny_calendar/participant_added';
 	}
 
 	/**
@@ -133,7 +141,23 @@ class participant_added extends \phpbb\notification\type\base
 	 */
 	public function get_email_template_variables()
 	{
-		return [];
+		$url = $this->get_url();
+		if ($this->calendar_link)
+		{
+			$url = $this->calendar_link->absolute_url(generate_board_url(), $url);
+		}
+		else
+		{
+			$url = generate_board_url() . '/' . ltrim($url, './');
+		}
+
+		$username = $this->user_loader->get_username($this->get_data('sender_id'), 'username');
+
+		return [
+			'AUTHOR_NAME' => html_entity_decode($username, ENT_COMPAT),
+			'EVENT_TITLE' => html_entity_decode(censor_text($this->get_data('event_title')), ENT_COMPAT),
+			'U_EVENT'     => $url,
+		];
 	}
 
 	/**

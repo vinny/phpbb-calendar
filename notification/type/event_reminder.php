@@ -96,14 +96,36 @@ class event_reminder extends \phpbb\notification\type\base
 		return $this->helper->route('vinny_calendar_view', $params);
 	}
 
+	/** @var \vinny\calendar\service\calendar_link */
+	protected $calendar_link;
+
+	public function set_calendar_link(\vinny\calendar\service\calendar_link $calendar_link)
+	{
+		$this->calendar_link = $calendar_link;
+	}
+
 	public function get_email_template()
 	{
-		return false;
+		return '@vinny_calendar/event_reminder';
 	}
 
 	public function get_email_template_variables()
 	{
-		return [];
+		$url = $this->get_url();
+		if ($this->calendar_link)
+		{
+			$url = $this->calendar_link->absolute_url(generate_board_url(), $url);
+		}
+		else
+		{
+			$url = generate_board_url() . '/' . ltrim($url, './');
+		}
+
+		return [
+			'EVENT_TITLE'  => html_entity_decode(censor_text($this->get_data('event_title')), ENT_COMPAT),
+			'LEAD_MINUTES' => (int) $this->get_data('lead_minutes'),
+			'U_EVENT'      => $url,
+		];
 	}
 
 	public function create_insert_array($data, $pre_create_data = [])

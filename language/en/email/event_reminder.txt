@@ -1,0 +1,10 @@
+Subject: Event reminder: "{EVENT_TITLE}"
+
+Hello {USERNAME},
+
+This is a reminder that the event "{EVENT_TITLE}" on "{SITENAME}" is starting in {LEAD_MINUTES} minutes.
+
+You can view the event details by clicking the following link:
+{U_EVENT}
+
+{EMAIL_SIG}

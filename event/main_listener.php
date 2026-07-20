@@ -71,6 +71,7 @@ class main_listener implements EventSubscriberInterface
 			'core.permissions' => 'add_permissions',
 			'core.index_modify_page_title' => 'index_modify_page_title',
 			'core.viewonline_overwrite_location' => 'viewonline_overwrite_location',
+			'core.ucp_notifications_output_notification_types_modify_template_vars' => 'ucp_notifications_output_template_vars',
 		];
 	}
 
@@ -244,5 +245,21 @@ class main_listener implements EventSubscriberInterface
 
 		$event['location'] = $location;
 		$event['location_url'] = $location_url;
+	}
+
+	public function ucp_notifications_output_template_vars($event)
+	{
+		$type_data = $event['type_data'];
+		$method_data = $event['method_data'];
+
+		if (strpos($type_data['type'], 'vinny.calendar.notification.type.') === 0 && $method_data['id'] === 'notification.method.email')
+		{
+			$subscriptions = $event['subscriptions'];
+			$type = $type_data['type'];
+			$tpl_ary = $event['tpl_ary'];
+
+			$tpl_ary['SUBSCRIBED'] = (isset($subscriptions[$type]) && in_array('notification.method.email', $subscriptions[$type]));
+			$event['tpl_ary'] = $tpl_ary;
+		}
 	}
 }

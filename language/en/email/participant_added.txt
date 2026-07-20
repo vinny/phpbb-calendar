@@ -1,0 +1,10 @@
+Subject: New participant for event "{EVENT_TITLE}"
+
+Hello {USERNAME},
+
+"{AUTHOR_NAME}" has confirmed attendance for your event "{EVENT_TITLE}" on "{SITENAME}".
+
+You can view the event details and attendee list by clicking the following link:
+{U_EVENT}
+
+{EMAIL_SIG}

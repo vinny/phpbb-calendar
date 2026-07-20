@@ -206,4 +206,18 @@ class main_listener_test extends \phpbb_test_case
 		$this->assertEquals('Editing an event', $event['location']);
 		$this->assertEquals('http://example.com/vinny_calendar_controller', $event['location_url']);
 	}
+
+	public function test_ucp_notifications_output_template_vars()
+	{
+		$event = new \ArrayObject([
+			'type_data' => ['type' => 'vinny.calendar.notification.type.event_reminder'],
+			'method_data' => ['id' => 'notification.method.email'],
+			'subscriptions' => [],
+			'tpl_ary' => ['SUBSCRIBED' => true],
+		]);
+
+		$this->listener->ucp_notifications_output_template_vars($event);
+
+		$this->assertFalse($event['tpl_ary']['SUBSCRIBED']);
+	}
 }

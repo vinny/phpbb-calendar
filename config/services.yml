@@ -128,6 +128,7 @@ services:
         calls:
             - [set_helper, ['@controller.helper']]
             - [set_user_loader, ['@user_loader']]
+            - [set_calendar_link, ['@vinny.calendar.service.calendar_link']]
 
     vinny.calendar.notification.type.new_comment:
         class: vinny\calendar\notification\type\new_comment
@@ -145,6 +146,7 @@ services:
         calls:
             - [set_helper, ['@controller.helper']]
             - [set_user_loader, ['@user_loader']]
+            - [set_calendar_link, ['@vinny.calendar.service.calendar_link']]
 
     vinny.calendar.notification.type.event_reminder:
         class: vinny\calendar\notification\type\event_reminder
@@ -161,6 +163,7 @@ services:
             - '@config'
         calls:
             - [set_helper, ['@controller.helper']]
+            - [set_calendar_link, ['@vinny.calendar.service.calendar_link']]
 
     vinny.calendar.cron.task.event_reminder:
         class: vinny\calendar\cron\task\event_reminder

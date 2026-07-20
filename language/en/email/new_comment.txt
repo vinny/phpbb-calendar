@@ -1,0 +1,10 @@
+Subject: New comment on event "{EVENT_TITLE}"
+
+Hello {USERNAME},
+
+"{AUTHOR_NAME}" has posted a new comment on the event "{EVENT_TITLE}" on "{SITENAME}".
+
+You can view the comment and event details by clicking the following link:
+{U_EVENT}
+
+{EMAIL_SIG}
