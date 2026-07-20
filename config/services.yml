@@ -180,5 +180,6 @@ services:
             - '@auth'
             - '@vinny.calendar.service.calendar_link'
             - '@vinny.calendar.service.event_query'
+            - '@vinny.calendar.service.event_access'
         tags:
             - { name: event.listener }

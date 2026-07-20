@@ -33,6 +33,16 @@ $lang = array_merge($lang, array(
 	'NO_EVENTS' => 'No events found.',
 	'COMING_UP' => 'Coming Up',
 
+	// View Online Strings
+	'VIEWING_EVENT_CALENDAR' => 'Viewing event calendar',
+	'VIEWING_EVENT' => 'Viewing event: %s',
+	'CREATING_EVENT' => 'Creating an event',
+	'EDITING_EVENT' => 'Editing an event',
+	'VIEWING_UPCOMING_EVENTS' => 'Viewing upcoming events',
+	'VIEWING_EVENT_CATEGORY' => 'Viewing event category: %s',
+	'VIEWING_MY_EVENTS' => 'Viewing my events',
+	'VIEWING_MY_RSVPS' => 'Viewing my RSVPs',
+
 	'EVENT_TITLE_REQUIRED' => 'The event title is required.',
 	'EVENT_CATEGORY_REQUIRED' => 'You must select a category.',
 	'EVENT_DESCRIPTION_REQUIRED' => 'The event description is required.',

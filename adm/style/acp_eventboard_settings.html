@@ -10,7 +10,7 @@
 		<legend>{{ lang('ACP_EVENTBOARD_SETTINGS') }}</legend>
 
 		<dl>
-			<dt><label for="vinny_calendar_enable">{{ lang('EVENTBOARD_ENABLE') }}:</label><br /><span>{{ lang('EVENTBOARD_ENABLE_EXPLAIN') }}</span></dt>
+			<dt><label for="vinny_calendar_enable">{{ lang('EVENTBOARD_ENABLE') }}{{ lang('COLON') }}</label><br /><span>{{ lang('EVENTBOARD_ENABLE_EXPLAIN') }}</span></dt>
 			<dd>
 				<label><input type="radio" class="radio" name="vinny_calendar_enable" value="1" {% if VINNY_CALENDAR_ENABLE %}checked="checked" {% endif %} /> {{ lang('YES') }}</label>
 				<label><input type="radio" class="radio" name="vinny_calendar_enable" value="0" {% if not VINNY_CALENDAR_ENABLE %}checked="checked" {% endif %} /> {{ lang('NO') }}</label>
@@ -18,7 +18,7 @@
 		</dl>
 
 		<dl>
-			<dt><label for="vinny_calendar_allow_comments">{{ lang('EVENTBOARD_ALLOW_COMMENTS') }}:</label><br /><span>{{ lang('EVENTBOARD_ALLOW_COMMENTS_EXPLAIN') }}</span></dt>
+			<dt><label for="vinny_calendar_allow_comments">{{ lang('EVENTBOARD_ALLOW_COMMENTS') }}{{ lang('COLON') }}</label><br /><span>{{ lang('EVENTBOARD_ALLOW_COMMENTS_EXPLAIN') }}</span></dt>
 			<dd>
 				<label><input type="radio" class="radio" name="vinny_calendar_allow_comments" value="1" {% if VINNY_CALENDAR_ALLOW_COMMENTS %}checked="checked" {% endif %} /> {{ lang('YES') }}</label>
 				<label><input type="radio" class="radio" name="vinny_calendar_allow_comments" value="0" {% if not VINNY_CALENDAR_ALLOW_COMMENTS %}checked="checked" {% endif %} /> {{ lang('NO') }}</label>
@@ -26,7 +26,7 @@
 		</dl>
 
 		<dl>
-			<dt><label for="vinny_calendar_enable_feed">{{ lang('EVENTBOARD_ENABLE_FEED') }}:</label><br /><span>{{ lang('EVENTBOARD_ENABLE_FEED_EXPLAIN') }}</span></dt>
+			<dt><label for="vinny_calendar_enable_feed">{{ lang('EVENTBOARD_ENABLE_FEED') }}{{ lang('COLON') }}</label><br /><span>{{ lang('EVENTBOARD_ENABLE_FEED_EXPLAIN') }}</span></dt>
 			<dd>
 				<label><input type="radio" class="radio" name="vinny_calendar_enable_feed" value="1" {% if VINNY_CALENDAR_ENABLE_FEED %}checked="checked" {% endif %} /> {{ lang('YES') }}</label>
 				<label><input type="radio" class="radio" name="vinny_calendar_enable_feed" value="0" {% if not VINNY_CALENDAR_ENABLE_FEED %}checked="checked" {% endif %} /> {{ lang('NO') }}</label>
@@ -34,12 +34,12 @@
 		</dl>
 
 		<dl>
-			<dt><label for="vinny_calendar_reminder_minutes">{{ lang('EVENTBOARD_REMINDER_MINUTES') }}:</label><br /><span>{{ lang('EVENTBOARD_REMINDER_MINUTES_EXPLAIN') }}</span></dt>
+			<dt><label for="vinny_calendar_reminder_minutes">{{ lang('EVENTBOARD_REMINDER_MINUTES') }}{{ lang('COLON') }}</label><br /><span>{{ lang('EVENTBOARD_REMINDER_MINUTES_EXPLAIN') }}</span></dt>
 			<dd><input type="number" id="vinny_calendar_reminder_minutes" name="vinny_calendar_reminder_minutes" value="{{ VINNY_CALENDAR_REMINDER_MINUTES }}" min="0" max="60" /></dd>
 		</dl>
 
 		<dl>
-			<dt><label for="vinny_calendar_display_occurring">{{ lang('EVENTBOARD_DISPLAY_OCCURRING') }}:</label><br /><span>{{ lang('EVENTBOARD_DISPLAY_OCCURRING_EXPLAIN') }}</span></dt>
+			<dt><label for="vinny_calendar_display_occurring">{{ lang('EVENTBOARD_DISPLAY_OCCURRING') }}{{ lang('COLON') }}</label><br /><span>{{ lang('EVENTBOARD_DISPLAY_OCCURRING_EXPLAIN') }}</span></dt>
 			<dd>
 				<label><input type="radio" class="radio" name="vinny_calendar_display_occurring" value="1" {% if VINNY_CALENDAR_DISPLAY_OCCURRING %}checked="checked" {% endif %} /> {{ lang('YES') }}</label>
 				<label><input type="radio" class="radio" name="vinny_calendar_display_occurring" value="0" {% if not VINNY_CALENDAR_DISPLAY_OCCURRING %}checked="checked" {% endif %} /> {{ lang('NO') }}</label>
@@ -47,7 +47,7 @@
 		</dl>
 
 		<dl>
-			<dt><label for="vinny_calendar_display_upcoming">{{ lang('EVENTBOARD_DISPLAY_UPCOMING') }}:</label><br /><span>{{ lang('EVENTBOARD_DISPLAY_UPCOMING_EXPLAIN') }}</span></dt>
+			<dt><label for="vinny_calendar_display_upcoming">{{ lang('EVENTBOARD_DISPLAY_UPCOMING') }}{{ lang('COLON') }}</label><br /><span>{{ lang('EVENTBOARD_DISPLAY_UPCOMING_EXPLAIN') }}</span></dt>
 			<dd>
 				<label><input type="radio" class="radio" name="vinny_calendar_display_upcoming" value="1" {% if VINNY_CALENDAR_DISPLAY_UPCOMING %}checked="checked" {% endif %} /> {{ lang('YES') }}</label>
 				<label><input type="radio" class="radio" name="vinny_calendar_display_upcoming" value="0" {% if not VINNY_CALENDAR_DISPLAY_UPCOMING %}checked="checked" {% endif %} /> {{ lang('NO') }}</label>
@@ -55,7 +55,7 @@
 		</dl>
 
 		<dl>
-			<dt><label for="vinny_calendar_display_stats">{{ lang('EVENTBOARD_DISPLAY_STATS') }}:</label><br /><span>{{ lang('EVENTBOARD_DISPLAY_STATS_EXPLAIN') }}</span></dt>
+			<dt><label for="vinny_calendar_display_stats">{{ lang('EVENTBOARD_DISPLAY_STATS') }}{{ lang('COLON') }}</label><br /><span>{{ lang('EVENTBOARD_DISPLAY_STATS_EXPLAIN') }}</span></dt>
 			<dd>
 				<label><input type="radio" class="radio" name="vinny_calendar_display_stats" value="1" {% if VINNY_CALENDAR_DISPLAY_STATS %}checked="checked" {% endif %} /> {{ lang('YES') }}</label>
 				<label><input type="radio" class="radio" name="vinny_calendar_display_stats" value="0" {% if not VINNY_CALENDAR_DISPLAY_STATS %}checked="checked" {% endif %} /> {{ lang('NO') }}</label>
@@ -67,20 +67,20 @@
 	<fieldset>
 		<legend>{{ lang('ACP_EVENTBOARD_MAP_SETTINGS') }}</legend>
 		<dl>
-			<dt><label for="vinny_calendar_geoapify_key">{{ lang('EVENTBOARD_GEOAPIFY_KEY') }}:</label><br /><span>{{ lang('EVENTBOARD_GEOAPIFY_KEY_EXPLAIN') }}</span></dt>
+			<dt><label for="vinny_calendar_geoapify_key">{{ lang('EVENTBOARD_GEOAPIFY_KEY') }}{{ lang('COLON') }}</label><br /><span>{{ lang('EVENTBOARD_GEOAPIFY_KEY_EXPLAIN') }}</span></dt>
 			<dd><input type="text" id="vinny_calendar_geoapify_key" name="vinny_calendar_geoapify_key"
 					value="{{ VINNY_CALENDAR_GEOAPIFY_KEY }}" size="50" /></dd>
 		</dl>
 		<dl>
-			<dt><label for="vinny_calendar_map_width">{{ lang('ACP_MAP_WIDTH') }}:</label><br /><span>{{ lang('ACP_MAP_WIDTH_EXPLAIN') }}</span></dt>
+			<dt><label for="vinny_calendar_map_width">{{ lang('ACP_MAP_WIDTH') }}{{ lang('COLON') }}</label><br /><span>{{ lang('ACP_MAP_WIDTH_EXPLAIN') }}</span></dt>
 			<dd><input type="number" id="vinny_calendar_map_width" name="vinny_calendar_map_width" value="{{ VINNY_CALENDAR_MAP_WIDTH }}" min="100" max="2000" /></dd>
 		</dl>
 		<dl>
-			<dt><label for="vinny_calendar_map_height">{{ lang('ACP_MAP_HEIGHT') }}:</label><br /><span>{{ lang('ACP_MAP_HEIGHT_EXPLAIN') }}</span></dt>
+			<dt><label for="vinny_calendar_map_height">{{ lang('ACP_MAP_HEIGHT') }}{{ lang('COLON') }}</label><br /><span>{{ lang('ACP_MAP_HEIGHT_EXPLAIN') }}</span></dt>
 			<dd><input type="number" id="vinny_calendar_map_height" name="vinny_calendar_map_height" value="{{ VINNY_CALENDAR_MAP_HEIGHT }}" min="100" max="2000" /></dd>
 		</dl>
 		<dl>
-			<dt><label for="vinny_calendar_map_zoom">{{ lang('ACP_MAP_ZOOM') }}:</label><br /><span>{{ lang('ACP_MAP_ZOOM_EXPLAIN') }}</span></dt>
+			<dt><label for="vinny_calendar_map_zoom">{{ lang('ACP_MAP_ZOOM') }}{{ lang('COLON') }}</label><br /><span>{{ lang('ACP_MAP_ZOOM_EXPLAIN') }}</span></dt>
 			<dd><input type="number" id="vinny_calendar_map_zoom" name="vinny_calendar_map_zoom" value="{{ VINNY_CALENDAR_MAP_ZOOM }}" min="1" max="20" /></dd>
 		</dl>
 	</fieldset>

@@ -21,16 +21,16 @@
 		<legend>{% if CAT_NAME %}{{ lang('EDIT_CATEGORY') }}{% else %}{{ lang('CREATE_CATEGORY') }}{% endif %}</legend>
 
 		<dl>
-			<dt><label for="cat_name">{{ lang('CAT_NAME') }}:</label><br /><span>{{ lang('CATEGORY_NAME_EXPLAIN') }}</span></dt>
+			<dt><label for="cat_name">{{ lang('CAT_NAME') }}{{ lang('COLON') }}</label><br /><span>{{ lang('CATEGORY_NAME_EXPLAIN') }}</span></dt>
 			<dd><input type="text" name="cat_name" id="cat_name" value="{{ CAT_NAME }}" maxlength="255" size="40" />
 			</dd>
 		</dl>
 		<dl>
-			<dt><label for="cat_desc">{{ lang('CAT_DESC') }}:</label></dt>
+			<dt><label for="cat_desc">{{ lang('CAT_DESC') }}{{ lang('COLON') }}</label></dt>
 			<dd><textarea name="cat_desc" id="cat_desc" rows="3" cols="40">{{ CAT_DESC }}</textarea></dd>
 		</dl>
 		<dl>
-			<dt><label for="cat_color">{{ lang('CAT_COLOR') }}:</label><br /><span>{{ lang('CATEGORY_COLOR_EXPLAIN') }}</span></dt>
+			<dt><label for="cat_color">{{ lang('CAT_COLOR') }}{{ lang('COLON') }}</label><br /><span>{{ lang('CATEGORY_COLOR_EXPLAIN') }}</span></dt>
 			<dd>
 				<input type="text" name="cat_color" id="cat_color" value="{{ CAT_COLOR }}" maxlength="7" size="7" />
 				{% if CAT_COLOR %}&nbsp;<span style="background-color: #{{ CAT_COLOR }}">&nbsp; &nbsp;</span>{% endif
@@ -41,7 +41,7 @@
 			</dd>
 		</dl>
 		<dl>
-			<dt><label for="cat_icon">{{ lang('CAT_ICON') }}:</label><br /><span>{{ lang('CATEGORY_ICON_EXPLAIN') }}</span></dt>
+			<dt><label for="cat_icon">{{ lang('CAT_ICON') }}{{ lang('COLON') }}</label><br /><span>{{ lang('CATEGORY_ICON_EXPLAIN') }}</span></dt>
 			<dd><input type="text" name="cat_icon" id="cat_icon" value="{{ CAT_ICON }}" maxlength="50" size="20" /> <i
 					class="icon {{ CAT_ICON }} fa-fw"></i></dd>
 		</dl>

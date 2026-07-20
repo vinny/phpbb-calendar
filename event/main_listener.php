@@ -36,6 +36,9 @@ class main_listener implements EventSubscriberInterface
 	/** @var \vinny\calendar\service\event_query */
 	protected $event_query;
 
+	/** @var \vinny\calendar\service\event_access */
+	protected $event_access;
+
 	/**
 	 * Constructor
 	 *
@@ -46,8 +49,9 @@ class main_listener implements EventSubscriberInterface
 	 * @param \phpbb\auth\auth $auth
 	 * @param \vinny\calendar\service\calendar_link $calendar_link
 	 * @param \vinny\calendar\service\event_query $event_query
+	 * @param \vinny\calendar\service\event_access $event_access
 	 */
-	public function __construct(\phpbb\user $user, \phpbb\controller\helper $helper, \phpbb\template\template $template, \phpbb\config\config $config, \phpbb\auth\auth $auth, \vinny\calendar\service\calendar_link $calendar_link, \vinny\calendar\service\event_query $event_query)
+	public function __construct(\phpbb\user $user, \phpbb\controller\helper $helper, \phpbb\template\template $template, \phpbb\config\config $config, \phpbb\auth\auth $auth, \vinny\calendar\service\calendar_link $calendar_link, \vinny\calendar\service\event_query $event_query, \vinny\calendar\service\event_access $event_access)
 	{
 		$this->user = $user;
 		$this->helper = $helper;
@@ -56,6 +60,7 @@ class main_listener implements EventSubscriberInterface
 		$this->auth = $auth;
 		$this->calendar_link = $calendar_link;
 		$this->event_query = $event_query;
+		$this->event_access = $event_access;
 	}
 
 	public static function getSubscribedEvents()
@@ -65,6 +70,7 @@ class main_listener implements EventSubscriberInterface
 			'core.page_header' => 'add_page_header_link',
 			'core.permissions' => 'add_permissions',
 			'core.index_modify_page_title' => 'index_modify_page_title',
+			'core.viewonline_overwrite_location' => 'viewonline_overwrite_location',
 		];
 	}
 
@@ -164,5 +170,79 @@ class main_listener implements EventSubscriberInterface
 
 			$this->template->assign_var('TOTAL_USERS', $total_users_string . ' &bull; ' . $total_events_string);
 		}
+	}
+
+	public function viewonline_overwrite_location($event)
+	{
+		if (empty($this->config['vinny_calendar_enable']) || !$this->auth->acl_get('u_eventboard_view'))
+		{
+			return;
+		}
+
+		$on_page = $event['on_page'];
+		$row = $event['row'];
+		$session_page = (string) ($row['session_page'] ?? '');
+
+		if (strpos($on_page[1] ?? '', 'app.php/events') === false && strpos($session_page, 'events') === false)
+		{
+			return;
+		}
+
+		$user_id = (int) $this->user->data['user_id'];
+
+		$location = $this->user->lang('VIEWING_EVENT_CALENDAR');
+		$location_url = $this->helper->route('vinny_calendar_controller');
+
+		if (preg_match('#events/view/([0-9]+)#', $session_page, $matches))
+		{
+			$event_id = (int) $matches[1];
+			$event_data = $this->event_query->get_event_basic($event_id);
+
+			if ($event_data && $this->event_access->can_view_event($event_data, $user_id, ''))
+			{
+				$location = sprintf($this->user->lang('VIEWING_EVENT'), $event_data['title']);
+				$route_params = $this->event_access->build_route_params($event_data, ['id' => $event_id]);
+				$location_url = $this->calendar_link->route('vinny_calendar_view', $event_data, $route_params);
+			}
+		}
+		else if (strpos($session_page, 'events/create') !== false)
+		{
+			$location = $this->user->lang('CREATING_EVENT');
+			$location_url = $this->helper->route('vinny_calendar_controller');
+		}
+		else if (preg_match('#events/edit/([0-9]+)#', $session_page, $matches))
+		{
+			$location = $this->user->lang('EDITING_EVENT');
+			$location_url = $this->helper->route('vinny_calendar_controller');
+		}
+		else if (strpos($session_page, 'events/upcoming') !== false)
+		{
+			$location = $this->user->lang('VIEWING_UPCOMING_EVENTS');
+			$location_url = $this->helper->route('vinny_calendar_upcoming');
+		}
+		else if (preg_match('#events/category/([0-9]+)#', $session_page, $matches))
+		{
+			$cat_id = (int) $matches[1];
+			$category = $this->event_query->get_category($cat_id);
+
+			if ($category)
+			{
+				$location = sprintf($this->user->lang('VIEWING_EVENT_CATEGORY'), $category['cat_name']);
+				$location_url = $this->helper->route('vinny_calendar_category', ['id' => $cat_id]);
+			}
+		}
+		else if (strpos($session_page, 'events/my-events') !== false)
+		{
+			$location = $this->user->lang('VIEWING_MY_EVENTS');
+			$location_url = $this->helper->route('vinny_calendar_my_events');
+		}
+		else if (strpos($session_page, 'events/my-rsvps') !== false)
+		{
+			$location = $this->user->lang('VIEWING_MY_RSVPS');
+			$location_url = $this->helper->route('vinny_calendar_my_rsvps');
+		}
+
+		$event['location'] = $location;
+		$event['location_url'] = $location_url;
 	}
 }
