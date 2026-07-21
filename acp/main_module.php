@@ -107,8 +107,8 @@ class main_module
 				$category = [
 					'cat_name' => '',
 					'cat_desc' => '',
-					'cat_color' => '3089a6',
-					'cat_icon' => 'fa-calendar',
+					'cat_color' => '',
+					'cat_icon' => '',
 				];
 
 				if ($cat_id)

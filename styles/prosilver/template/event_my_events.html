@@ -4,7 +4,7 @@
 
 <div class="action-bar bar-top">
 	{% if U_CREATE_EVENT %}
-	<a class="button button-primary" href="{{ U_CREATE_EVENT }}" title="{{ lang('EVENT_CREATE') }}">
+	<a class="button button-primary" href="{{ U_CREATE_EVENT }}" title="{{ lang('EVENT_CREATE')|e('html_attr') }}">
 		<span>{{ lang('EVENT_CREATE') }}</span> <i class="icon fa-plus fa-fw" aria-hidden="true"></i>
 	</a>
 	{% endif %}
@@ -41,20 +41,20 @@
 			{% for event in loops.events %}
 			<li class="row{% if event.S_ROW_COUNT is even %} bg1{% else %} bg2{% endif %}">
 				<dl class="row-item">
-					<dt title="{{ event.TITLE }}" class="calendar-event-row">
-						<span class="calendar-row-icon" style="color: #{{ event.CAT_COLOR }};">
+					<dt title="{{ event.TITLE|e('html_attr') }}" class="calendar-event-row">
+						<span class="calendar-row-icon"{% if event.CAT_COLOR %} style="color: #{{ event.CAT_COLOR }};"{% endif %}>
 							<i class="icon {{ event.CAT_ICON }} fa-fw icon-md" aria-hidden="true"></i>
 						</span>
 						<div class="list-inner">
 							{% if not S_SHOW_COMPLETED %}
 							<div class="responsive-show calendar-mobile-actions-right" style="display: none;">
 								{% if event.U_EDIT %}
-								<a href="{{ event.U_EDIT }}" title="{{ lang('EDIT_EVENT') }}" class="button button-icon-only">
+								<a href="{{ event.U_EDIT }}" title="{{ lang('EDIT_EVENT')|e('html_attr') }}" class="button button-icon-only">
 									<i class="icon fa-pencil fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('EDIT_EVENT') }}</span>
 								</a>
 								{% endif %}
 								{% if event.U_DELETE %}
-								<a href="{{ event.U_DELETE }}" data-ajax="true" title="{{ lang('DELETE') }}" class="button button-icon-only">
+								<a href="{{ event.U_DELETE }}" data-ajax="true" title="{{ lang('DELETE')|e('html_attr') }}" class="button button-icon-only">
 									<i class="icon fa-times fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('DELETE') }}</span>
 								</a>
 								{% endif %}
@@ -86,14 +86,14 @@
 						<ul class="post-buttons">
 							{% if event.U_EDIT %}
 							<li>
-								<a href="{{ event.U_EDIT }}" title="{{ lang('EDIT_EVENT') }}" class="button button-icon-only">
+								<a href="{{ event.U_EDIT }}" title="{{ lang('EDIT_EVENT')|e('html_attr') }}" class="button button-icon-only">
 									<i class="icon fa-pencil fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('EDIT_EVENT') }}</span>
 								</a>
 							</li>
 							{% endif %}
 							{% if event.U_DELETE %}
 							<li>
-								<a href="{{ event.U_DELETE }}" data-ajax="true" title="{{ lang('DELETE') }}" class="button button-icon-only">
+								<a href="{{ event.U_DELETE }}" data-ajax="true" title="{{ lang('DELETE')|e('html_attr') }}" class="button button-icon-only">
 									<i class="icon fa-times fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('DELETE') }}</span>
 								</a>
 							</li>

@@ -28,7 +28,7 @@
 			<li class="row{% if event.S_ROW_COUNT is even %} bg1{% else %} bg2{% endif %}">
 				<dl class="row-item">
 					<dt title="{{ event.TITLE }}" class="calendar-event-row">
-						<span class="calendar-row-icon" style="color: #{{ event.CAT_COLOR }};">
+						<span class="calendar-row-icon"{% if event.CAT_COLOR %} style="color: #{{ event.CAT_COLOR }};"{% endif %}>
 							<i class="icon {{ event.CAT_ICON }} fa-fw icon-md" aria-hidden="true"></i>
 						</span>
 						<div class="list-inner">

@@ -11,7 +11,7 @@
 
 namespace vinny\calendar\migrations\v100;
 
-class v100_schema extends \phpbb\db\migration\migration
+class v100_schema extends \phpbb\db\migration\container_aware_migration
 {
 	public function effectively_installed()
 	{
@@ -127,16 +127,28 @@ class v100_schema extends \phpbb\db\migration\migration
 
 	public function insert_default_category()
 	{
-		global $user;
+		$cat_name = 'UNCATEGORIZED';
 
-		if (isset($user) && is_object($user))
+		if (isset($this->container) && $this->container->has('language'))
 		{
+			$language = $this->container->get('language');
+			$language->add_lang('common', 'vinny/calendar');
+			$cat_name = $language->lang('UNCATEGORIZED');
+		}
+		else if (isset($this->container) && $this->container->has('user'))
+		{
+			$user = $this->container->get('user');
 			$user->add_lang_ext('vinny/calendar', 'common');
 			$cat_name = $user->lang('UNCATEGORIZED');
 		}
 		else
 		{
-			$cat_name = 'Uncategorized';
+			global $user;
+			if (isset($user) && is_object($user))
+			{
+				$user->add_lang_ext('vinny/calendar', 'common');
+				$cat_name = $user->lang('UNCATEGORIZED');
+			}
 		}
 
 		$sql = 'INSERT INTO ' . $this->table_prefix . 'eventboard_categories ' . $this->db->sql_build_array('INSERT', [

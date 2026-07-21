@@ -154,7 +154,7 @@ class main_listener implements EventSubscriberInterface
 					'TITLE'      => $row['title'],
 					'U_VIEW'     => $this->calendar_link->route('vinny_calendar_view', $row, ['id' => (int) $row['event_id']]),
 					'START_DATE' => $this->user->format_date((int) $row['start_at']),
-					'CAT_ICON'   => $row['cat_icon'] ?: 'fa-calendar',
+					'CAT_ICON'   => $row['cat_icon'] ?? '',
 				]);
 			}
 			$this->template->assign_vars([

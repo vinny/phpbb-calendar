@@ -24,14 +24,14 @@
 				{% if S_USER_LOGGED_IN and not S_IS_OWNER %}
 					{% if S_IS_COMPLETED %}
 						<li>
-							<span class="button button-icon-only button-secondary" title="{{ lang('EVENT_ENDED') }}">
+							<span class="button button-icon-only button-secondary" title="{{ lang('EVENT_ENDED')|e('html_attr') }}">
 								<i class="icon fa-calendar-times-o fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('EVENT_ENDED') }}</span>
 							</span>
 						</li>
 					{% elseif S_HAS_JOINED %}
 						<li>
 							<form action="{{ U_LEAVE_EVENT }}" method="post" class="calendar-inline-form">
-								<button type="submit" name="submit_leave" class="button button-icon-only" title="{{ lang('EVENT_LEAVE') }}">
+								<button type="submit" name="submit_leave" class="button button-icon-only" title="{{ lang('EVENT_LEAVE')|e('html_attr') }}">
 									<i class="icon fa-sign-out fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('EVENT_LEAVE') }}</span>
 								</button>
 								{{ S_FORM_TOKEN }}
@@ -40,7 +40,7 @@
 					{% elseif S_CAN_JOIN %}
 						<li>
 							<form action="{{ U_JOIN_EVENT }}" method="post" class="calendar-inline-form">
-								<button type="submit" name="submit_join" class="button button-icon-only" title="{{ lang('CONFIRM_ATTENDANCE') }}">
+								<button type="submit" name="submit_join" class="button button-icon-only" title="{{ lang('CONFIRM_ATTENDANCE')|e('html_attr') }}">
 									<i class="icon fa-calendar-check-o fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('CONFIRM_ATTENDANCE') }}</span>
 								</button>
 								{{ S_FORM_TOKEN }}
@@ -48,7 +48,7 @@
 						</li>
 					{% else %}
 						<li>
-							<span class="button button-icon-only button-secondary" title="{{ lang('EVENT_FULL') }}">
+							<span class="button button-icon-only button-secondary" title="{{ lang('EVENT_FULL')|e('html_attr') }}">
 								<i class="icon fa-ban fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('EVENT_FULL') }}</span>
 							</span>
 						</li>
@@ -56,7 +56,7 @@
 				{% endif %}
 
 				<li class="dropdown-container dropdown-button-control">
-					<a class="button button-icon-only dropdown-trigger" href="#" title="{{ lang('ADD_TO_CALENDAR') }}">
+					<a class="button button-icon-only dropdown-trigger" href="#" title="{{ lang('ADD_TO_CALENDAR')|e('html_attr') }}">
 						<i class="icon fa-calendar-plus-o fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('ADD_TO_CALENDAR') }}</span>
 					</a>
 					<div class="dropdown hidden">
@@ -69,7 +69,7 @@
 					</div>
 				</li>
 				<li class="dropdown-container dropdown-button-control">
-					<a class="button button-icon-only dropdown-trigger" href="#" title="{{ lang('SHARE_EVENT') }}">
+					<a class="button button-icon-only dropdown-trigger" href="#" title="{{ lang('SHARE_EVENT')|e('html_attr') }}">
 						<i class="icon fa-share-alt fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('SHARE_EVENT') }}</span>
 					</a>
 					<div class="dropdown hidden">
@@ -85,14 +85,14 @@
 				</li>
 				{% if U_EDIT %}
 				<li>
-					<a href="{{ U_EDIT }}" title="{{ lang('EDIT_EVENT') }}" class="button button-icon-only">
+					<a href="{{ U_EDIT }}" title="{{ lang('EDIT_EVENT')|e('html_attr') }}" class="button button-icon-only">
 						<i class="icon fa-pencil fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('EDIT_EVENT') }}</span>
 					</a>
 				</li>
 				{% endif %}
 				{% if U_DELETE %}
 				<li>
-					<a href="{{ U_DELETE }}" data-ajax="true" title="{{ lang('DELETE') }}" class="button button-icon-only">
+					<a href="{{ U_DELETE }}" data-ajax="true" title="{{ lang('DELETE')|e('html_attr') }}" class="button button-icon-only">
 						<i class="icon fa-times fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('DELETE') }}</span>
 					</a>
 				</li>
@@ -140,24 +140,24 @@
 </div>
 
 {% if S_ALLOW_COMMENTS %}
-{% if S_USER_LOGGED_IN and S_CAN_COMMENT and (not S_IS_COMPLETED or S_IS_ADMIN_OR_MOD) %}
-<div class="panel">
+{% if S_CAN_COMMENT %}
+<div class="panel bg2 calendar-comment-form">
 	<div class="inner">
-		<h3>{{ lang('COMMENTS') }}</h3>
-
+		<h3>{{ lang('POST_COMMENT') }}</h3>
 		<form action="{{ U_ACTION_COMMENT }}" method="post" id="postform">
-			<div id="message-box" class="message-box">
+			<div class="message-container">
 				{% INCLUDE 'posting_buttons.html' %}
 				<textarea name="comment_text" id="message" rows="8" cols="76" class="inputbox" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" onfocus="initInsertions();"></textarea>
 			</div>
 			<fieldset class="submit-buttons">
-				<input type="submit" name="submit" class="button1 default-submit-action" value="{{ lang('POST_COMMENT') }}">
+				<input type="submit" name="submit" class="button1 default-submit-action" value="{{ lang('POST_COMMENT')|e('html_attr') }}">
 				{{ S_FORM_TOKEN }}
 			</fieldset>
 		</form>
 	</div>
 </div>
 {% endif %}
+
 {% if loops.comments|length %}
 <hr>
 
@@ -182,13 +182,13 @@
 					<ul class="post-buttons">
 						{% if comment.S_CAN_DELETE %}
 						<li>
-							<a href="{{ comment.U_DELETE }}" data-ajax="post_visibility" title="{{ lang('DELETE_COMMENT') }}" class="button button-icon-only">
+							<a href="{{ comment.U_DELETE }}" data-ajax="post_visibility" title="{{ lang('DELETE_COMMENT')|e('html_attr') }}" class="button button-icon-only">
 								<i class="icon fa-times fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('DELETE_COMMENT') }}</span>
 							</a>
 						</li>
 						{% endif %}
 						<li>
-							<a href="#" class="button button-icon-only js-calendar-quote" title="{{ lang('QUOTE') }}" data-quote-author="{{ comment.AUTHOR_NAME|e('html_attr') }}" data-quote-message="{{ comment.QUOTE_TEXT|e('html_attr') }}">
+							<a href="#" class="button button-icon-only js-calendar-quote" title="{{ lang('QUOTE')|e('html_attr') }}" data-quote-author="{{ comment.AUTHOR_NAME|e('html_attr') }}" data-quote-message="{{ comment.QUOTE_TEXT|e('html_attr') }}">
 								<i class="icon fa-quote-left fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('QUOTE') }}</span>
 							</a>
 						</li>

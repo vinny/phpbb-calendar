@@ -21,6 +21,7 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 	'EVENT_CALENDAR' => 'Calendar',
+	'EVENT_CALENDAR_EXPLAIN' => 'View events and calendar',
 	'UNCATEGORIZED' => 'Uncategorized',
 	'EVENT_CREATE' => 'Create Event',
 	'EVENT_TITLE' => 'Title',
@@ -130,7 +131,6 @@ $lang = array_merge($lang, array(
 	'NO_EVENTS_FOUND' => 'No events found',
 	'UNLIMITED_SPOTS' => 'Unlimited',
 	'HAPPENING_NOW' => 'Happening Now',
-	'NO_HAPPENING_NOW' => 'No events happening right now.',
 	'TOTAL_EVENTS' => 'Total events <strong>%d</strong>',
 
 	'CATEGORIES' => 'Categories',
@@ -140,8 +140,6 @@ $lang = array_merge($lang, array(
 	'UPCOMING_EVENTS_LIST' => 'Upcoming Events',
 	'CONFIRM_DELETE_EVENT' => 'Are you sure you want to delete this event? This will also remove all participants and comments.',
 	'CONFIRM_DELETE_COMMENT' => 'Are you sure you want to delete this comment?',
-	'COMMENT_DELETED' => 'Comment deleted successfully.',
-	'RETURN_TO_EVENT' => 'Return to the event page',
 	'RETURN_TO_MY_EVENTS' => 'Return to My Events',
 	'EDIT_EVENT' => 'Edit Event',
 	'STATUS' => 'Status',
@@ -204,6 +202,7 @@ $lang = array_merge($lang, array(
 	'FLATPICKR_HOUR_ARIA_LABEL' => 'Hour',
 	'FLATPICKR_MINUTE_ARIA_LABEL' => 'Minute',
 
-	// Full list: https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes
+	// Set the 2-letter language code for static map images (e.g. 'en', 'pt', 'es', 'de', 'fr').
+	// Full list of ISO 639-1 language codes: https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes
 	'CALENDAR_MAP_LANG'			=> 'en',
 ));

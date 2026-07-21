@@ -57,7 +57,7 @@ class feed
 
 			$full_content = $meta_html . $desc_html;
 
-			$category = utf8_htmlspecialchars($row['cat_name'] ?: 'Event');
+			$category = utf8_htmlspecialchars($row['cat_name'] ?: $this->user->lang('UNCATEGORIZED'));
 			$author = utf8_htmlspecialchars($row['username']);
 
 			// Format dates (using created_at to avoid future dates)

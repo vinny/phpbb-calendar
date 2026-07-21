@@ -32,7 +32,7 @@
 		<dl>
 			<dt><label for="cat_color">{{ lang('CAT_COLOR') }}{{ lang('COLON') }}</label><br /><span>{{ lang('CATEGORY_COLOR_EXPLAIN') }}</span></dt>
 			<dd>
-				<input type="text" name="cat_color" id="cat_color" value="{{ CAT_COLOR }}" maxlength="7" size="7" />
+				<input type="text" name="cat_color" id="cat_color" value="{{ CAT_COLOR }}" maxlength="7" size="7" required />
 				{% if CAT_COLOR %}&nbsp;<span style="background-color: #{{ CAT_COLOR }}">&nbsp; &nbsp;</span>{% endif
 				%}&nbsp;&nbsp;
 				<span>[ <a href="#" id="color_palette_toggle">{{ lang('COLOUR_SWATCH') }}</a> ]</span>
@@ -41,9 +41,9 @@
 			</dd>
 		</dl>
 		<dl>
-			<dt><label for="cat_icon">{{ lang('CAT_ICON') }}{{ lang('COLON') }}</label><br /><span>{{ lang('CATEGORY_ICON_EXPLAIN') }}</span></dt>
-			<dd><input type="text" name="cat_icon" id="cat_icon" value="{{ CAT_ICON }}" maxlength="50" size="20" /> <i
-					class="icon {{ CAT_ICON }} fa-fw"></i></dd>
+			<dt><label for="cat_icon">{{ lang('CAT_ICON') }}{{ lang('COLON') }}</label><br /><span>{{ lang('CATEGORY_ICON_EXPLAIN')|raw }}</span></dt>
+			<dd><input type="text" name="cat_icon" id="cat_icon" value="{{ CAT_ICON }}" maxlength="50" size="20" required /> {% if CAT_ICON %}<i
+					class="icon {{ CAT_ICON }} fa-fw"></i>{% endif %}</dd>
 		</dl>
 
 	</fieldset>
@@ -51,8 +51,8 @@
 	<fieldset>
 		<legend>{{ lang('ACP_SUBMIT_CHANGES') }}</legend>
 		<p class="submit-buttons">
-			<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}" />&nbsp;
-			<input class="button2" type="reset" id="reset" name="reset" value="{{ lang('RESET') }}" />
+			<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT')|e('html_attr') }}" />&nbsp;
+			<input class="button2" type="reset" id="reset" name="reset" value="{{ lang('RESET')|e('html_attr') }}" />
 		</p>
 		{{ S_FORM_TOKEN }}
 	</fieldset>
@@ -84,7 +84,7 @@
 				{% if category.S_CAN_DELETE %}
 				<a href="{{ category.U_DELETE }}" data-ajax="row_delete">{{ ICON_DELETE }}</a>
 				{% else %}
-				<span title="{{ lang('CATEGORY_HAS_EVENTS') }}" aria-disabled="true" style="opacity: .35; cursor: not-allowed;">{{ ICON_DELETE|replace({'title=': 'data-title='})|raw }}</span>
+				<span title="{{ lang('CATEGORY_HAS_EVENTS')|e('html_attr') }}" aria-disabled="true" style="opacity: .35; cursor: not-allowed;">{{ ICON_DELETE|replace({'title=': 'data-title='})|raw }}</span>
 				{% endif %}
 			</td>
 		</tr>
@@ -98,7 +98,7 @@
 
 <form id="acp_cat_add" method="post" action="{{ U_ADD_CATEGORY }}">
 	<fieldset class="quick">
-		<input class="button2" type="submit" name="add" value="{{ lang('CREATE_CATEGORY') }}" />
+		<input class="button2" type="submit" name="add" value="{{ lang('CREATE_CATEGORY')|e('html_attr') }}" />
 	</fieldset>
 </form>
 

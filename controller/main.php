@@ -104,40 +104,39 @@ class main
 		$now = time();
 		foreach ($this->event_query->get_public_calendar_events((int) $this->user->data['user_id']) as $row)
 		{
-			$color = '#' . ($row['cat_color'] ?: '3788d8');
+			$cat_color = !empty($row['cat_color']) ? '#' . ltrim($row['cat_color'], '#') : '';
 			$is_ended = $now > (int) $row['end_at'];
 			$is_occurring = $now >= (int) $row['start_at'] && $now <= (int) $row['end_at'];
 
+			$class_names = [];
 			if ($is_ended)
 			{
-				$bg_color = '#e2e7eb';
-				$border_color = '#c2c7cc';
-				$text_color = '#536482';
-				$class_name = 'calendar-event-ended';
+				$class_names[] = 'calendar-event-ended';
 			}
-			else
+			else if ($is_occurring)
 			{
-				$bg_color = $color;
-				$border_color = $color;
-				$text_color = '#ffffff';
-				$class_name = $is_occurring ? 'calendar-event-occurring' : '';
+				$class_names[] = 'calendar-event-occurring';
 			}
 
-			$events[] = [
+			$event_data = [
 				'title' => html_entity_decode($row['title']),
 				'start' => $this->format_fullcalendar_value((int) $row['start_at']),
 				'end' => $this->format_fullcalendar_value((int) $row['end_at']),
 				'url' => $this->calendar_link->route('vinny_calendar_view', $row, ['id' => (int) $row['event_id']]),
-				'backgroundColor' => $bg_color,
-				'borderColor' => $border_color,
-				'textColor' => $text_color,
-				'color' => $is_ended ? '#8a95a0' : $color,
-				'className' => $class_name,
-				'icon' => $row['cat_icon'] ?: 'fa-calendar',
-				'cat_color' => $color,
+				'className' => implode(' ', $class_names),
+				'icon' => $row['cat_icon'] ?? '',
+				'cat_color' => $cat_color,
 				'is_ended' => $is_ended,
 				'is_occurring' => $is_occurring,
 			];
+
+			if (!empty($cat_color) && !$is_ended)
+			{
+				$event_data['backgroundColor'] = $cat_color;
+				$event_data['borderColor'] = $cat_color;
+			}
+
+			$events[] = $event_data;
 		}
 
 		$canonical_url = $this->calendar_link->absolute_url(generate_board_url(), $this->helper->route('vinny_calendar_controller'));
@@ -150,7 +149,7 @@ class main
 			'U_FEED_EVENTS' => $this->helper->route('vinny_calendar_feed'),
 			'U_ICAL' => $this->helper->route('vinny_calendar_ical'),
 			'S_FEED_ENABLED' => (int) ($this->config['vinny_calendar_enable_feed'] ?? 0),
-			'CALENDAR_EVENTS_JSON' => json_encode($events),
+			'CALENDAR_EVENTS_JSON' => json_encode($events, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT),
 			'S_FC_12HR' => $this->is_user_12hour(),
 			'U_CANONICAL' => $canonical_url,
 			'CALENDAR_OG_TITLE' => $this->user->lang('PUBLIC_CALENDAR') ?: $this->user->lang('EVENT_CALENDAR'),
@@ -603,7 +602,7 @@ class main
 		}
 
 		$this->assert_event_visible($event);
-		if ((int) $event['start_at'] <= time())
+		if ((int) $event['end_at'] <= time())
 		{
 			trigger_error('EVENT_ENDED');
 		}
@@ -1035,7 +1034,7 @@ class main
 	protected function truncate_desc($string, $max_length = 150)
 	{
 		$string = trim(strip_tags(html_entity_decode($string, ENT_QUOTES, 'UTF-8')));
-		$ellipsis = $this->user->lang('ELLIPSIS') ?: '...';
+		$ellipsis = $this->user->lang('ELLIPSIS');
 		if (mb_strlen($string, 'UTF-8') > $max_length)
 		{
 			return mb_substr($string, 0, $max_length - mb_strlen($ellipsis, 'UTF-8'), 'UTF-8') . $ellipsis;

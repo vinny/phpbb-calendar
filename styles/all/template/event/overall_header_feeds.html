@@ -1,3 +1,3 @@
 {% if S_CALENDAR_FEED_ENABLED %}
-	<link rel="alternate" type="application/atom+xml" title="{{ lang('EVENT_CALENDAR') }}" href="{{ U_CALENDAR_FEED }}" />
+	<link rel="alternate" type="application/atom+xml" title="{{ lang('EVENT_CALENDAR')|e('html_attr') }}" href="{{ U_CALENDAR_FEED }}" />
 {% endif %}

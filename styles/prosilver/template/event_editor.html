@@ -28,12 +28,12 @@
 					<dd class="calendar-datetime-range">
 						<div class="calendar-datetime-input-wrapper">
 							<i class="icon fa-calendar fa-fw calendar-input-icon" aria-hidden="true"></i>
-							<input type="text" name="event_start" id="event_start" value="{{ EVENT_START }}" class="inputbox flatpickr-input" required placeholder="{{ lang('EVENT_START') }}">
+							<input type="text" name="event_start" id="event_start" value="{{ EVENT_START }}" class="inputbox flatpickr-input" required placeholder="{{ lang('EVENT_START')|e('html_attr') }}">
 						</div>
 						<span class="calendar-datetime-separator">{{ lang('FLATPICKR_RANGE_SEPARATOR')|trim }}</span>
 						<div class="calendar-datetime-input-wrapper">
 							<i class="icon fa-calendar fa-fw calendar-input-icon" aria-hidden="true"></i>
-							<input type="text" name="event_end" id="event_end" value="{{ EVENT_END }}" class="inputbox flatpickr-input" placeholder="{{ lang('EVENT_END') }}">
+							<input type="text" name="event_end" id="event_end" value="{{ EVENT_END }}" class="inputbox flatpickr-input" placeholder="{{ lang('EVENT_END')|e('html_attr') }}">
 						</div>
 					</dd>
 				</dl>
@@ -46,13 +46,13 @@
 				</dl>
 				<dl id="group-location"{% if S_FORMAT_ONLINE %} style="display: none;"{% endif %}>
 					<dt><label for="event_location">{{ lang('EVENT_LOCATION') }}{{ lang('COLON') }}</label></dt>
-					<dd style="position: relative;"{% if S_GEOAPIFY_ENABLED %} data-calendar-geo-autocomplete data-input-id="event_location" data-lat-id="event_lat" data-lng-id="event_lng" data-endpoint="{{ U_GEO_PROXY }}" data-placeholder="{{ lang('EVENT_GEO_SEARCH_PLACEHOLDER') }}"{% endif %}>
-						<input type="text" name="event_location" id="event_location" value="{{ EVENT_LOCATION }}" class="inputbox full" placeholder="{% if S_GEOAPIFY_ENABLED %}{{ lang('EVENT_GEO_SEARCH_PLACEHOLDER') }}{% else %}{{ lang('EVENT_LOCATION') }}{% endif %}" autocomplete="off">
+					<dd style="position: relative;"{% if S_GEOAPIFY_ENABLED %} data-calendar-geo-autocomplete data-input-id="event_location" data-lat-id="event_lat" data-lng-id="event_lng" data-endpoint="{{ U_GEO_PROXY }}" data-placeholder="{{ lang('EVENT_GEO_SEARCH_PLACEHOLDER')|e('html_attr') }}"{% endif %}>
+						<input type="text" name="event_location" id="event_location" value="{{ EVENT_LOCATION }}" class="inputbox full" placeholder="{% if S_GEOAPIFY_ENABLED %}{{ lang('EVENT_GEO_SEARCH_PLACEHOLDER')|e('html_attr') }}{% else %}{{ lang('EVENT_LOCATION')|e('html_attr') }}{% endif %}" autocomplete="off">
 						<input type="hidden" name="event_lat" id="event_lat" value="{{ EVENT_LAT }}">
 						<input type="hidden" name="event_lng" id="event_lng" value="{{ EVENT_LNG }}">
 						{% if EVENT_MAP_IMAGE_SRC %}
 						<div class="calendar-map-preview" style="margin-top: 8px;">
-							<img src="{{ ROOT_PATH }}{{ EVENT_MAP_IMAGE_SRC }}" alt="{{ lang('MAP_PREVIEW') }}">
+							<img src="{{ ROOT_PATH }}{{ EVENT_MAP_IMAGE_SRC }}" alt="{{ lang('MAP_PREVIEW')|e('html_attr') }}">
 						</div>
 						{% endif %}
 					</dd>
@@ -95,7 +95,7 @@
 	<div class="panel bg3">
 		<div class="inner">
 			<fieldset class="submit-buttons">
-				<input type="submit" name="submit" class="button1 default-submit-action" value="{{ lang('SUBMIT') }}">
+				<input type="submit" name="submit" class="button1 default-submit-action" value="{{ lang('SUBMIT')|e('html_attr') }}">
 				{{ S_FORM_TOKEN }}
 			</fieldset>
 		</div>

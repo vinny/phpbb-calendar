@@ -239,6 +239,7 @@
 }
 
 .calendar-blink {
+	color: #d31731;
 	animation: calendar-pulse-animation 1.5s ease-in-out infinite;
 }
 

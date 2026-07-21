@@ -31,11 +31,11 @@
 <div class="action-bar bar-bottom">
 	<div class="rightside">
 		{% if S_FEED_ENABLED %}
-		<a class="button button-icon-only" href="{{ U_FEED_EVENTS }}" title="{{ lang('RSS_FEED') }}">
+		<a class="button button-icon-only" href="{{ U_FEED_EVENTS }}" title="{{ lang('RSS_FEED')|e('html_attr') }}">
 			<i class="icon fa-rss fa-fw" aria-hidden="true"></i>{{ lang('RSS_FEED') }}
 		</a>
 		{% endif %}
-		<a class="button button-icon-only" href="{{ U_ICAL }}" title="{{ lang('EXPORT_ICS') }}">
+		<a class="button button-icon-only" href="{{ U_ICAL }}" title="{{ lang('EXPORT_ICS')|e('html_attr') }}">
 			<i class="icon fa-download fa-fw" aria-hidden="true"></i>{{ lang('EXPORT_ICS') }}
 		</a>
 	</div>
@@ -74,9 +74,9 @@ document.addEventListener('DOMContentLoaded', function () {
 		aspectRatio: 1.35,
 		eventContent: function (arg) {
 			var viewType = arg.view.type;
-			var iconClass = arg.event.extendedProps.icon || 'fa-calendar';
+			var iconClass = arg.event.extendedProps.icon || '';
 			var title = arg.event.title;
-			var color = arg.event.extendedProps.cat_color || '#3788d8';
+			var color = arg.event.extendedProps.cat_color || '';
 			var url = arg.event.url;
 			var timeText = arg.timeText;
 			var escapedTitle = title.replace(/"/g, '&quot;');
@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 			var statusIndicator = '';
 			if (isOccurring) {
-				statusIndicator = '<i class="icon fa-circle fa-fw calendar-blink" aria-hidden="true" style="color: #ff0000 !important;" title="{{ lang('EVENT_OCCURRING')|e('js') }}"></i> ';
+				statusIndicator = '<i class="icon fa-circle fa-fw calendar-blink" aria-hidden="true" title="{{ lang('EVENT_OCCURRING')|e('js') }}"></i> ';
 			}
 
 			var timeHtml = '';
@@ -95,16 +95,17 @@ document.addEventListener('DOMContentLoaded', function () {
 				timeHtml = '<strong>' + timeText + '</strong> ';
 			}
 
-			var iconColor = isEnded ? '#536482' : color;
+			var iconStyle = (!isEnded && color) ? ' style="color:' + color + ';"' : '';
+			var iconHtml = iconClass ? '<i class="icon ' + iconClass + ' fa-fw" aria-hidden="true"' + iconStyle + '></i> ' : '';
 
 			if (viewType.startsWith('list')) {
 				return {
-					html: '<a href="' + url + '" class="calendar-event-link" title="' + escapedTitle + '">' + statusIndicator + '<i class="icon ' + iconClass + ' fa-fw" aria-hidden="true" style="color:' + iconColor + ' !important;"></i> ' + title + '</a>'
+					html: '<a href="' + url + '" class="calendar-event-link" title="' + escapedTitle + '">' + statusIndicator + iconHtml + title + '</a>'
 				};
 			}
 
 			return {
-				html: '<span class="calendar-grid-event" title="' + escapedTitle + '">' + statusIndicator + timeHtml + '<i class="icon ' + iconClass + ' fa-fw" aria-hidden="true" style="color:' + iconColor + ' !important;"></i> ' + title + '</span>'
+				html: '<span class="calendar-grid-event" title="' + escapedTitle + '">' + statusIndicator + timeHtml + iconHtml + title + '</span>'
 			};
 		},
 		eventClick: function (info) {
