@@ -1,0 +1,34 @@
+{% if S_INDEX and S_DISPLAY_OCCURRING_EVENTS and S_HAS_OCCURRING_EVENTS %}
+<div class="forumbg">
+	<div class="inner">
+		<ul class="topiclist">
+			<li class="header">
+				<dl class="row-item">
+					<dt><div class="list-inner"><i class="icon fa-circle fa-fw calendar-blink" aria-hidden="true"></i> {{ lang('HAPPENING_NOW') }}</div></dt>
+					<dd class="lastpost calendar-actions">{{ lang('EVENT_ENDS') }}</dd>
+				</dl>
+			</li>
+		</ul>
+		<ul class="topiclist topics">
+			{% for event in loops.occurring_events %}
+			<li class="row{% if event.S_ROW_COUNT is even %} bg1{% else %} bg2{% endif %}">
+				<dl class="row-item">
+					<dt title="{{ event.TITLE }}" class="calendar-event-row calendar-no-icon">
+						<div class="list-inner">
+							<a href="{{ event.U_VIEW }}" class="topictitle">{{ event.TITLE }}</a>
+							<div class="topic-poster">
+								{{ event.HOSTED_BY|raw }}
+							</div>
+						</div>
+					</dt>
+					<dd class="lastpost calendar-actions">
+						<time>{{ event.END_DATE }}</time>
+					</dd>
+				</dl>
+			</li>
+			{% endfor %}
+		</ul>
+	</div>
+</div>
+{% INCLUDECSS '@vinny_calendar/eventboard.css' %}
+{% endif %}

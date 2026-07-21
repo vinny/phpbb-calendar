@@ -207,8 +207,11 @@
 
 .calendar-actions {
 	text-align: center;
-	position: relative;
-	z-index: 3;
+}
+
+.calendar-event-row.calendar-no-icon .list-inner {
+	margin-left: 0 !important;
+	padding-left: 10px;
 }
 
 .calendar-actions .post-buttons {
@@ -269,3 +272,4 @@
 .calendar-event-ended i {
 	color: #536482 !important;
 }
+

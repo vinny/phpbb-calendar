@@ -107,9 +107,10 @@ class event_query
 
 		if ($user_id > 1)
 		{
-			$sql = 'SELECT e.*, c.cat_name, c.cat_color, c.cat_icon
+			$sql = 'SELECT e.*, c.cat_name, c.cat_color, c.cat_icon, u.username, u.user_colour
 				FROM ' . $this->table_prefix . 'eventboard_events e
 				LEFT JOIN ' . $this->table_prefix . 'eventboard_categories c ON (e.cat_id = c.cat_id)
+				LEFT JOIN ' . $this->table_prefix . 'users u ON (e.user_id = u.user_id)
 				LEFT JOIN ' . $this->table_prefix . 'eventboard_participants p ON (e.event_id = p.event_id AND p.user_id = ' . (int) $user_id . ')
 				WHERE (e.visibility = 0 OR e.user_id = ' . (int) $user_id . ' OR p.user_id IS NOT NULL)
 					AND e.start_at <= ' . $now . '
@@ -118,9 +119,10 @@ class event_query
 		}
 		else
 		{
-			$sql = 'SELECT e.*, c.cat_name, c.cat_color, c.cat_icon
+			$sql = 'SELECT e.*, c.cat_name, c.cat_color, c.cat_icon, u.username, u.user_colour
 				FROM ' . $this->table_prefix . 'eventboard_events e
 				LEFT JOIN ' . $this->table_prefix . 'eventboard_categories c ON (e.cat_id = c.cat_id)
+				LEFT JOIN ' . $this->table_prefix . 'users u ON (e.user_id = u.user_id)
 				WHERE e.visibility = 0
 					AND e.start_at <= ' . $now . '
 					AND e.end_at >= ' . $now . '

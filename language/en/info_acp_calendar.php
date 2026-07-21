@@ -45,7 +45,7 @@ $lang = array_merge($lang, array(
 	'EVENTBOARD_GEOAPIFY_KEY' => 'Geoapify API Key',
 	'EVENTBOARD_GEOAPIFY_KEY_EXPLAIN' => 'Key for address autocomplete and maps. Get your Geoapify key <a href="https://myprojects.geoapify.com/" target="_blank">here</a>.<br />Important: In the Geoapify Dashboard, select the project > expand the dropdown arrow > under Allowed Origins click the add button > enter your site domain (e.g. https://www.mysite.com) > click Ok.',
 	'EVENTBOARD_DISABLED' => 'The event calendar is disabled.',
-	'EVENTBOARD_DISPLAY_OCCURRING' => 'Display "Happening Now" block on index',
+	'EVENTBOARD_DISPLAY_OCCURRING' => 'Display "Events Happening Now" block on index',
 	'EVENTBOARD_DISPLAY_OCCURRING_EXPLAIN' => 'Show a block on the forum index page displaying events that are currently taking place.',
 	'EVENTBOARD_DISPLAY_UPCOMING' => 'Display "Upcoming Events" block on index',
 	'EVENTBOARD_DISPLAY_UPCOMING_EXPLAIN' => 'Show a block on the forum index page with the list of the next 5 upcoming events.',

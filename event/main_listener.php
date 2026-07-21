@@ -134,9 +134,12 @@ class main_listener implements EventSubscriberInterface
 			$occurring_events = $this->event_query->get_occurring_public_events($user_id);
 			foreach ($occurring_events as $row)
 			{
+				$user_full = get_username_string('full', (int) $row['user_id'], $row['username'], $row['user_colour']);
 				$this->template->assign_block_vars('occurring_events', [
-					'TITLE'  => $row['title'],
-					'U_VIEW' => $this->calendar_link->route('vinny_calendar_view', $row, ['id' => (int) $row['event_id']]),
+					'TITLE'     => $row['title'],
+					'U_VIEW'    => $this->calendar_link->route('vinny_calendar_view', $row, ['id' => (int) $row['event_id']]),
+					'HOSTED_BY' => $this->user->lang('HOSTED_BY', $user_full),
+					'END_DATE'  => $this->user->format_date((int) $row['end_at']),
 				]);
 			}
 			$this->template->assign_vars([

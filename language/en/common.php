@@ -86,6 +86,8 @@ $lang = array_merge($lang, array(
 
 	// Event View Strings
 	'EVENT_ORGANIZED_BY' => 'Organized by',
+	'HOSTED_BY' => 'Hosted by %s',
+	'EVENT_ENDS' => 'Ends',
 	'WHO_IS_GOING' => "Who's Going",
 	'ADD_TO_CALENDAR' => 'Add to Calendar',
 	'GOOGLE_CALENDAR' => 'Google Calendar',
@@ -130,7 +132,7 @@ $lang = array_merge($lang, array(
 	'ACTIONS' => 'Actions',
 	'NO_EVENTS_FOUND' => 'No events found',
 	'UNLIMITED_SPOTS' => 'Unlimited',
-	'HAPPENING_NOW' => 'Happening Now',
+	'HAPPENING_NOW' => 'Events Happening Now',
 	'TOTAL_EVENTS' => 'Total events <strong>%d</strong>',
 
 	'CATEGORIES' => 'Categories',
