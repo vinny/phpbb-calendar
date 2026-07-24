@@ -107,7 +107,7 @@ class main_module
 				$category = [
 					'cat_name' => '',
 					'cat_desc' => '',
-					'cat_color' => '',
+					'cat_color' => '3788d8',
 					'cat_icon' => '',
 				];
 
@@ -196,7 +196,7 @@ class main_module
 					'U_BACK' => $this->u_action,
 					'CAT_NAME' => $category['cat_name'],
 					'CAT_DESC' => $category['cat_desc'],
-					'CAT_COLOR' => ltrim($category['cat_color'], '#'),
+					'CAT_COLOR' => '#' . ltrim($category['cat_color'], '#'),
 					'CAT_ICON' => $category['cat_icon'],
 				]);
 				return;
@@ -276,6 +276,14 @@ class main_module
 	{
 		global $table_prefix;
 
+		if (!defined('EVENTBOARD_EVENTS_TABLE'))
+		{
+			define('EVENTBOARD_EVENTS_TABLE', $table_prefix . 'eventboard_events');
+			define('EVENTBOARD_CATEGORIES_TABLE', $table_prefix . 'eventboard_categories');
+			define('EVENTBOARD_PARTICIPANTS_TABLE', $table_prefix . 'eventboard_participants');
+			define('EVENTBOARD_COMMENTS_TABLE', $table_prefix . 'eventboard_comments');
+		}
+
 		$db = $container->get('dbal.conn');
 		$helper = $container->get('controller.helper');
 		$pagination = $container->get('pagination');
@@ -285,18 +293,13 @@ class main_module
 		$completed = $request->variable('completed', 0);
 		$per_page = 15;
 
-		$table_events = $table_prefix . 'eventboard_events';
-		$table_users = $table_prefix . 'users';
-		$table_categories = $table_prefix . 'eventboard_categories';
-		$table_participants = $table_prefix . 'eventboard_participants';
-
 		if ($action === 'delete' && $event_id)
 		{
 			if (confirm_box(true))
 			{
-				$db->sql_query('DELETE FROM ' . $table_events . ' WHERE event_id = ' . (int) $event_id);
-				$db->sql_query('DELETE FROM ' . $table_participants . ' WHERE event_id = ' . (int) $event_id);
-				$db->sql_query('DELETE FROM ' . $table_prefix . 'eventboard_comments WHERE event_id = ' . (int) $event_id);
+				$db->sql_query('DELETE FROM ' . EVENTBOARD_EVENTS_TABLE . ' WHERE event_id = ' . (int) $event_id);
+				$db->sql_query('DELETE FROM ' . EVENTBOARD_PARTICIPANTS_TABLE . ' WHERE event_id = ' . (int) $event_id);
+				$db->sql_query('DELETE FROM ' . EVENTBOARD_COMMENTS_TABLE . ' WHERE event_id = ' . (int) $event_id);
 
 				if ($request->is_ajax())
 				{
@@ -316,17 +319,37 @@ class main_module
 			]));
 		}
 
-		$total_events = $this->fetch_count($db, 'SELECT COUNT(event_id) AS total FROM ' . $table_events . ' e WHERE ' . ($completed ? 'e.start_at < ' . (int) time() : 'e.start_at >= ' . (int) time()));
-		$total_active = $this->fetch_count($db, 'SELECT COUNT(event_id) AS total FROM ' . $table_events . ' WHERE start_at >= ' . (int) time());
-		$total_completed = $this->fetch_count($db, 'SELECT COUNT(event_id) AS total FROM ' . $table_events . ' WHERE start_at < ' . (int) time());
+		if ($completed)
+		{
+			$total_events = $this->fetch_count($db, 'SELECT COUNT(event_id) AS total FROM ' . EVENTBOARD_EVENTS_TABLE . ' e WHERE e.start_at < ' . (int) time());
+		}
+		else
+		{
+			$total_events = $this->fetch_count($db, 'SELECT COUNT(event_id) AS total FROM ' . EVENTBOARD_EVENTS_TABLE . ' e WHERE e.start_at >= ' . (int) time());
+		}
+		$total_active = $this->fetch_count($db, 'SELECT COUNT(event_id) AS total FROM ' . EVENTBOARD_EVENTS_TABLE . ' WHERE start_at >= ' . (int) time());
+		$total_completed = $this->fetch_count($db, 'SELECT COUNT(event_id) AS total FROM ' . EVENTBOARD_EVENTS_TABLE . ' WHERE start_at < ' . (int) time());
 
-		$sql = 'SELECT e.*, u.username, u.user_colour, c.cat_name,
-				(SELECT COUNT(p.id) FROM ' . $table_participants . ' p WHERE p.event_id = e.event_id) AS participant_count
-			FROM ' . $table_events . ' e
-			LEFT JOIN ' . $table_users . ' u ON (u.user_id = e.user_id)
-			LEFT JOIN ' . $table_categories . ' c ON (c.cat_id = e.cat_id)
-			WHERE ' . ($completed ? 'e.start_at < ' . (int) time() : 'e.start_at >= ' . (int) time()) . '
-			ORDER BY e.start_at ' . ($completed ? 'DESC' : 'ASC');
+		if ($completed)
+		{
+			$sql = 'SELECT e.*, u.username, u.user_colour, c.cat_name,
+					(SELECT COUNT(p.id) FROM ' . EVENTBOARD_PARTICIPANTS_TABLE . ' p WHERE p.event_id = e.event_id) AS participant_count
+				FROM ' . EVENTBOARD_EVENTS_TABLE . ' e
+				LEFT JOIN ' . USERS_TABLE . ' u ON (u.user_id = e.user_id)
+				LEFT JOIN ' . EVENTBOARD_CATEGORIES_TABLE . ' c ON (c.cat_id = e.cat_id)
+				WHERE e.start_at < ' . (int) time() . '
+				ORDER BY e.start_at DESC';
+		}
+		else
+		{
+			$sql = 'SELECT e.*, u.username, u.user_colour, c.cat_name,
+					(SELECT COUNT(p.id) FROM ' . EVENTBOARD_PARTICIPANTS_TABLE . ' p WHERE p.event_id = e.event_id) AS participant_count
+				FROM ' . EVENTBOARD_EVENTS_TABLE . ' e
+				LEFT JOIN ' . USERS_TABLE . ' u ON (u.user_id = e.user_id)
+				LEFT JOIN ' . EVENTBOARD_CATEGORIES_TABLE . ' c ON (c.cat_id = e.cat_id)
+				WHERE e.start_at >= ' . (int) time() . '
+				ORDER BY e.start_at ASC';
+		}
 		$result = $db->sql_query_limit($sql, $per_page, $start);
 
 		while ($row = $db->sql_fetchrow($result))

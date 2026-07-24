@@ -27,6 +27,14 @@ class event_access
 		$this->db = $db;
 		$this->auth = $auth;
 		$this->table_prefix = $table_prefix;
+
+		if (!defined('EVENTBOARD_EVENTS_TABLE'))
+		{
+			define('EVENTBOARD_EVENTS_TABLE', $table_prefix . 'eventboard_events');
+			define('EVENTBOARD_CATEGORIES_TABLE', $table_prefix . 'eventboard_categories');
+			define('EVENTBOARD_PARTICIPANTS_TABLE', $table_prefix . 'eventboard_participants');
+			define('EVENTBOARD_COMMENTS_TABLE', $table_prefix . 'eventboard_comments');
+		}
 	}
 
 	public function normalize_token($token)
@@ -77,7 +85,7 @@ class event_access
 		}
 
 		$sql = 'SELECT id
-            FROM ' . $this->table_prefix . 'eventboard_participants
+            FROM ' . EVENTBOARD_PARTICIPANTS_TABLE . '
             WHERE event_id = ' . (int) $event_id . '
                 AND user_id = ' . (int) $user_id;
 		$result = $this->db->sql_query($sql);

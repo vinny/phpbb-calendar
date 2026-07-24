@@ -1,5 +1,8 @@
 {% if S_IN_CALENDAR %}
-{% INCLUDECSS '@vinny_calendar/eventboard.css' %}
+{% if not definition.INCLUDED_EVENTBOARD_CSS %}
+	{% INCLUDECSS '@vinny_calendar/eventboard.css' %}
+	{% DEFINE INCLUDED_EVENTBOARD_CSS = true %}
+{% endif %}
 
 {% if CALENDAR_OG_TITLE %}
 <meta property="og:title" content="{{ CALENDAR_OG_TITLE }}" />

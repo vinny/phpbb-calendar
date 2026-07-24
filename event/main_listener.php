@@ -128,10 +128,11 @@ class main_listener implements EventSubscriberInterface
 		}
 
 		$user_id = (int) $this->user->data['user_id'];
+		$token = $this->calendar_link->current_access_token();
 
 		if (!empty($this->config['vinny_calendar_display_occurring']))
 		{
-			$occurring_events = $this->event_query->get_occurring_public_events($user_id);
+			$occurring_events = $this->event_query->get_occurring_public_events($user_id, $token);
 			foreach ($occurring_events as $row)
 			{
 				$user_full = get_username_string('full', (int) $row['user_id'], $row['username'], $row['user_colour']);
@@ -150,7 +151,7 @@ class main_listener implements EventSubscriberInterface
 
 		if (!empty($this->config['vinny_calendar_display_upcoming']))
 		{
-			$upcoming_events = $this->event_query->get_upcoming_public_events(5, 0, $user_id);
+			$upcoming_events = $this->event_query->get_upcoming_public_events(5, 0, $user_id, $token);
 			foreach ($upcoming_events as $row)
 			{
 				$this->template->assign_block_vars('upcoming_events_list', [

@@ -19,6 +19,11 @@
 
 .calendar-event-row {
 	position: relative;
+	pointer-events: none;
+}
+
+.calendar-event-row .list-inner {
+	pointer-events: auto;
 }
 
 .calendar-row-icon {

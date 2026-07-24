@@ -32,12 +32,7 @@
 		<dl>
 			<dt><label for="cat_color">{{ lang('CAT_COLOR') }}{{ lang('COLON') }}</label><br /><span>{{ lang('CATEGORY_COLOR_EXPLAIN') }}</span></dt>
 			<dd>
-				<input type="text" name="cat_color" id="cat_color" value="{{ CAT_COLOR }}" maxlength="7" size="7" required />
-				{% if CAT_COLOR %}&nbsp;<span style="background-color: #{{ CAT_COLOR }}">&nbsp; &nbsp;</span>{% endif
-				%}&nbsp;&nbsp;
-				<span>[ <a href="#" id="color_palette_toggle">{{ lang('COLOUR_SWATCH') }}</a> ]</span>
-				<div id="color_palette_placeholder" style="display: none;" data-color-palette="h" data-height="12"
-					data-width="15" data-target="#cat_color"></div>
+				<input type="color" name="cat_color" id="cat_color" value="{{ CAT_COLOR }}" required />
 			</dd>
 		</dl>
 		<dl>
@@ -65,9 +60,9 @@
 		<tr>
 			<th>{{ lang('CAT_NAME') }}</th>
 			<th>{{ lang('CAT_DESC') }}</th>
-			<th>{{ lang('CAT_COLOR') }}</th>
+			<th style="text-align: center;">{{ lang('CAT_COLOR') }}</th>
 			<th>{{ lang('CAT_ICON') }}</th>
-			<th>{{ lang('CAT_EVENT_COUNT') }}</th>
+			<th style="text-align: center;">{{ lang('CAT_EVENT_COUNT') }}</th>
 			<th>{{ lang('ACTION') }}</th>
 		</tr>
 	</thead>
@@ -76,7 +71,9 @@
 		<tr>
 			<td><strong>{{ category.NAME }}</strong></td>
 			<td>{{ category.DESC ? category.DESC : lang('NO_DESCRIPTION') }}</td>
-			<td><span style="color: {{ category.COLOR }}; font-weight: bold;">{{ category.COLOR }}</span></td>
+			<td style="text-align: center;">
+				<span style="background-color: {{ category.COLOR }}; display: inline-block; width: 35px; height: 15px; border: 1px solid #ccc; vertical-align: middle;"></span>
+			</td>
 			<td><i class="icon {{ category.ICON }} fa-fw"></i> {{ category.ICON }}</td>
 			<td style="text-align: center;">{{ category.EVENT_COUNT }}</td>
 			<td style="width: 80px; text-align: center;" class="actions">

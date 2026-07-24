@@ -102,7 +102,8 @@ class main
 
 		$events = [];
 		$now = time();
-		foreach ($this->event_query->get_public_calendar_events((int) $this->user->data['user_id']) as $row)
+		$token = $this->calendar_link->current_access_token();
+		foreach ($this->event_query->get_public_calendar_events((int) $this->user->data['user_id'], $token) as $row)
 		{
 			$cat_color = !empty($row['cat_color']) ? '#' . ltrim($row['cat_color'], '#') : '';
 			$is_ended = $now > (int) $row['end_at'];
@@ -169,9 +170,10 @@ class main
 
 		$start = $this->request->variable('start', 0);
 		$per_page = 10;
-		$total = $this->event_query->count_upcoming_public_events((int) $this->user->data['user_id']);
+		$token = $this->calendar_link->current_access_token();
+		$total = $this->event_query->count_upcoming_public_events((int) $this->user->data['user_id'], $token);
 
-		foreach ($this->event_query->get_upcoming_public_events($per_page, $start, (int) $this->user->data['user_id']) as $row)
+		foreach ($this->event_query->get_upcoming_public_events($per_page, $start, (int) $this->user->data['user_id'], $token) as $row)
 		{
 			$this->template->assign_block_vars('events', $this->build_list_event_vars($row));
 		}
@@ -208,9 +210,10 @@ class main
 
 		$start = $this->request->variable('start', 0);
 		$per_page = 10;
-		$total = $this->event_query->count_public_category_events((int) $id, (int) $this->user->data['user_id']);
+		$token = $this->calendar_link->current_access_token();
+		$total = $this->event_query->count_public_category_events((int) $id, (int) $this->user->data['user_id'], $token);
 
-		foreach ($this->event_query->get_public_category_events((int) $id, $per_page, $start, (int) $this->user->data['user_id']) as $row)
+		foreach ($this->event_query->get_public_category_events((int) $id, $per_page, $start, (int) $this->user->data['user_id'], $token) as $row)
 		{
 			$this->template->assign_block_vars('events', $this->build_list_event_vars($row));
 		}

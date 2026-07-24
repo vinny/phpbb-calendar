@@ -27,12 +27,20 @@ class rsvp
 		$this->db = $db;
 		$this->notification_manager = $notification_manager;
 		$this->table_prefix = $table_prefix;
+
+		if (!defined('EVENTBOARD_EVENTS_TABLE'))
+		{
+			define('EVENTBOARD_EVENTS_TABLE', $table_prefix . 'eventboard_events');
+			define('EVENTBOARD_CATEGORIES_TABLE', $table_prefix . 'eventboard_categories');
+			define('EVENTBOARD_PARTICIPANTS_TABLE', $table_prefix . 'eventboard_participants');
+			define('EVENTBOARD_COMMENTS_TABLE', $table_prefix . 'eventboard_comments');
+		}
 	}
 
 	public function has_joined($event_id, $user_id)
 	{
 		$sql = 'SELECT id
-            FROM ' . $this->table_prefix . 'eventboard_participants
+            FROM ' . EVENTBOARD_PARTICIPANTS_TABLE . '
             WHERE event_id = ' . (int) $event_id . '
                 AND user_id = ' . (int) $user_id;
 		$result = $this->db->sql_query($sql);
@@ -45,7 +53,7 @@ class rsvp
 	public function count_participants($event_id)
 	{
 		$sql = 'SELECT COUNT(id) as total
-            FROM ' . $this->table_prefix . 'eventboard_participants
+            FROM ' . EVENTBOARD_PARTICIPANTS_TABLE . '
             WHERE event_id = ' . (int) $event_id;
 		$result = $this->db->sql_query($sql);
 		$total = (int) $this->db->sql_fetchfield('total');
@@ -64,7 +72,7 @@ class rsvp
 		$this->db->sql_transaction('begin');
 
 		$sql = 'SELECT max_participants
-            FROM ' . $this->table_prefix . 'eventboard_events
+            FROM ' . EVENTBOARD_EVENTS_TABLE . '
             WHERE event_id = ' . (int) $event['event_id'];
 		$result = $this->db->sql_query($sql);
 		$current_event = $this->db->sql_fetchrow($result);
@@ -88,7 +96,7 @@ class rsvp
 			'user_id' => (int) $user_id,
 			'joined_at' => time(),
 		];
-		$sql = 'INSERT INTO ' . $this->table_prefix . 'eventboard_participants ' . $this->db->sql_build_array('INSERT', $sql_ary);
+		$sql = 'INSERT INTO ' . EVENTBOARD_PARTICIPANTS_TABLE . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
 		$this->db->sql_query($sql);
 
 		$total_after_insert = $this->count_participants($event['event_id']);
@@ -116,7 +124,7 @@ class rsvp
 
 	public function leave($event_id, $user_id)
 	{
-		$sql = 'DELETE FROM ' . $this->table_prefix . 'eventboard_participants
+		$sql = 'DELETE FROM ' . EVENTBOARD_PARTICIPANTS_TABLE . '
             WHERE event_id = ' . (int) $event_id . '
                 AND user_id = ' . (int) $user_id;
 		$this->db->sql_query($sql);

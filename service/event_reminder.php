@@ -24,6 +24,14 @@ class event_reminder
 		$this->db = $db;
 		$this->notification_manager = $notification_manager;
 		$this->table_prefix = $table_prefix;
+
+		if (!defined('EVENTBOARD_EVENTS_TABLE'))
+		{
+			define('EVENTBOARD_EVENTS_TABLE', $table_prefix . 'eventboard_events');
+			define('EVENTBOARD_CATEGORIES_TABLE', $table_prefix . 'eventboard_categories');
+			define('EVENTBOARD_PARTICIPANTS_TABLE', $table_prefix . 'eventboard_participants');
+			define('EVENTBOARD_COMMENTS_TABLE', $table_prefix . 'eventboard_comments');
+		}
 	}
 
 	public function is_enabled()
@@ -43,7 +51,7 @@ class event_reminder
 		$window_end = $now + ($lead_minutes * 60);
 
 		$sql = 'SELECT *
-			FROM ' . $this->table_prefix . 'eventboard_events
+			FROM ' . EVENTBOARD_EVENTS_TABLE . '
 			WHERE start_at > ' . (int) $now . '
 				AND start_at <= ' . (int) $window_end . '
 				AND reminder_sent_at = 0';
@@ -65,7 +73,7 @@ class event_reminder
 
 		$participants = [];
 		$participant_sql = 'SELECT event_id, user_id
-			FROM ' . $this->table_prefix . 'eventboard_participants
+			FROM ' . EVENTBOARD_PARTICIPANTS_TABLE . '
 			WHERE ' . $this->db->sql_in_set('event_id', $event_ids);
 		$participant_result = $this->db->sql_query($participant_sql);
 		while ($row = $this->db->sql_fetchrow($participant_result))
@@ -92,7 +100,7 @@ class event_reminder
 			);
 		}
 
-		$update_sql = 'UPDATE ' . $this->table_prefix . 'eventboard_events
+		$update_sql = 'UPDATE ' . EVENTBOARD_EVENTS_TABLE . '
 			SET reminder_sent_at = ' . $now . '
 			WHERE ' . $this->db->sql_in_set('event_id', $event_ids);
 		$this->db->sql_query($update_sql);

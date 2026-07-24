@@ -151,7 +151,8 @@ class v100_schema extends \phpbb\db\migration\container_aware_migration
 			}
 		}
 
-		$sql = 'INSERT INTO ' . $this->table_prefix . 'eventboard_categories ' . $this->db->sql_build_array('INSERT', [
+		$categories_table = $this->table_prefix . 'eventboard_categories';
+		$sql = 'INSERT INTO ' . $categories_table . ' ' . $this->db->sql_build_array('INSERT', [
 			'cat_name'  => $cat_name,
 			'cat_desc'  => '',
 			'cat_color' => '000000',
@@ -162,7 +163,8 @@ class v100_schema extends \phpbb\db\migration\container_aware_migration
 
 	public function remove_default_category()
 	{
-		$sql = 'DELETE FROM ' . $this->table_prefix . "eventboard_categories WHERE cat_color = '000000' AND cat_icon = 'fa-calendar-o'";
+		$categories_table = $this->table_prefix . 'eventboard_categories';
+		$sql = 'DELETE FROM ' . $categories_table . " WHERE cat_color = '000000' AND cat_icon = 'fa-calendar-o'";
 		$this->db->sql_query($sql);
 	}
 }

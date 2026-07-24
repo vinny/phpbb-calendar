@@ -30,5 +30,8 @@
 		</ul>
 	</div>
 </div>
-{% INCLUDECSS '@vinny_calendar/eventboard.css' %}
+{% if not definition.INCLUDED_EVENTBOARD_CSS %}
+	{% INCLUDECSS '@vinny_calendar/eventboard.css' %}
+	{% DEFINE INCLUDED_EVENTBOARD_CSS = true %}
+{% endif %}
 {% endif %}

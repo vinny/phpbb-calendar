@@ -31,11 +31,19 @@ class event_manager
 		$this->map_image = $map_image;
 		$this->table_prefix = $table_prefix;
 		$this->notification_manager = $notification_manager;
+
+		if (!defined('EVENTBOARD_EVENTS_TABLE'))
+		{
+			define('EVENTBOARD_EVENTS_TABLE', $table_prefix . 'eventboard_events');
+			define('EVENTBOARD_CATEGORIES_TABLE', $table_prefix . 'eventboard_categories');
+			define('EVENTBOARD_PARTICIPANTS_TABLE', $table_prefix . 'eventboard_participants');
+			define('EVENTBOARD_COMMENTS_TABLE', $table_prefix . 'eventboard_comments');
+		}
 	}
 
 	public function create_event(array $data)
 	{
-		$sql = 'INSERT INTO ' . $this->table_prefix . 'eventboard_events ' . $this->db->sql_build_array('INSERT', [
+		$sql = 'INSERT INTO ' . EVENTBOARD_EVENTS_TABLE . ' ' . $this->db->sql_build_array('INSERT', [
 			'user_id' => (int) $data['user_id'],
 			'title' => $data['title'],
 			'description' => $data['description'],
@@ -57,7 +65,7 @@ class event_manager
 
 		$event_id = (int) $this->db->sql_nextid();
 
-		$sql = 'INSERT INTO ' . $this->table_prefix . 'eventboard_participants ' . $this->db->sql_build_array('INSERT', [
+		$sql = 'INSERT INTO ' . EVENTBOARD_PARTICIPANTS_TABLE . ' ' . $this->db->sql_build_array('INSERT', [
 			'event_id' => $event_id,
 			'user_id' => (int) $data['user_id'],
 			'joined_at' => time(),
@@ -68,7 +76,7 @@ class event_manager
 
 		if ($map_image !== '')
 		{
-			$sql = 'UPDATE ' . $this->table_prefix . "eventboard_events
+			$sql = 'UPDATE ' . EVENTBOARD_EVENTS_TABLE . "
 				SET map_image = '" . $this->db->sql_escape($map_image) . "'
 				WHERE event_id = " . (int) $event_id;
 			$this->db->sql_query($sql);
@@ -90,7 +98,7 @@ class event_manager
 			$map_image = $this->map_image->generate($event_id, $data['lat'], $data['lng']);
 		}
 
-		$sql = 'UPDATE ' . $this->table_prefix . 'eventboard_events
+		$sql = 'UPDATE ' . EVENTBOARD_EVENTS_TABLE . '
             SET ' . $this->db->sql_build_array('UPDATE', [
 				'title' => $data['title'],
 				'description' => $data['description'],
@@ -120,15 +128,15 @@ class event_manager
 
 	public function delete_event($event_id)
 	{
-		$sql = 'DELETE FROM ' . $this->table_prefix . 'eventboard_events
+		$sql = 'DELETE FROM ' . EVENTBOARD_EVENTS_TABLE . '
             WHERE event_id = ' . (int) $event_id;
 		$this->db->sql_query($sql);
 
-		$sql = 'DELETE FROM ' . $this->table_prefix . 'eventboard_participants
+		$sql = 'DELETE FROM ' . EVENTBOARD_PARTICIPANTS_TABLE . '
             WHERE event_id = ' . (int) $event_id;
 		$this->db->sql_query($sql);
 
-		$sql = 'DELETE FROM ' . $this->table_prefix . 'eventboard_comments
+		$sql = 'DELETE FROM ' . EVENTBOARD_COMMENTS_TABLE . '
             WHERE event_id = ' . (int) $event_id;
 		$this->db->sql_query($sql);
 
