@@ -117,7 +117,7 @@
 
 				{% if EVENT_MAP_IMAGE %}
 				<div class="calendar-map-panel">
-					<img src="{{ ROOT_PATH }}images/vinny_calendar_img/{{ EVENT_MAP_IMAGE }}" alt="{{ EVENT_LOCATION }}">
+					<img src="{{ ROOT_PATH }}images/vinny_calendar_img/{{ EVENT_MAP_IMAGE }}" alt="{{ EVENT_LOCATION|e('html_attr') }}">
 				</div>
 				{% endif %}
 			</div>

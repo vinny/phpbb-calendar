@@ -1,5 +1,4 @@
 <?php
-
 /**
  *
  * EventBoard extension for the phpBB Forum Software package.

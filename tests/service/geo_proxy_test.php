@@ -10,12 +10,6 @@
 
 namespace vinny\calendar\tests\service;
 
-class dummy_user extends \phpbb\user
-{
-	public function __construct() {}
-	public function lang() { return 'en'; }
-}
-
 class geo_proxy_test extends \phpbb_test_case
 {
 	protected $config;
@@ -27,7 +21,12 @@ class geo_proxy_test extends \phpbb_test_case
 		parent::setUp();
 
 		$this->config = new \phpbb\config\config(['vinny_calendar_geoapify_key' => '']);
-		$this->user = new dummy_user();
+		$this->user = $this->getMockBuilder(\phpbb\user::class)
+			->disableOriginalConstructor()
+			->getMock();
+
+		$this->user->method('lang')
+			->willReturn('en');
 
 		$this->service = new \vinny\calendar\service\geo_proxy(
 			$this->config,

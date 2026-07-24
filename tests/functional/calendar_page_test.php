@@ -12,7 +12,7 @@ namespace vinny\calendar\tests\functional;
 
 class calendar_page_test extends \phpbb_functional_test_case
 {
-	static protected function setup_extensions()
+	protected static function setup_extensions()
 	{
 		return array('vinny/calendar');
 	}

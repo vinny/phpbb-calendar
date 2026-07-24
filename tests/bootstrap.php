@@ -8,7 +8,8 @@
  *
  */
 
-if (!file_exists(__DIR__ . '/../vendor/autoload.php')) {
+if (!file_exists(__DIR__ . '/../vendor/autoload.php'))
+{
 	throw new \RuntimeException('Install dependencies using Composer before running tests.');
 }
 

@@ -15,7 +15,7 @@ class database_test extends \phpbb_database_test_case
 	protected $db_tools;
 	protected $table_prefix;
 
-	static protected function setup_extensions()
+	protected static function setup_extensions()
 	{
 		return array('vinny/calendar');
 	}

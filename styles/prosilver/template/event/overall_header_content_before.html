@@ -13,7 +13,7 @@
 			{% for event in loops.occurring_events %}
 			<li class="row{% if event.S_ROW_COUNT is even %} bg1{% else %} bg2{% endif %}">
 				<dl class="row-item">
-					<dt title="{{ event.TITLE }}" class="calendar-event-row calendar-no-icon">
+					<dt title="{{ event.TITLE|e('html_attr') }}" class="calendar-event-row calendar-no-icon">
 						<div class="list-inner">
 							<a href="{{ event.U_VIEW }}" class="topictitle">{{ event.TITLE }}</a>
 							<div class="topic-poster">

@@ -10,21 +10,6 @@
 
 namespace vinny\calendar\tests\service;
 
-class dummy_request extends \phpbb\request\request
-{
-	public function __construct() {}
-}
-
-class dummy_helper extends \phpbb\controller\helper
-{
-	public function __construct() {}
-}
-
-class dummy_event_access extends \vinny\calendar\service\event_access
-{
-	public function __construct() {}
-}
-
 class calendar_link_test extends \phpbb_test_case
 {
 	protected $helper;
@@ -36,9 +21,17 @@ class calendar_link_test extends \phpbb_test_case
 	{
 		parent::setUp();
 
-		$this->helper = new dummy_helper();
-		$this->request = new dummy_request();
-		$this->event_access = new dummy_event_access();
+		$this->helper = $this->getMockBuilder(\phpbb\controller\helper::class)
+			->disableOriginalConstructor()
+			->getMock();
+
+		$this->request = $this->getMockBuilder(\phpbb\request\request::class)
+			->disableOriginalConstructor()
+			->getMock();
+
+		$this->event_access = $this->getMockBuilder(\vinny\calendar\service\event_access::class)
+			->disableOriginalConstructor()
+			->getMock();
 
 		$this->service = new \vinny\calendar\service\calendar_link(
 			$this->helper,
