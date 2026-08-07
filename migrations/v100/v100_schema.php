@@ -19,7 +19,7 @@ class v100_schema extends \phpbb\db\migration\container_aware_migration
 
 	public static function depends_on()
 	{
-		return ['\phpbb\db\migration\data\v330\v330'];
+		return ['\phpbb\db\migration\data\v33x\v331rc1'];
 	}
 
 	public function update_schema()

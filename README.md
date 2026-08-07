@@ -8,33 +8,41 @@
 [![PHPStan](https://img.shields.io/badge/phpstan-passing-brightgreen)](https://phpstan.org/)
 [![PHPUnit](https://img.shields.io/badge/phpunit-passing-brightgreen)](https://phpunit.de/)
 
-Calendar and event manager extension for phpBB 3.3+.
+
+EventBoard Calendar is a calendar and event manager extension for phpBB. It allows community members to create, view, and interact with public or private events directly on the forum.
 
 ## Features
 
-- **Public & Private Events**: Create events visible to everyone or restrict visibility to specific users using secure unique access tokens.
-- **[FullCalendar.io](https://v7.fullcalendar.io/) Integration**: A beautiful, interactive calendar interface to view and manage events seamlessly.
-- **Location Search & Autocomplete**: Integrated location lookup with suggestions for event venues (powered by [Geoapify](https://www.geoapify.com/)).
-- **Map Image Generator**: Automatically generates static maps and images of locations for events.
-- **Event Comments**: Interactive comment section on events.
-- **RSVP Confirmations**: Attendees can confirm participation or leave events with a single click.
-- **Event Feeds**: Discoverable RSS/Atom feeds (Atom 1.0) allowing users to subscribe to event updates.
-- **User Notifications**: Real-time notifications for event reminders, comments, and registration changes.
-- **Social Sharing**: Easily share events with direct links, including access tokens for private events.
-- **Administration Control Panel (ACP)**: Complete control for administrators to configure API keys, manage categories, events, and moderate settings.
+- **Public & Private Events:** Create events visible to everyone or restrict visibility to specific users using secure unique access tokens.
+- **FullCalendar Integration:** View and manage events through an interactive calendar interface powered by FullCalendar.
+- **Location Search & Autocomplete:** Search for event venues with automatic address suggestions powered by Geoapify.
+- **Map Image Generator:** Generate static maps and location previews automatically for events.
+- **Event Comments:** Add and read comments on event pages to discuss details with attendees.
+- **RSVP Confirmations:** Confirm participation or leave events with a single click.
+- **Event Feeds:** Subscribe to event updates using discoverable Atom 1.0 feeds.
+- **User Notifications:** Receive real-time alerts for event reminders, new comments, and registration changes.
+- **Social Sharing:** Share events with direct links, including access tokens for private events.
+- **Administration Control Panel (ACP):** Configure API keys, moderate settings, and manage categories and events from the ACP.
 
+## Requirements
 
-## Development: Quality Assurance & Testing
+- **PHP:** `7.2.0` or higher
+- **phpBB:** `3.3.1-RC1` or higher
 
-For development, the extension comes with pre-configured static analysis and testing tools to maintain 100% code quality.
+## Installation
 
-### Prerequisites
+1. Download the extension and extract the files.
+2. Upload the contents to the `ext/vinny/calendar/` directory of your phpBB forum.
+3. Navigate to the Admin Control Panel (ACP) > **Customise** > **Manage extensions**.
+4. Locate **EventBoard Calendar** under the disabled list and click **Enable**.
 
-Ensure you have [Node.js](https://nodejs.org/) and [Composer](https://getcomposer.org/) installed globally on your machine.
+## Development
 
-### Setup Dependencies
+Pre-configured linting and testing tools are available to help maintain code quality during development.
 
-To set up Node and Composer development tools, run:
+### Setup
+
+Install the Node.js and Composer development dependencies:
 
 ```bash
 npm install
@@ -43,7 +51,7 @@ composer install
 
 ### Running Checks
 
-To run the complete QA suite (ESLint, Stylelint, PHPCS, TwigCS, PHPStan, and PHPUnit unit tests), execute:
+To run the complete QA suite (ESLint, Stylelint, PHPCS, TwigCS, PHPStan, and PHPUnit unit tests), run:
 
 ```bash
 npm test
@@ -58,17 +66,12 @@ You can also run specific checks individually:
 | **PHPCS** | `npm run lint:php` | Checks PHP coding standards (PSR-12 with phpBB conventions) |
 | **TwigCS** | `npm run lint:twig` | Lints HTML/Twig templates (`styles/**/*.html`) |
 | **PHPStan** | `npm run phpstan` | Performs strict PHP static analysis |
-| **PHPUnit** | `npm run test:unit` | Executes unit test suite (`tests/`) |
+| **PHPUnit** | `npm run test:unit` | Executes the unit test suite (`tests/`) |
 
+## Support
 
-## Support this project
-
-If you find this extension useful, you can support its development by buying me a coffee!
-
-[![Support me on Ko-fi](https://camo.githubusercontent.com/201ef269611db7eb6b5d08e9f756ab8980df3014b64492770bdf13a6ed924641/68747470733a2f2f6b6f2d66692e636f6d2f696d672f676974687562627574746f6e5f736d2e737667)](https://ko-fi.com/vinny1)
-
+If you find this extension useful, you can support its development on [Ko-fi](https://ko-fi.com/vinny1).
 
 ## License
-[GNU General Public License v2](license.txt)
 
-
+[![License](https://img.shields.io/badge/license-GPL--2.0-blue.svg)](license.txt)
