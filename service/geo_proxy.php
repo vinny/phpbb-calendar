@@ -76,46 +76,21 @@ class geo_proxy
 
 	protected function fetch_url($url)
 	{
-		$options = [
-			'http' => [
-				'method' => 'GET',
-				'header' => "User-Agent: phpBB-Calendar-Extension\r\n",
-				'timeout' => 8,
-			],
-		];
-
-		$result = false;
-
-		if (ini_get('allow_url_fopen'))
+		try
 		{
-			$result = @file_get_contents($url, false, stream_context_create($options));
-		}
-
-		if ($result !== false)
-		{
-			return $result;
-		}
-
-		if (function_exists('curl_init'))
-		{
-			$ch = curl_init($url);
-			curl_setopt_array($ch, [
-				CURLOPT_CONNECTTIMEOUT => 5,
-				CURLOPT_RETURNTRANSFER => true,
-				CURLOPT_TIMEOUT => 8,
-				CURLOPT_USERAGENT => 'phpBB-Calendar-Extension',
+			$client = new \GuzzleHttp\Client([
+				'timeout' => 8.0,
+				'headers' => [
+					'User-Agent' => 'phpBB-Calendar-Extension',
+				],
 			]);
+			$response = $client->get($url);
 
-			$result = curl_exec($ch);
-			$status = (int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
-			curl_close($ch);
-
-			if ($result !== false && $status >= 200 && $status < 300)
-			{
-				return $result;
-			}
+			return (string) $response->getBody();
 		}
-
-		return false;
+		catch (\Exception $e)
+		{
+			return false;
+		}
 	}
 }

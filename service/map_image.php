@@ -24,12 +24,16 @@ class map_image
 	/** @var \phpbb\auth\auth */
 	protected $auth;
 
-	public function __construct(\phpbb\config\config $config, $root_path, \phpbb\user $user, \phpbb\auth\auth $auth)
+	/** @var \phpbb\filesystem\filesystem_interface */
+	protected $filesystem;
+
+	public function __construct(\phpbb\config\config $config, $root_path, \phpbb\user $user, \phpbb\auth\auth $auth, \phpbb\filesystem\filesystem_interface $filesystem)
 	{
 		$this->config = $config;
 		$this->root_path = $root_path;
 		$this->user = $user;
 		$this->auth = $auth;
+		$this->filesystem = $filesystem;
 	}
 
 	public function generate($event_id, $lat, $lng)
@@ -53,10 +57,10 @@ class map_image
 			return '';
 		}
 
-		$width = (int) ($this->config['vinny_calendar_map_width'] ?? 1024);
-		$height = (int) ($this->config['vinny_calendar_map_height'] ?? 768);
-		$zoom = (int) ($this->config['vinny_calendar_map_zoom'] ?? 17);
-		$map_lang = $this->user->lang('CALENDAR_MAP_LANG') ?: 'en';
+		$width = (int) $this->config['vinny_calendar_map_width'];
+		$height = (int) $this->config['vinny_calendar_map_height'];
+		$zoom = (int) $this->config['vinny_calendar_map_zoom'];
+		$map_lang = $this->user->lang('CALENDAR_MAP_LANG');
 
 		$url = 'https://maps.geoapify.com/v1/staticmap'
 			. '?style=osm-carto'
@@ -68,20 +72,38 @@ class map_image
 			. '&marker=lonlat:' . $lng . ',' . $lat . ';type:material;color:red;icontype:awesome;icon:map-pin'
 			. '&apiKey=' . rawurlencode($api_key);
 
-		$image_data = @file_get_contents($url);
-		if ($image_data === false)
+		try
+		{
+			$client = new \GuzzleHttp\Client([
+				'timeout' => 10.0,
+			]);
+			$response = $client->get($url);
+			$image_data = (string) $response->getBody();
+		}
+		catch (\Exception $e)
 		{
 			return '';
 		}
 
 		$dir = $this->root_path . 'images/vinny_calendar_img/';
-		if (!is_dir($dir))
+		if (!$this->filesystem->exists($dir))
 		{
-			@mkdir($dir, 0755, true);
+			try
+			{
+				$this->filesystem->mkdir($dir, 0755);
+			}
+			catch (\phpbb\filesystem\exception\filesystem_exception $e)
+			{
+				return '';
+			}
 		}
 
 		$filename = 'event_' . (int) $event_id . '.png';
-		if (@file_put_contents($dir . $filename, $image_data) === false)
+		try
+		{
+			$this->filesystem->dump_file($dir . $filename, $image_data);
+		}
+		catch (\phpbb\filesystem\exception\filesystem_exception $e)
 		{
 			return '';
 		}

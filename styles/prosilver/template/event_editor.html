@@ -52,7 +52,7 @@
 						<input type="hidden" name="event_lng" id="event_lng" value="{{ EVENT_LNG }}">
 						{% if EVENT_MAP_IMAGE_SRC %}
 						<div class="calendar-map-preview" style="margin-top: 8px;">
-							<img src="{{ ROOT_PATH }}{{ EVENT_MAP_IMAGE_SRC }}" alt="{{ lang('MAP_PREVIEW')|e('html_attr') }}">
+							<img src="{{ EVENT_MAP_IMAGE_SRC }}" alt="{{ lang('MAP_PREVIEW')|e('html_attr') }}">
 						</div>
 						{% endif %}
 					</dd>

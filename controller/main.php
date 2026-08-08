@@ -388,7 +388,7 @@ class main
 			'S_IS_ONLINE' => $this->event_display->is_online($event),
 			'EVENT_LOCATION' => $event['location'],
 			'EVENT_DESCRIPTION' => generate_text_for_display($event['description'], $event['desc_uid'], $event['desc_bitfield'], $event['desc_options']),
-			'EVENT_MAP_IMAGE' => $event['map_image'],
+			'EVENT_MAP_IMAGE_SRC' => $event['map_image'] ? generate_board_url() . '/images/vinny_calendar_img/' . $event['map_image'] : '',
 			'TOTAL_PARTICIPANTS' => $total_participants,
 			'MAX_PARTICIPANTS' => (int) $event['max_participants'],
 			'S_ALLOW_COMMENTS' => (int) ($this->config['vinny_calendar_allow_comments'] ?? 0) && $this->auth->acl_get('u_eventboard_comment'),
@@ -538,7 +538,7 @@ class main
 			'S_PUBLIC_ENABLED' => ((int) $event['visibility'] === 0),
 			'S_FORMAT_IN_PERSON' => !$this->event_display->is_online($event),
 			'S_FORMAT_ONLINE' => $this->event_display->is_online($event),
-			'EVENT_MAP_IMAGE_SRC' => $event['map_image'] ? 'images/vinny_calendar_img/' . $event['map_image'] : '',
+			'EVENT_MAP_IMAGE_SRC' => $event['map_image'] ? generate_board_url() . '/images/vinny_calendar_img/' . $event['map_image'] : '',
 		]);
 
 		return $this->helper->render('event_editor.html', $this->user->lang('EDIT_EVENT'));

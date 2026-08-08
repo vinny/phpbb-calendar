@@ -13,6 +13,7 @@ services:
             - '%core.root_path%'
             - '@user'
             - '@auth'
+            - '@filesystem'
 
     vinny.calendar.service.event_query:
         class: vinny\calendar\service\event_query
