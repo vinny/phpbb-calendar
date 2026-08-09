@@ -957,6 +957,12 @@ class main
 		include_once($this->root_path . 'includes/functions_posting.' . $this->php_ext);
 		$this->user->add_lang('posting');
 		$this->user->add_lang('viewtopic');
+
+		if (!function_exists('display_custom_bbcodes'))
+		{
+			include_once($this->root_path . 'includes/functions_display.' . $this->php_ext);
+		}
+		display_custom_bbcodes();
 	}
 
 	protected function check_action_form()

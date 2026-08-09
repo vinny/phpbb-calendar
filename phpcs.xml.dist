@@ -16,6 +16,7 @@
     <!-- Exclude third-party vendor directories -->
     <exclude-pattern>*/vendor/*</exclude-pattern>
     <exclude-pattern>*/phpcs_rules/*</exclude-pattern>
+    <exclude-pattern>*/node_modules/*</exclude-pattern>
 
     <!-- Use PSR-12 standard but ignore space-indent constraints and require tab-indent -->
     <rule ref="PSR12">

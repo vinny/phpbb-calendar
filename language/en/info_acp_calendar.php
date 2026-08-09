@@ -42,7 +42,7 @@ $lang = array_merge($lang, array(
 	'EVENTBOARD_REMINDER_MINUTES' => 'Reminder period',
 	'EVENTBOARD_REMINDER_MINUTES_EXPLAIN' => 'How many minutes before the event starts users should receive a reminder. Use 0 to disable notifications.',
 	'EVENTBOARD_GEOAPIFY_KEY' => 'Geoapify API key',
-	'EVENTBOARD_GEOAPIFY_KEY_EXPLAIN' => 'Key for address autocomplete and maps. Get your Geoapify key <a href="https://myprojects.geoapify.com/" target="_blank">here</a>.<br />Important: In the Geoapify Dashboard, select the project > expand the dropdown arrow > under Allowed Origins click the add button > enter your site domain (e.g. https://www.mysite.com) > click Ok.',
+	'EVENTBOARD_GEOAPIFY_KEY_EXPLAIN' => 'Key for address autocomplete and maps. Get your Geoapify key <a href="https://myprojects.geoapify.com/" target="_blank" rel="noopener">here</a>.<br />Important: In the Geoapify Dashboard, select the project > expand the dropdown arrow > under Allowed Origins click the add button > enter your site domain (e.g. https://www.mysite.com) > click Ok.',
 	'EVENTBOARD_DISABLED' => 'The event calendar is disabled.',
 	'EVENTBOARD_DISPLAY_OCCURRING' => 'Display "Events Happening Now" block on index',
 	'EVENTBOARD_DISPLAY_OCCURRING_EXPLAIN' => 'Show a block on the forum index page displaying events that are currently taking place.',
