@@ -7,7 +7,7 @@ module.exports = [
 		]
 	},
 	{
-		files: ["styles/all/template/*.js"],
+		files: ["styles/all/template/*.js", "adm/style/*.js"],
 		languageOptions: {
 			ecmaVersion: 2021,
 			sourceType: "script",
@@ -20,7 +20,8 @@ module.exports = [
 				navigator: "readonly",
 				encodeURIComponent: "readonly",
 				Array: "readonly",
-				Error: "readonly"
+				Error: "readonly",
+				jQuery: "readonly"
 			}
 		},
 		rules: {

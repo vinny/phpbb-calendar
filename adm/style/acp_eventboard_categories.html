@@ -37,8 +37,12 @@
 		</dl>
 		<dl>
 			<dt><label for="cat_icon">{{ lang('CAT_ICON') }}{{ lang('COLON') }}</label><br /><span>{{ lang('CATEGORY_ICON_EXPLAIN')|raw }}</span></dt>
-			<dd><input type="text" name="cat_icon" id="cat_icon" value="{{ CAT_ICON }}" maxlength="50" size="20" required /> {% if CAT_ICON %}<i
-					class="icon {{ CAT_ICON }} fa-fw"></i>{% endif %}</dd>
+			<dd>
+				<input type="text" name="cat_icon" id="cat_icon" value="{{ CAT_ICON }}" maxlength="50" size="20" required />
+				<span id="cat_icon_preview" style="margin-left: 8px; font-size: 1.4em; vertical-align: middle;">
+					<i class="icon {% if CAT_ICON %}{{ CAT_ICON }}{% endif %} fa-fw" style="{% if not CAT_ICON %}display: none;{% endif %} {% if CAT_COLOR %}color: {{ CAT_COLOR }};{% endif %}"></i>
+				</span>
+			</dd>
 		</dl>
 
 	</fieldset>
@@ -100,5 +104,7 @@
 </form>
 
 {% endif %}
+
+{% INCLUDEJS '@vinny_calendar/acp_eventboard_categories.js' %}
 
 {% include 'overall_footer.html' %}
