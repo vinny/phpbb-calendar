@@ -32,6 +32,6 @@
 		"phpunit/phpunit": "^9.5",
 		"phpunit/dbunit": "^4.0",
 		"friendsoftwig/twigcs": "^5.1",
-		"squizlabs/php_codesniffer": "^4.0"
+		"squizlabs/php_codesniffer": "4.0.2"
 	}
 }
