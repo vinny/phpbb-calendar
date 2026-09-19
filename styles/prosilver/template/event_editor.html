@@ -13,7 +13,7 @@
 					<dd><input type="text" name="event_subject" id="event_subject" value="{{ EVENT_SUBJECT }}" maxlength="255" class="inputbox full" required></dd>
 				</dl>
 				<dl>
-					<dt><label for="event_category">{{ lang('CATEGORY') }}{{ lang('COLON') }}</label></dt>
+					<dt><label for="event_category">{{ lang('EVENT_CATEGORY') }}{{ lang('COLON') }}</label></dt>
 					<dd>
 						<select name="event_category" id="event_category">
 							<option value="0">{{ lang('SELECT_CATEGORY') }}</option>
@@ -47,7 +47,7 @@
 				<dl id="group-location"{% if S_FORMAT_ONLINE %} style="display: none;"{% endif %}>
 					<dt><label for="event_location">{{ lang('EVENT_LOCATION') }}{{ lang('COLON') }}</label></dt>
 					<dd style="position: relative;"{% if S_GEOAPIFY_ENABLED %} data-calendar-geo-autocomplete data-input-id="event_location" data-lat-id="event_lat" data-lng-id="event_lng" data-endpoint="{{ U_GEO_PROXY }}" data-placeholder="{{ lang('EVENT_GEO_SEARCH_PLACEHOLDER')|e('html_attr') }}"{% endif %}>
-						<input type="text" name="event_location" id="event_location" value="{{ EVENT_LOCATION }}" class="inputbox full" placeholder="{% if S_GEOAPIFY_ENABLED %}{{ lang('EVENT_GEO_SEARCH_PLACEHOLDER')|e('html_attr') }}{% else %}{{ lang('EVENT_LOCATION')|e('html_attr') }}{% endif %}" autocomplete="off">
+						<input type="text" name="event_location" id="event_location" value="{{ EVENT_LOCATION }}" maxlength="255" class="inputbox full" placeholder="{% if S_GEOAPIFY_ENABLED %}{{ lang('EVENT_GEO_SEARCH_PLACEHOLDER')|e('html_attr') }}{% else %}{{ lang('EVENT_LOCATION')|e('html_attr') }}{% endif %}" autocomplete="off">
 						<input type="hidden" name="event_lat" id="event_lat" value="{{ EVENT_LAT }}">
 						<input type="hidden" name="event_lng" id="event_lng" value="{{ EVENT_LNG }}">
 						{% if EVENT_MAP_IMAGE_SRC %}
@@ -79,6 +79,7 @@
 					<dd>
 						<label><input type="checkbox" name="limit_registrations_enabled" id="limit_registrations_enabled" value="1"{% if S_LIMIT_ENABLED %} checked{% endif %}></label>
 						<input type="number" name="event_attendees_limit" id="limit-input" value="{{ EVENT_ATTENDEES_LIMIT }}" min="1" class="inputbox autowidth"{% if not S_LIMIT_ENABLED %} style="display: none;"{% endif %}>
+						<span class="explain">{{ lang('EVENT_ATTENDEES_LIMIT_EXPLAIN') }}</span>
 					</dd>
 				</dl>
 				<dl>
@@ -95,7 +96,7 @@
 	<div class="panel bg3">
 		<div class="inner">
 			<fieldset class="submit-buttons">
-				<input type="submit" name="submit" class="button1 default-submit-action" value="{{ lang('SUBMIT')|e('html_attr') }}">
+				<input type="submit" name="submit" class="button1 default-submit-action" value="{{ lang('EVENT_SUBMIT')|e('html_attr') }}">
 				{{ S_FORM_TOKEN }}
 			</fieldset>
 		</div>
@@ -110,9 +111,7 @@
 document.addEventListener('DOMContentLoaded', function () {
 	flatpickr('input.flatpickr-input', {
 		enableTime: true,
-		dateFormat: 'Y-m-d H:i',
-		altInput: true,
-		altFormat: '{{ S_FP_DATE_FORMAT|e('js') }}',
+		dateFormat: '{{ S_FP_DATE_FORMAT|e('js') }}',
 		minDate: 'today',
 		time_24hr: {% if S_FP_24HR %}true{% else %}false{% endif %},
 		allowInput: false,
@@ -226,6 +225,6 @@ var text_name = 'message';
 var load_draft = false;
 var upload_allowed = false;
 </script>
-<script src="{{ T_ASSETS_PATH }}/javascript/editor.js"></script>
+{% INCLUDEJS T_ASSETS_PATH ~ '/javascript/editor.js' %}
 
 {% INCLUDE 'overall_footer.html' %}

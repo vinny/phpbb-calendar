@@ -65,6 +65,19 @@
 				<label><input type="radio" class="radio" name="vinny_calendar_display_stats" value="0" {% if not VINNY_CALENDAR_DISPLAY_STATS %}checked="checked" {% endif %} /> {{ lang('NO') }}</label>
 			</dd>
 		</dl>
+		<dl>
+			<dt><label for="fp_dateoptions">{{ lang('EVENTBOARD_FP_DATE_FORMAT') }}{{ lang('COLON') }}</label><br /><span>{{ lang('EVENTBOARD_FP_DATE_FORMAT_EXPLAIN') }}</span></dt>
+			<dd>
+				<select id="fp_dateoptions" name="fp_dateoptions" onchange="if (this.value === 'custom') { document.getElementById('custom_fp_dateformat').style.display = ''; } else { document.getElementById('custom_fp_dateformat').style.display = 'none'; document.getElementById('vinny_calendar_fp_date_format').value = this.value; }">
+					{% for option in FP_DATE_FORMAT_OPTIONS %}
+						<option value="{{ option.VALUE }}"{% if option.S_SELECTED %} selected="selected"{% endif %}>{{ option.LABEL }}</option>
+					{% endfor %}
+				</select>
+			</dd>
+			<dd id="custom_fp_dateformat"{% if not S_CUSTOM_FP_DATE_FORMAT %} style="display: none;"{% endif %}>
+				<input type="text" id="vinny_calendar_fp_date_format" name="vinny_calendar_fp_date_format" value="{{ VINNY_CALENDAR_FP_DATE_FORMAT }}" size="25" maxlength="64" />
+			</dd>
+		</dl>
 
 	</fieldset>
 

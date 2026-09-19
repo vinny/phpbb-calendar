@@ -78,6 +78,10 @@ class map_image
 				'timeout' => 10.0,
 			]);
 			$response = $client->get($url);
+			if ($response->getStatusCode() !== 200)
+			{
+				return '';
+			}
 			$image_data = (string) $response->getBody();
 		}
 		catch (\Exception $e)
@@ -109,5 +113,22 @@ class map_image
 		}
 
 		return $filename;
+	}
+
+	public function delete($event_id)
+	{
+		$filename = 'event_' . (int) $event_id . '.png';
+		$file = $this->root_path . 'images/vinny_calendar_img/' . $filename;
+		if ($this->filesystem->exists($file))
+		{
+			try
+			{
+				$this->filesystem->remove($file);
+			}
+			catch (\phpbb\filesystem\exception\filesystem_exception $e)
+			{
+				// Ignore filesystem exceptions on delete
+			}
+		}
 	}
 }

@@ -29,7 +29,7 @@ class v100_schema extends \phpbb\db\migration\container_aware_migration
 				$this->table_prefix . 'eventboard_categories' => [
 					'COLUMNS' => [
 						'cat_id'    => ['UINT', null, 'auto_increment'],
-						'cat_name'  => ['VCHAR:255', ''],
+						'cat_name'  => ['VCHAR_UNI:255', ''],
 						'cat_color' => ['VCHAR:50', ''],
 						'cat_icon'  => ['VCHAR:50', ''],
 						'cat_desc'  => ['MTEXT_UNI', ''],
@@ -41,14 +41,14 @@ class v100_schema extends \phpbb\db\migration\container_aware_migration
 						'event_id'         => ['UINT', null, 'auto_increment'],
 						'user_id'          => ['UINT', 0],
 						'cat_id'           => ['UINT', 0],
-						'title'            => ['VCHAR:255', ''],
+						'title'            => ['VCHAR_UNI:255', ''],
 						'description'      => ['MTEXT_UNI', ''],
 						'desc_uid'         => ['VCHAR:8', ''],
 						'desc_bitfield'    => ['VCHAR:255', ''],
 						'desc_options'     => ['UINT:11', 7],
 						'start_at'         => ['UINT:11', 0],
 						'end_at'           => ['UINT:11', 0],
-						'location'         => ['VCHAR:255', ''],
+						'location'         => ['VCHAR_UNI:255', ''],
 						'max_participants' => ['UINT', 0],
 						'visibility'       => ['UINT', 0],
 						'access_token'     => ['VCHAR:64', ''],
@@ -119,9 +119,7 @@ class v100_schema extends \phpbb\db\migration\container_aware_migration
 
 	public function revert_data()
 	{
-		return [
-			['custom', [[$this, 'remove_default_category']]],
-		];
+		return [];
 	}
 
 	public function insert_default_category()
@@ -157,13 +155,6 @@ class v100_schema extends \phpbb\db\migration\container_aware_migration
 			'cat_color' => '000000',
 			'cat_icon'  => 'fa-calendar-o',
 		]);
-		$this->db->sql_query($sql);
-	}
-
-	public function remove_default_category()
-	{
-		$categories_table = $this->table_prefix . 'eventboard_categories';
-		$sql = 'DELETE FROM ' . $categories_table . " WHERE cat_color = '000000' AND cat_icon = 'fa-calendar-o'";
 		$this->db->sql_query($sql);
 	}
 }

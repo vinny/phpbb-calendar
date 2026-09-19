@@ -111,11 +111,11 @@ class feed
 			$vcalendar .= "DTSTAMP:" . gmdate('Ymd\THis\Z', time()) . "\r\n";
 			$vcalendar .= "DTSTART:" . gmdate('Ymd\THis\Z', $row['start_at']) . "\r\n";
 			$vcalendar .= "DTEND:" . gmdate('Ymd\THis\Z', $row['end_at']) . "\r\n";
-			$vcalendar .= $this->format_ical_line('SUMMARY', $row['title']);
-			$vcalendar .= $this->format_ical_line('DESCRIPTION', $desc_clean);
+			$vcalendar .= $this->format_ical_line('SUMMARY', html_entity_decode($row['title'], ENT_QUOTES, 'UTF-8'));
+			$vcalendar .= $this->format_ical_line('DESCRIPTION', html_entity_decode($desc_clean, ENT_QUOTES, 'UTF-8'));
 			if (!empty($row['location']))
 			{
-				$vcalendar .= $this->format_ical_line('LOCATION', $row['location']);
+				$vcalendar .= $this->format_ical_line('LOCATION', html_entity_decode($row['location'], ENT_QUOTES, 'UTF-8'));
 			}
 			$vcalendar .= "URL:" . $event_url_builder($row) . "\r\n";
 			$vcalendar .= "END:VEVENT\r\n";

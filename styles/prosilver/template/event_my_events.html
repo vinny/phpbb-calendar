@@ -10,7 +10,7 @@
 	{% endif %}
 
 	<a class="button{% if not S_SHOW_COMPLETED %} active{% endif %}" href="{{ U_MY_EVENTS_ACTIVE }}">{{ lang('ACTIVE_EVENTS') }}</a>
-	<a class="button{% if S_SHOW_COMPLETED %} active{% endif %}" href="{{ U_MY_EVENTS_COMPLETED }}">{{ lang('COMPLETED') }}</a>
+	<a class="button{% if S_SHOW_COMPLETED %} active{% endif %}" href="{{ U_MY_EVENTS_COMPLETED }}">{{ lang('EVENT_COMPLETED') }}</a>
 
 	<div class="pagination">
 		{% if TOTAL_EVENTS %}{{ TOTAL_EVENTS }}{% endif %}
@@ -29,10 +29,10 @@
 				<dl class="row-item">
 					<dt><div class="list-inner">{{ lang('EVENT_DETAILS') }}</div></dt>
 					{% if S_SHOW_COMPLETED %}
-					<dd class="lastpost calendar-actions">{{ lang('STATUS') }}</dd>
+					<dd class="lastpost calendar-actions">{{ lang('EVENT_STATUS') }}</dd>
 					{% else %}
 					<dd class="posts">{{ lang('SIGNUPS') }}</dd>
-					<dd class="lastpost calendar-actions">{{ lang('ACTIONS') }}</dd>
+					<dd class="lastpost calendar-actions">{{ lang('EVENT_ACTIONS') }}</dd>
 					{% endif %}
 				</dl>
 			</li>
@@ -73,7 +73,7 @@
 						</div>
 					</dt>
 					{% if S_SHOW_COMPLETED %}
-					<dd class="lastpost calendar-actions">{{ lang('COMPLETED') }}</dd>
+					<dd class="lastpost calendar-actions">{{ lang('EVENT_COMPLETED') }}</dd>
 					{% else %}
 					<dd class="posts responsive-hide">
 						{% if event.MAX_PARTICIPANTS == 0 %}

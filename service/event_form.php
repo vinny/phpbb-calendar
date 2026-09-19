@@ -24,12 +24,22 @@ class event_form
 	/** @var \vinny\calendar\service\event_access */
 	protected $event_access;
 
-	public function __construct(\phpbb\request\request $request, \phpbb\user $user, \phpbb\config\config $config, \vinny\calendar\service\event_access $event_access)
+	/** @var \vinny\calendar\service\event_query */
+	protected $event_query;
+
+	public function __construct(
+		\phpbb\request\request $request,
+		\phpbb\user $user,
+		\phpbb\config\config $config,
+		\vinny\calendar\service\event_access $event_access,
+		\vinny\calendar\service\event_query $event_query
+	)
 	{
 		$this->request = $request;
 		$this->user = $user;
 		$this->config = $config;
 		$this->event_access = $event_access;
+		$this->event_query = $event_query;
 	}
 
 	public function build_create_payload()
@@ -93,7 +103,7 @@ class event_form
 		];
 	}
 
-	protected function collect_common_fields(array $event = null)
+	protected function collect_common_fields(?array $event = null)
 	{
 		$subject = trim($this->request->variable('event_subject', '', true));
 		$start = trim($this->request->variable('event_start', ''));
@@ -105,12 +115,20 @@ class event_form
 		$lat = (float) $this->request->variable('event_lat', 0.0);
 		$lng = (float) $this->request->variable('event_lng', 0.0);
 
+		$subject = utf8_encode_ucr($subject);
+		$loc = utf8_encode_ucr($loc);
+
 		if ($subject === '')
 		{
 			trigger_error('EVENT_TITLE_REQUIRED');
 		}
 
-		if ($cat_id <= 0)
+		if (utf8_strlen($subject) > 255)
+		{
+			trigger_error('EVENT_TITLE_TOO_LONG');
+		}
+
+		if ($cat_id <= 0 || !$this->event_query->get_category($cat_id))
 		{
 			trigger_error('EVENT_CATEGORY_REQUIRED');
 		}
@@ -129,6 +147,10 @@ class event_form
 		else if ($loc === '')
 		{
 			trigger_error('EVENT_LOCATION_REQUIRED');
+		}
+		else if (utf8_strlen($loc) > 255)
+		{
+			trigger_error('EVENT_LOCATION_TOO_LONG');
 		}
 
 		$start_at = $this->parse_local_datetime($start);
@@ -169,6 +191,17 @@ class event_form
 		if ($value === '')
 		{
 			return false;
+		}
+
+		$fp_format = trim((string) ($this->config['vinny_calendar_fp_date_format'] ?? ''));
+		if ($fp_format !== '')
+		{
+			$php_format = str_replace(['K', 'J'], ['A', 'jS'], $fp_format);
+			$timestamp = $this->user->get_timestamp_from_format($php_format, $value);
+			if ($timestamp !== false)
+			{
+				return (int) $timestamp;
+			}
 		}
 
 		$timestamp = $this->user->get_timestamp_from_format('Y-m-d H:i', $value);

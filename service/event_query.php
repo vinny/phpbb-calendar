@@ -146,45 +146,7 @@ class event_query
 	public function get_total_events_count()
 	{
 		$sql = 'SELECT COUNT(event_id) as total FROM ' . EVENTBOARD_EVENTS_TABLE . ' WHERE visibility = 0';
-		return $this->fetch_count($sql, 300);
-	}
-
-	public function get_category_filters($active_only = true, $limit = null, $user_id = 0)
-	{
-		$user_id = (int) $user_id;
-
-		if ($active_only)
-		{
-			if ($user_id > 1)
-			{
-				$sql = 'SELECT c.cat_id, c.cat_name, c.cat_color, c.cat_icon, COUNT(e.event_id) as event_count
-					FROM ' . EVENTBOARD_CATEGORIES_TABLE . ' c
-					LEFT JOIN ' . EVENTBOARD_EVENTS_TABLE . ' e ON (c.cat_id = e.cat_id AND e.start_at >= ' . (int) time() . ' AND (e.visibility = 0 OR e.user_id = ' . (int) $user_id . ' OR EXISTS(
-						SELECT 1 FROM ' . EVENTBOARD_PARTICIPANTS_TABLE . ' p
-						WHERE p.event_id = e.event_id AND p.user_id = ' . (int) $user_id . '
-					)))
-					GROUP BY c.cat_id, c.cat_name, c.cat_color, c.cat_icon
-					ORDER BY c.cat_name ASC';
-			}
-			else
-			{
-				$sql = 'SELECT c.cat_id, c.cat_name, c.cat_color, c.cat_icon, COUNT(e.event_id) as event_count
-					FROM ' . EVENTBOARD_CATEGORIES_TABLE . ' c
-					LEFT JOIN ' . EVENTBOARD_EVENTS_TABLE . ' e ON (c.cat_id = e.cat_id AND e.start_at >= ' . (int) time() . ' AND e.visibility = 0)
-					GROUP BY c.cat_id, c.cat_name, c.cat_color, c.cat_icon
-					ORDER BY c.cat_name ASC';
-			}
-		}
-		else
-		{
-			$sql = 'SELECT c.cat_id, c.cat_name, c.cat_color, c.cat_icon, COUNT(e.event_id) as event_count
-				FROM ' . EVENTBOARD_CATEGORIES_TABLE . ' c
-				LEFT JOIN ' . EVENTBOARD_EVENTS_TABLE . ' e ON (c.cat_id = e.cat_id)
-				GROUP BY c.cat_id, c.cat_name, c.cat_color, c.cat_icon
-				ORDER BY c.cat_name ASC';
-		}
-
-		return $this->fetch_all($sql, $limit);
+		return $this->fetch_count($sql);
 	}
 
 	public function get_category_list($limit = null)
@@ -230,7 +192,7 @@ class event_query
 
 	public function get_event_for_redirect($event_id)
 	{
-		$sql = 'SELECT event_id, user_id, visibility, access_token
+		$sql = 'SELECT event_id, user_id, start_at, end_at, visibility, access_token
             FROM ' . EVENTBOARD_EVENTS_TABLE . '
             WHERE event_id = ' . (int) $event_id;
 
@@ -324,30 +286,6 @@ class event_query
 		return $this->fetch_all($sql, $limit, $start);
 	}
 
-	public function get_owned_event_stats($user_id)
-	{
-		return [
-			'active' => $this->fetch_count(
-				'SELECT COUNT(event_id) as total
-				FROM ' . EVENTBOARD_EVENTS_TABLE . '
-				WHERE user_id = ' . (int) $user_id . '
-					AND start_at >= ' . (int) time()
-			),
-			'signups' => $this->fetch_count(
-				'SELECT COUNT(p.id) as total
-				FROM ' . EVENTBOARD_PARTICIPANTS_TABLE . ' p
-				JOIN ' . EVENTBOARD_EVENTS_TABLE . ' e ON (p.event_id = e.event_id)
-				WHERE e.user_id = ' . (int) $user_id . '
-					AND e.start_at >= ' . (int) time()
-			),
-			'created' => $this->fetch_count(
-				'SELECT COUNT(event_id) as total
-				FROM ' . EVENTBOARD_EVENTS_TABLE . '
-				WHERE user_id = ' . (int) $user_id
-			),
-		];
-	}
-
 	public function count_owned_events($user_id, $completed_view)
 	{
 		if ($completed_view)
@@ -392,17 +330,6 @@ class event_query
 		}
 
 		return $this->fetch_all($sql, $limit, $start);
-	}
-
-	public function count_user_rsvps($user_id)
-	{
-		return $this->fetch_count(
-			'SELECT COUNT(p.id) as total
-			FROM ' . EVENTBOARD_PARTICIPANTS_TABLE . ' p
-			JOIN ' . EVENTBOARD_EVENTS_TABLE . ' e ON (p.event_id = e.event_id)
-			WHERE p.user_id = ' . (int) $user_id . '
-				AND e.start_at >= ' . (int) time()
-		);
 	}
 
 	public function count_rsvp_events($user_id)

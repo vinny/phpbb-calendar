@@ -5,15 +5,15 @@
 {% endif %}
 
 {% if CALENDAR_OG_TITLE %}
-<meta property="og:title" content="{{ CALENDAR_OG_TITLE }}" />
+<meta property="og:title" content="{{ CALENDAR_OG_TITLE|e('html_attr') }}" />
 {% endif %}
 {% if CALENDAR_OG_DESCRIPTION %}
-<meta property="og:description" content="{{ CALENDAR_OG_DESCRIPTION }}" />
+<meta property="og:description" content="{{ CALENDAR_OG_DESCRIPTION|e('html_attr') }}" />
 {% endif %}
 {% if CALENDAR_OG_IMAGE %}
-<meta property="og:image" content="{{ CALENDAR_OG_IMAGE }}" />
+<meta property="og:image" content="{{ CALENDAR_OG_IMAGE|e('html_attr') }}" />
 {% endif %}
 {% if CALENDAR_OG_URL %}
-<meta property="og:url" content="{{ CALENDAR_OG_URL }}" />
+<meta property="og:url" content="{{ CALENDAR_OG_URL|e('html_attr') }}" />
 {% endif %}
 {% endif %}

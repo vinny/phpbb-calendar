@@ -12,16 +12,45 @@ namespace vinny\calendar\service;
 
 class geo_proxy
 {
-	/** @var \phpbb\config\config */
-	protected $config;
+	/** @var \phpbb\cache\driver\driver_interface */
+	protected $cache;
 
-	/** @var \phpbb\user */
-	protected $user;
-
-	public function __construct(\phpbb\config\config $config, \phpbb\user $user)
+	public function __construct(\phpbb\config\config $config, \phpbb\user $user, \phpbb\cache\driver\driver_interface $cache)
 	{
 		$this->config = $config;
 		$this->user = $user;
+		$this->cache = $cache;
+	}
+
+	public function is_rate_limited($session_id = null)
+	{
+		$session_id = ($session_id !== null) ? (string) $session_id : (string) ($this->user->data['session_id'] ?? '');
+		if ($session_id === '')
+		{
+			return false;
+		}
+
+		$cache_key = '_geo_proxy_rl_' . substr(md5($session_id), 0, 16);
+		$now = time();
+		$data = $this->cache->get($cache_key);
+
+		if (!is_array($data) || ($now - (int) ($data['start'] ?? 0)) >= 60)
+		{
+			$data = ['start' => $now, 'count' => 1];
+			$this->cache->put($cache_key, $data, 60);
+			return false;
+		}
+
+		if ((int) $data['count'] >= 30)
+		{
+			return true;
+		}
+
+		$data['count'] = (int) $data['count'] + 1;
+		$ttl = max(1, 60 - ($now - (int) $data['start']));
+		$this->cache->put($cache_key, $data, $ttl);
+
+		return false;
 	}
 
 	public function autocomplete($text)

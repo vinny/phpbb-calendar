@@ -92,9 +92,13 @@ class event_manager
 	{
 		$map_image = $data['map_image'];
 
-		if ($map_image === '' && (float) $data['lat'] != 0.0 && (float) $data['lng'] != 0.0)
+		if ($map_image === '')
 		{
-			$map_image = $this->map_image->generate($event_id, $data['lat'], $data['lng']);
+			$this->map_image->delete($event_id);
+			if ((float) $data['lat'] != 0.0 && (float) $data['lng'] != 0.0)
+			{
+				$map_image = $this->map_image->generate($event_id, $data['lat'], $data['lng']);
+			}
 		}
 
 		$sql = 'UPDATE ' . EVENTBOARD_EVENTS_TABLE . '
@@ -127,6 +131,8 @@ class event_manager
 
 	public function delete_event($event_id)
 	{
+		$this->map_image->delete((int) $event_id);
+
 		$sql = 'DELETE FROM ' . EVENTBOARD_EVENTS_TABLE . '
             WHERE event_id = ' . (int) $event_id;
 		$this->db->sql_query($sql);

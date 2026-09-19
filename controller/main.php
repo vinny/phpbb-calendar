@@ -104,7 +104,7 @@ class main
 		$token = $this->calendar_link->current_access_token();
 		foreach ($this->event_query->get_public_calendar_events((int) $this->user->data['user_id'], $token) as $row)
 		{
-			$cat_color = !empty($row['cat_color']) ? '#' . ltrim($row['cat_color'], '#') : '';
+			$cat_color = !empty($row['cat_color']) ? '#' . ltrim((string) $row['cat_color'], '#') : '';
 			$is_ended = $now > (int) $row['end_at'];
 			$is_occurring = $now >= (int) $row['start_at'] && $now <= (int) $row['end_at'];
 
@@ -119,7 +119,7 @@ class main
 			}
 
 			$event_data = [
-				'title' => html_entity_decode($row['title']),
+				'title' => (string) $row['title'],
 				'start' => $this->format_fullcalendar_value((int) $row['start_at']),
 				'end' => $this->format_fullcalendar_value((int) $row['end_at']),
 				'url' => $this->calendar_link->route('vinny_calendar_view', $row, ['id' => (int) $row['event_id']]),
@@ -253,14 +253,14 @@ class main
 		{
 			$this->template->assign_block_vars('events', [
 				'TITLE' => $row['title'],
-				'CAT_COLOR' => ltrim($row['cat_color'], '#'),
+				'CAT_COLOR' => ltrim((string) $row['cat_color'], '#'),
 				'CAT_ICON' => $row['cat_icon'],
 				'DATE_FULL' => $this->user->format_date($row['start_at']),
 				'NUM_PARTICIPANTS' => (int) ($row['num_participants'] ?? 0),
 				'MAX_PARTICIPANTS' => (int) ($row['max_participants'] ?? 0),
 				'U_VIEW' => $this->calendar_link->route('vinny_calendar_view', $row, ['id' => (int) $row['event_id']]),
-				'U_EDIT' => $this->calendar_link->route('vinny_calendar_edit', $row, ['id' => (int) $row['event_id']]),
-				'U_DELETE' => $this->calendar_link->route('vinny_calendar_delete', $row, ['id' => (int) $row['event_id']]),
+				'U_EDIT' => $this->can_manage_event($row) ? $this->calendar_link->route('vinny_calendar_edit', $row, ['id' => (int) $row['event_id']]) : '',
+				'U_DELETE' => $this->can_delete_event($row) ? $this->calendar_link->route('vinny_calendar_delete', $row, ['id' => (int) $row['event_id']]) : '',
 			]);
 		}
 
@@ -295,7 +295,7 @@ class main
 		{
 			$this->template->assign_block_vars('events', [
 				'TITLE' => $row['title'],
-				'CAT_COLOR' => ltrim($row['cat_color'], '#'),
+				'CAT_COLOR' => ltrim((string) $row['cat_color'], '#'),
 				'CAT_ICON' => $row['cat_icon'],
 				'DATE_FULL' => $this->user->format_date($row['start_at']),
 				'NUM_PARTICIPANTS' => (int) ($row['num_participants'] ?? 0),
@@ -422,7 +422,7 @@ class main
 			'U_JOIN_EVENT' => $this->calendar_link->route('vinny_calendar_join', $event, ['id' => (int) $event['event_id']]),
 			'U_LEAVE_EVENT' => $this->calendar_link->route('vinny_calendar_leave', $event, ['id' => (int) $event['event_id']]),
 			'U_EDIT' => $this->can_manage_event($event) ? $this->calendar_link->route('vinny_calendar_edit', $event, ['id' => (int) $event['event_id']]) : '',
-			'U_DELETE' => $this->can_manage_event($event) ? $this->calendar_link->route('vinny_calendar_delete', $event, ['id' => (int) $event['event_id']]) : '',
+			'U_DELETE' => $this->can_delete_event($event) ? $this->calendar_link->route('vinny_calendar_delete', $event, ['id' => (int) $event['event_id']]) : '',
 			'U_ACTION_COMMENT' => $this->calendar_link->route('vinny_calendar_comment', $event, ['id' => (int) $event['event_id']]),
 			'U_ADD_GOOGLE' => $calendar_targets['google'],
 			'U_ADD_OUTLOOK' => $calendar_targets['outlook'],
@@ -556,7 +556,7 @@ class main
 			trigger_error('EVENT_NOT_FOUND');
 		}
 
-		if (!$this->can_manage_event($event))
+		if (!$this->can_delete_event($event))
 		{
 			trigger_error('NOT_AUTHORISED');
 		}
@@ -614,7 +614,16 @@ class main
 			trigger_error('EVENT_OWNER_CANNOT_RSVP');
 		}
 
-		$this->rsvp->join($event, (int) $this->user->data['user_id']);
+		$result = $this->rsvp->join($event, (int) $this->user->data['user_id']);
+		if ($result === 'full')
+		{
+			trigger_error('EVENT_FULL');
+		}
+		else if ($result === 'already_joined')
+		{
+			trigger_error('EVENT_ALREADY_JOINED');
+		}
+
 		redirect($this->calendar_link->route('vinny_calendar_view', $event, ['id' => (int) $event['event_id']]));
 	}
 
@@ -716,7 +725,8 @@ class main
 			}
 		);
 
-		$filename = preg_replace('/[^a-z0-9_\-]+/i', '-', $event['title']) . '.ics';
+		$clean_title = trim(preg_replace('/[^a-z0-9_\-]+/i', '-', html_entity_decode($event['title'], ENT_QUOTES, 'UTF-8')), '-');
+		$filename = ($clean_title !== '' ? $clean_title : 'event') . '.ics';
 		return new Response($ical, 200, [
 			'Content-Type' => 'text/calendar; charset=UTF-8',
 			'Content-Disposition' => 'attachment; filename="' . $filename . '"',
@@ -735,6 +745,11 @@ class main
 		if (!$this->auth->acl_get('u_eventboard_create'))
 		{
 			return new JsonResponse(['features' => []], 403);
+		}
+
+		if ($this->geo_proxy->is_rate_limited())
+		{
+			return new JsonResponse(['features' => [], 'error' => $this->user->lang('EVENT_GEO_PROXY_RATE_LIMITED')], 429);
 		}
 
 		return new JsonResponse($this->geo_proxy->autocomplete($this->request->variable('text', '', true)));
@@ -845,10 +860,12 @@ class main
 
 	protected function assign_form_defaults(array $vars)
 	{
+		$fp_alt_format = $this->get_flatpickr_alt_format();
+
 		$this->template->assign_vars(array_merge([
 			'S_EDIT_MODE' => false,
-			'S_FP_24HR' => !$this->is_user_12hour(),
-			'S_FP_DATE_FORMAT' => $this->get_flatpickr_alt_format(),
+			'S_FP_24HR' => $this->is_flatpickr_24hr($fp_alt_format),
+			'S_FP_DATE_FORMAT' => $fp_alt_format,
 			'U_GEO_PROXY' => $this->helper->route('vinny_calendar_geo_proxy'),
 			'S_GEOAPIFY_ENABLED' => ((string) ($this->config['vinny_calendar_geoapify_key'] ?? '') !== ''),
 			'S_BBCODE_ALLOWED' => (bool) ($this->config['allow_bbcode'] && $this->user->optionget('bbcode')),
@@ -874,7 +891,7 @@ class main
 				'ID' => (int) $category['cat_id'],
 				'NAME' => $category['cat_name'],
 				'ICON' => $category['cat_icon'],
-				'COLOR' => ltrim($category['cat_color'], '#'),
+				'COLOR' => ltrim((string) $category['cat_color'], '#'),
 				'S_SELECTED' => ((int) $selected_id === (int) $category['cat_id']),
 			]);
 		}
@@ -886,7 +903,7 @@ class main
 			'TITLE' => $row['title'],
 			'LOCATION' => $row['location'] ?: $this->user->lang('EVENT_ONLINE'),
 			'CAT_NAME' => $row['cat_name'],
-			'CAT_COLOR' => ltrim($row['cat_color'], '#'),
+			'CAT_COLOR' => ltrim((string) $row['cat_color'], '#'),
 			'CAT_ICON' => $row['cat_icon'],
 			'NUM_PARTICIPANTS' => (int) ($row['num_participants'] ?? 0),
 			'MAX_PARTICIPANTS' => (int) ($row['max_participants'] ?? 0),
@@ -908,6 +925,23 @@ class main
 		return $this->auth->acl_get('a_')
 			|| $this->auth->acl_get('m_')
 			|| ((int) $event['user_id'] === (int) $this->user->data['user_id']);
+	}
+
+	protected function can_delete_event(array $event)
+	{
+		$is_completed = isset($event['end_at']) && ((int) $event['end_at'] <= time());
+		if ($is_completed)
+		{
+			return $this->auth->acl_get('a_') || $this->auth->acl_get('m_');
+		}
+
+		if ($this->auth->acl_get('a_') || $this->auth->acl_get('m_'))
+		{
+			return true;
+		}
+
+		return ((int) $event['user_id'] === (int) $this->user->data['user_id'])
+			&& (bool) $this->auth->acl_get('u_eventboard_delete');
 	}
 
 	protected function assert_event_visible(array $event)
@@ -973,25 +1007,26 @@ class main
 		}
 	}
 
-	protected function get_time_format()
-	{
-		return $this->is_user_12hour() ? 'g:i A' : 'H:i';
-	}
-
 	protected function get_flatpickr_alt_format()
 	{
-		$format = trim((string) ($this->config['vinny_calendar_fp_date_format'] ?? 'd/m/Y H:i'));
-		$time_format = !$this->is_user_12hour() ? 'H:i' : 'h:i K';
+		$format = trim((string) ($this->config['vinny_calendar_fp_date_format'] ?? ''));
 
-		if ($format === '')
+		return ($format !== '') ? $format : 'Y-m-d H:i';
+	}
+
+	protected function is_flatpickr_24hr($format)
+	{
+		if (strpos($format, 'K') !== false || strpos($format, 'h') !== false || strpos($format, 'g') !== false)
 		{
-			return 'd/m/Y ' . $time_format;
+			return false;
 		}
 
-		$has_time = preg_match('/(?:[HGhg]):i(?:\s*(?:[KA]))?/i', $format);
-		$updated = preg_replace('/(?:[HGhg]):i(?:\s*(?:[KA]))?/i', $time_format, $format, 1);
+		if (strpos($format, 'H') !== false || strpos($format, 'G') !== false)
+		{
+			return true;
+		}
 
-		return $has_time ? $updated : trim($format . ' ' . $time_format);
+		return !$this->is_user_12hour();
 	}
 
 	protected function is_user_12hour()
@@ -1012,8 +1047,10 @@ class main
 	protected function format_flatpickr_value($timestamp)
 	{
 		$date = new \DateTimeImmutable('@' . (int) $timestamp);
+		$format = $this->get_flatpickr_alt_format();
+		$php_format = str_replace(['K', 'J'], ['A', 'jS'], $format);
 
-		return $date->setTimezone($this->get_user_timezone())->format('Y-m-d H:i');
+		return $date->setTimezone($this->get_user_timezone())->format($php_format);
 	}
 
 	protected function format_fullcalendar_value($timestamp)
@@ -1041,7 +1078,7 @@ class main
 
 	protected function truncate_desc($string, $max_length = 150)
 	{
-		$string = trim(strip_tags(html_entity_decode($string, ENT_QUOTES, 'UTF-8')));
+		$string = trim(strip_tags($string));
 		$ellipsis = $this->user->lang('ELLIPSIS');
 		if (mb_strlen($string, 'UTF-8') > $max_length)
 		{

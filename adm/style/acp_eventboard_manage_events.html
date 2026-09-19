@@ -8,7 +8,7 @@
 <div class="pagination top-pagination">
 	{{ lang('ACP_EVENT_TOTAL') }}{{ lang('COLON') }} <strong>{{ TOTAL_EVENTS }}</strong>
 	&bull; <a href="{{ U_ACTIVE_EVENTS }}"{% if not S_COMPLETED_VIEW %} style="font-weight: bold;"{% endif %}>{{ lang('ACTIVE_EVENTS') }} ({{ TOTAL_ACTIVE_EVENTS }})</a>
-	&bull; <a href="{{ U_COMPLETED_EVENTS }}"{% if S_COMPLETED_VIEW %} style="font-weight: bold;"{% endif %}>{{ lang('COMPLETED') }} ({{ TOTAL_COMPLETED_EVENTS }})</a>
+	&bull; <a href="{{ U_COMPLETED_EVENTS }}"{% if S_COMPLETED_VIEW %} style="font-weight: bold;"{% endif %}>{{ lang('EVENT_COMPLETED') }} ({{ TOTAL_COMPLETED_EVENTS }})</a>
 	{% if loops.pagination|length %}
 		&bull; {% include 'pagination.html' %}
 	{% endif %}
@@ -18,7 +18,7 @@
 	<thead>
 		<tr>
 			<th>{{ lang('EVENT_TITLE') }}</th>
-			<th>{{ lang('CATEGORY') }}</th>
+			<th>{{ lang('EVENT_CATEGORY') }}</th>
 			<th>{{ lang('EVENT_START') }}</th>
 			<th>{{ lang('ACP_EVENT_VISIBILITY') }}</th>
 			<th>{{ lang('AUTHOR') }}</th>

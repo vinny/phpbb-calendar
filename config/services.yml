@@ -53,6 +53,7 @@ services:
         arguments:
             - '@config'
             - '@user'
+            - '@cache.driver'
 
     vinny.calendar.service.share:
         class: vinny\calendar\service\share
@@ -72,6 +73,7 @@ services:
             - '@user'
             - '@config'
             - '@vinny.calendar.service.event_access'
+            - '@vinny.calendar.service.event_query'
 
     vinny.calendar.service.event_manager:
         class: vinny\calendar\service\event_manager

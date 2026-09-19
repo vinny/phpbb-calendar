@@ -66,11 +66,47 @@ class main_module
 			$config->set('vinny_calendar_display_occurring', $request->variable('vinny_calendar_display_occurring', 0));
 			$config->set('vinny_calendar_display_upcoming', $request->variable('vinny_calendar_display_upcoming', 0));
 			$config->set('vinny_calendar_display_stats', $request->variable('vinny_calendar_display_stats', 0));
+			$config->set('vinny_calendar_fp_date_format', trim($request->variable('vinny_calendar_fp_date_format', '', true)));
 
 			$phpbb_log = $container->get('log');
 			$phpbb_log->add('admin', $user->data['user_id'], $user->ip, 'LOG_EVENTBOARD_CONFIG_UPDATED');
 			trigger_error($user->lang('CONFIG_UPDATED') . adm_back_link($this->u_action));
 		}
+
+		$presets = [
+			'Y-m-d H:i',
+			'd/m/Y H:i',
+			'm/d/Y h:i K',
+			'd.m.Y H:i',
+			'd-m-Y H:i',
+			'j F Y H:i',
+			'D, j M Y H:i',
+			'l, j F Y H:i',
+			'F j, Y h:i K',
+		];
+
+		$current_fp_format = (string) ($config['vinny_calendar_fp_date_format'] ?? '');
+		$is_custom_format = !in_array($current_fp_format, $presets, true);
+		$sample_time = time();
+
+		$fp_format_options = [];
+		foreach ($presets as $preset)
+		{
+			$php_format = str_replace(['K', 'J'], ['A', 'jS'], $preset);
+			$sample = $user->format_date($sample_time, $php_format, false);
+
+			$fp_format_options[] = [
+				'VALUE' => $preset,
+				'LABEL' => $sample . ' [' . $preset . ']',
+				'S_SELECTED' => ($current_fp_format === $preset),
+			];
+		}
+
+		$fp_format_options[] = [
+			'VALUE' => 'custom',
+			'LABEL' => $user->lang('EVENTBOARD_FP_DATE_FORMAT_CUSTOM'),
+			'S_SELECTED' => $is_custom_format,
+		];
 
 		$template->assign_vars([
 			'U_ACTION' => $this->u_action,
@@ -85,17 +121,28 @@ class main_module
 			'VINNY_CALENDAR_DISPLAY_OCCURRING' => (int) ($config['vinny_calendar_display_occurring'] ?? 1),
 			'VINNY_CALENDAR_DISPLAY_UPCOMING' => (int) ($config['vinny_calendar_display_upcoming'] ?? 1),
 			'VINNY_CALENDAR_DISPLAY_STATS' => (int) ($config['vinny_calendar_display_stats'] ?? 1),
+			'VINNY_CALENDAR_FP_DATE_FORMAT' => $current_fp_format,
+			'FP_DATE_FORMAT_OPTIONS' => $fp_format_options,
+			'S_CUSTOM_FP_DATE_FORMAT' => $is_custom_format,
 		]);
 	}
 
 	protected function categories($request, $template, $user, $container)
 	{
-		global $table_prefix;
+		$table_prefix = $container->getParameter('core.table_prefix');
 
 		$db = $container->get('dbal.conn');
 		$phpbb_log = $container->get('log');
-		$table_categories = $table_prefix . 'eventboard_categories';
-		$table_events = $table_prefix . 'eventboard_events';
+
+		if (!defined('EVENTBOARD_CATEGORIES_TABLE'))
+		{
+			define('EVENTBOARD_CATEGORIES_TABLE', $table_prefix . 'eventboard_categories');
+		}
+		if (!defined('EVENTBOARD_EVENTS_TABLE'))
+		{
+			define('EVENTBOARD_EVENTS_TABLE', $table_prefix . 'eventboard_events');
+		}
+
 		$action = $request->variable('action', '');
 		$cat_id = $request->variable('c', 0);
 
@@ -135,6 +182,7 @@ class main_module
 					}
 
 					$cat_name = trim($request->variable('cat_name', '', true));
+					$cat_name = utf8_encode_ucr($cat_name);
 					$cat_desc = trim($request->variable('cat_desc', '', true));
 					$cat_color = ltrim(trim($request->variable('cat_color', '', true)), '#');
 					$cat_icon = trim($request->variable('cat_icon', '', true));
@@ -143,6 +191,10 @@ class main_module
 					if ($cat_name === '')
 					{
 						$error = $user->lang('CATEGORY_NAME_REQUIRED');
+					}
+					else if (utf8_strlen($cat_name) > 255)
+					{
+						$error = $user->lang('CATEGORY_NAME_TOO_LONG');
 					}
 					else if (!preg_match('/^[a-f0-9]{3,6}$/i', $cat_color))
 					{
@@ -195,46 +247,35 @@ class main_module
 					'U_BACK' => $this->u_action,
 					'CAT_NAME' => $category['cat_name'],
 					'CAT_DESC' => $category['cat_desc'],
-					'CAT_COLOR' => '#' . ltrim($category['cat_color'], '#'),
+					'CAT_COLOR' => '#' . ltrim((string) $category['cat_color'], '#'),
 					'CAT_ICON' => $category['cat_icon'],
 				]);
 				return;
 
 			case 'delete':
-				$sql = 'SELECT c.cat_name, COUNT(e.event_id) AS event_count
-					FROM ' . $table_categories . ' c
-					LEFT JOIN ' . $table_events . ' e ON (e.cat_id = c.cat_id)
-					WHERE c.cat_id = ' . (int) $cat_id . '
-					GROUP BY c.cat_id, c.cat_name';
+				$sql = 'SELECT c.cat_name, (SELECT COUNT(e.event_id) FROM ' . EVENTBOARD_EVENTS_TABLE . ' e WHERE e.cat_id = c.cat_id) AS event_count
+					FROM ' . EVENTBOARD_CATEGORIES_TABLE . ' c
+					WHERE c.cat_id = ' . (int) $cat_id;
 				$result = $db->sql_query($sql);
 				$category = $db->sql_fetchrow($result);
 				$db->sql_freeresult($result);
 
 				if (!$category)
 				{
-					trigger_error('CATEGORY_NOT_FOUND');
+					trigger_error($user->lang('CATEGORY_NOT_FOUND') . adm_back_link($this->u_action));
 				}
 
 				if ((int) $category['event_count'] > 0)
 				{
-					trigger_error('CATEGORY_HAS_EVENTS');
+					trigger_error($user->lang('CATEGORY_HAS_EVENTS') . adm_back_link($this->u_action));
 				}
 
 				if (confirm_box(true))
 				{
-					$sql = 'DELETE FROM ' . $table_categories . '
+					$sql = 'DELETE FROM ' . EVENTBOARD_CATEGORIES_TABLE . '
 						WHERE cat_id = ' . (int) $cat_id;
 					$db->sql_query($sql);
 					$phpbb_log->add('admin', $user->data['user_id'], $user->ip, 'LOG_EVENTBOARD_CATEGORY_REMOVED', false, [$category['cat_name']]);
-
-					if ($request->is_ajax())
-					{
-						$json_response = new \phpbb\json_response();
-						$json_response->send([
-							'SUCCESS' => true,
-						]);
-					}
-
 					trigger_error($user->lang('CATEGORY_DELETED') . adm_back_link($this->u_action));
 				}
 
@@ -245,10 +286,8 @@ class main_module
 				return;
 		}
 
-		$sql = 'SELECT c.*, COUNT(e.event_id) AS event_count
-			FROM ' . $table_categories . ' c
-			LEFT JOIN ' . $table_events . ' e ON (e.cat_id = c.cat_id)
-			GROUP BY c.cat_id, c.cat_name, c.cat_desc, c.cat_color, c.cat_icon
+		$sql = 'SELECT c.*, (SELECT COUNT(e.event_id) FROM ' . EVENTBOARD_EVENTS_TABLE . ' e WHERE e.cat_id = c.cat_id) AS event_count
+			FROM ' . EVENTBOARD_CATEGORIES_TABLE . ' c
 			ORDER BY c.cat_name ASC';
 		$result = $db->sql_query($sql);
 		while ($row = $db->sql_fetchrow($result))
@@ -256,7 +295,7 @@ class main_module
 			$template->assign_block_vars('categories', [
 				'NAME' => $row['cat_name'],
 				'DESC' => $row['cat_desc'],
-				'COLOR' => '#' . ltrim($row['cat_color'], '#'),
+				'COLOR' => '#' . ltrim((string) $row['cat_color'], '#'),
 				'ICON' => $row['cat_icon'],
 				'EVENT_COUNT' => (int) $row['event_count'],
 				'S_CAN_DELETE' => ((int) $row['event_count'] === 0),
@@ -273,7 +312,7 @@ class main_module
 
 	protected function manage_events($request, $template, $user, $container)
 	{
-		global $table_prefix;
+		$table_prefix = $container->getParameter('core.table_prefix');
 
 		if (!defined('EVENTBOARD_EVENTS_TABLE'))
 		{
@@ -296,9 +335,8 @@ class main_module
 		{
 			if (confirm_box(true))
 			{
-				$db->sql_query('DELETE FROM ' . EVENTBOARD_EVENTS_TABLE . ' WHERE event_id = ' . (int) $event_id);
-				$db->sql_query('DELETE FROM ' . EVENTBOARD_PARTICIPANTS_TABLE . ' WHERE event_id = ' . (int) $event_id);
-				$db->sql_query('DELETE FROM ' . EVENTBOARD_COMMENTS_TABLE . ' WHERE event_id = ' . (int) $event_id);
+				$event_manager = $container->get('vinny.calendar.service.event_manager');
+				$event_manager->delete_event((int) $event_id);
 
 				if ($request->is_ajax())
 				{

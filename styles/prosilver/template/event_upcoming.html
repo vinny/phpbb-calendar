@@ -9,7 +9,7 @@
 				<dl class="row-item">
 					<dt><div class="list-inner">{{ lang('EVENT_DETAILS') }}</div></dt>
 					<dd class="posts">{{ lang('SIGNUPS') }}</dd>
-					<dd class="lastpost calendar-actions">{{ lang('CATEGORY') }}</dd>
+					<dd class="lastpost calendar-actions">{{ lang('EVENT_CATEGORY') }}</dd>
 				</dl>
 			</li>
 		</ul>
@@ -24,7 +24,7 @@
 						<div class="list-inner">
 							<a href="{{ event.U_VIEW }}" class="topictitle">{{ event.TITLE }}</a>
 							<div class="topic-poster">
-								<span class="responsive-show" style="display: none;">{{ lang('CATEGORY') }}{{ lang('COLON') }} <a href="{{ event.U_CATEGORY }}" title="{{ event.CAT_NAME|e('html_attr') }}">{{ event.CAT_NAME }}</a></span>
+								<span class="responsive-show" style="display: none;">{{ lang('EVENT_CATEGORY') }}{{ lang('COLON') }} <a href="{{ event.U_CATEGORY }}" title="{{ event.CAT_NAME|e('html_attr') }}">{{ event.CAT_NAME }}</a></span>
 								<time>{{ event.DATE_FULL }}</time>
 								{% if event.MAX_PARTICIPANTS == 0 %}
 								<span class="responsive-show" style="display: none;">{{ lang('UNLIMITED_SPOTS') }}</span>

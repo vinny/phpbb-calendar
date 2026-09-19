@@ -106,7 +106,7 @@
 
 			<div class="content calendar-event-content">
 				<div class="calendar-event-summary-rows">
-					<div class="calendar-event-summary-row"><strong>{{ lang('CATEGORY') }}{{ lang('COLON') }}</strong><span>{{ CAT_NAME }}</span></div>
+					<div class="calendar-event-summary-row"><strong>{{ lang('EVENT_CATEGORY') }}{{ lang('COLON') }}</strong><span>{{ CAT_NAME }}</span></div>
 					<div class="calendar-event-summary-row"><strong>{{ lang('EVENT_START') }}{{ lang('COLON') }}</strong><span>{{ EVENT_START_DATE }}</span></div>
 					<div class="calendar-event-summary-row"><strong>{{ lang('EVENT_END') }}{{ lang('COLON') }}</strong><span>{{ EVENT_END_DATE }}</span></div>
 					<div class="calendar-event-summary-row"><strong>{{ lang('EVENT_LOCATION') }}{{ lang('COLON') }}</strong><span>{% if S_IS_ONLINE %}{{ lang('EVENT_ONLINE') }}{% else %}{{ EVENT_LOCATION }}{% endif %}</span></div>
@@ -188,7 +188,7 @@
 						</li>
 						{% endif %}
 						<li>
-							<a href="#" class="button button-icon-only js-calendar-quote" title="{{ lang('QUOTE')|e('html_attr') }}" data-quote-author="{{ comment.AUTHOR_NAME|e('html_attr') }}" data-quote-message="{{ comment.QUOTE_TEXT|e('html_attr') }}">
+							<a href="#" class="button button-icon-only js-calendar-quote" title="{{ lang('QUOTE')|e('html_attr') }}" data-quote-author="{{ comment.AUTHOR_NAME|e('html_attr') }}" data-quote-message="{{ comment.QUOTE_TEXT }}">
 								<i class="icon fa-quote-left fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('QUOTE') }}</span>
 							</a>
 						</li>
@@ -268,6 +268,6 @@ document.addEventListener('DOMContentLoaded', function () {
 	}
 });
 </script>
-<script src="{{ T_ASSETS_PATH }}/javascript/editor.js"></script>
+{% INCLUDEJS T_ASSETS_PATH ~ '/javascript/editor.js' %}
 
 {% INCLUDE 'overall_footer.html' %}

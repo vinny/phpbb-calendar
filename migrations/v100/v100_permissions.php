@@ -12,11 +12,38 @@ namespace vinny\calendar\migrations\v100;
 
 class v100_permissions extends \phpbb\db\migration\migration
 {
+	/**
+	 * Check if migration is effectively installed.
+	 *
+	 * @return bool
+	 */
+	public function effectively_installed()
+	{
+		$sql = 'SELECT auth_option_id
+			FROM ' . ACL_OPTIONS_TABLE . "
+			WHERE auth_option = 'u_eventboard_view'";
+		$result = $this->db->sql_query($sql);
+		$row = $this->db->sql_fetchrow($result);
+		$this->db->sql_freeresult($result);
+
+		return (bool) $row;
+	}
+
+	/**
+	 * Define migration dependencies.
+	 *
+	 * @return array
+	 */
 	public static function depends_on()
 	{
 		return ['\vinny\calendar\migrations\v100\v100_configs'];
 	}
 
+	/**
+	 * Updates database data.
+	 *
+	 * @return array
+	 */
 	public function update_data()
 	{
 		return [
@@ -48,6 +75,21 @@ class v100_permissions extends \phpbb\db\migration\migration
 
 			// BOTS
 			['permission.permission_set', ['BOTS', 'u_eventboard_view', 'group']],
+		];
+	}
+
+	/**
+	 * Reverts database data.
+	 *
+	 * @return array
+	 */
+	public function revert_data()
+	{
+		return [
+			['permission.remove', ['u_eventboard_view']],
+			['permission.remove', ['u_eventboard_create']],
+			['permission.remove', ['u_eventboard_delete']],
+			['permission.remove', ['u_eventboard_comment']],
 		];
 	}
 }

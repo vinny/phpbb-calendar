@@ -37,7 +37,7 @@ class event_reminder extends \phpbb\cron\task\base
 
 	public function run()
 	{
-		$this->config->set('vinny_calendar_reminder_last_run', time());
+		$this->config->set('vinny_calendar_reminder_last_run', time(), false);
 		$this->event_reminder->dispatch_due_reminders();
 		return null;
 	}
