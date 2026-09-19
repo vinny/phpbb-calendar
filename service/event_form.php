@@ -193,17 +193,6 @@ class event_form
 			return false;
 		}
 
-		$fp_format = trim((string) ($this->config['vinny_calendar_fp_date_format'] ?? ''));
-		if ($fp_format !== '')
-		{
-			$php_format = str_replace(['K', 'J'], ['A', 'jS'], $fp_format);
-			$timestamp = $this->user->get_timestamp_from_format($php_format, $value);
-			if ($timestamp !== false)
-			{
-				return (int) $timestamp;
-			}
-		}
-
 		$timestamp = $this->user->get_timestamp_from_format('Y-m-d H:i', $value);
 
 		return ($timestamp !== false) ? (int) $timestamp : false;

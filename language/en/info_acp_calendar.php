@@ -49,9 +49,6 @@ $lang = array_merge($lang, array(
 	'EVENTBOARD_DISPLAY_UPCOMING_EXPLAIN' => 'Show a block on the forum index page with the list of the next 5 upcoming events.',
 	'EVENTBOARD_DISPLAY_STATS' => 'Display total events in statistics',
 	'EVENTBOARD_DISPLAY_STATS_EXPLAIN' => 'Show the total number of public events in the forum statistics on the index page.',
-	'EVENTBOARD_FP_DATE_FORMAT' => 'Date picker format',
-	'EVENTBOARD_FP_DATE_FORMAT_EXPLAIN' => 'Select a format preset or enter a custom date and time format used by the Flatpickr date picker when creating or editing events. Supported tokens from <a href="https://flatpickr.js.org/formatting/" target="_blank" rel="noopener">Flatpickr</a> include:<br />• <strong>Day:</strong> <code>d</code> (01–31), <code>j</code> (1–31), <code>D</code> (Mon–Sun), <code>l</code> (Monday–Sunday), <code>J</code> (1st, 2nd, 3rd)<br />• <strong>Month:</strong> <code>m</code> (01–12), <code>n</code> (1–12), <code>M</code> (Jan–Dec), <code>F</code> (January–December)<br />• <strong>Year:</strong> <code>Y</code> (4 digits, e.g. 2026), <code>y</code> (2 digits, e.g. 26)<br />• <strong>Time:</strong> <code>H</code> (00–23), <code>h</code> (01–12), <code>G</code> (0–23), <code>i</code> (00–59), <code>S</code> (00–59), <code>K</code> (AM/PM)',
-	'EVENTBOARD_FP_DATE_FORMAT_CUSTOM' => 'Custom…',
 
 	// ACP Logs & Messages
 	'CATEGORY_ADDED' => 'Category added.',

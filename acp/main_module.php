@@ -66,47 +66,11 @@ class main_module
 			$config->set('vinny_calendar_display_occurring', $request->variable('vinny_calendar_display_occurring', 0));
 			$config->set('vinny_calendar_display_upcoming', $request->variable('vinny_calendar_display_upcoming', 0));
 			$config->set('vinny_calendar_display_stats', $request->variable('vinny_calendar_display_stats', 0));
-			$config->set('vinny_calendar_fp_date_format', trim($request->variable('vinny_calendar_fp_date_format', '', true)));
 
 			$phpbb_log = $container->get('log');
 			$phpbb_log->add('admin', $user->data['user_id'], $user->ip, 'LOG_EVENTBOARD_CONFIG_UPDATED');
 			trigger_error($user->lang('CONFIG_UPDATED') . adm_back_link($this->u_action));
 		}
-
-		$presets = [
-			'Y-m-d H:i',
-			'd/m/Y H:i',
-			'm/d/Y h:i K',
-			'd.m.Y H:i',
-			'd-m-Y H:i',
-			'j F Y H:i',
-			'D, j M Y H:i',
-			'l, j F Y H:i',
-			'F j, Y h:i K',
-		];
-
-		$current_fp_format = (string) ($config['vinny_calendar_fp_date_format'] ?? '');
-		$is_custom_format = !in_array($current_fp_format, $presets, true);
-		$sample_time = time();
-
-		$fp_format_options = [];
-		foreach ($presets as $preset)
-		{
-			$php_format = str_replace(['K', 'J'], ['A', 'jS'], $preset);
-			$sample = $user->format_date($sample_time, $php_format, false);
-
-			$fp_format_options[] = [
-				'VALUE' => $preset,
-				'LABEL' => $sample . ' [' . $preset . ']',
-				'S_SELECTED' => ($current_fp_format === $preset),
-			];
-		}
-
-		$fp_format_options[] = [
-			'VALUE' => 'custom',
-			'LABEL' => $user->lang('EVENTBOARD_FP_DATE_FORMAT_CUSTOM'),
-			'S_SELECTED' => $is_custom_format,
-		];
 
 		$template->assign_vars([
 			'U_ACTION' => $this->u_action,
@@ -121,9 +85,6 @@ class main_module
 			'VINNY_CALENDAR_DISPLAY_OCCURRING' => (int) ($config['vinny_calendar_display_occurring'] ?? 1),
 			'VINNY_CALENDAR_DISPLAY_UPCOMING' => (int) ($config['vinny_calendar_display_upcoming'] ?? 1),
 			'VINNY_CALENDAR_DISPLAY_STATS' => (int) ($config['vinny_calendar_display_stats'] ?? 1),
-			'VINNY_CALENDAR_FP_DATE_FORMAT' => $current_fp_format,
-			'FP_DATE_FORMAT_OPTIONS' => $fp_format_options,
-			'S_CUSTOM_FP_DATE_FORMAT' => $is_custom_format,
 		]);
 	}
 

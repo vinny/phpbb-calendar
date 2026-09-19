@@ -111,7 +111,9 @@
 document.addEventListener('DOMContentLoaded', function () {
 	flatpickr('input.flatpickr-input', {
 		enableTime: true,
-		dateFormat: '{{ S_FP_DATE_FORMAT|e('js') }}',
+		dateFormat: 'Y-m-d H:i',
+		altInput: true,
+		altFormat: '{{ S_FP_ALT_FORMAT|e('js') }}',
 		minDate: 'today',
 		time_24hr: {% if S_FP_24HR %}true{% else %}false{% endif %},
 		allowInput: false,

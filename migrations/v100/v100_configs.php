@@ -19,7 +19,7 @@ class v100_configs extends \phpbb\db\migration\migration
 	 */
 	public function effectively_installed()
 	{
-		return isset($this->config['vinny_calendar_enable']) && isset($this->config['vinny_calendar_fp_date_format']);
+		return isset($this->config['vinny_calendar_enable']);
 	}
 
 	/**
@@ -47,8 +47,6 @@ class v100_configs extends \phpbb\db\migration\migration
 			['config.add', ['vinny_calendar_reminder_last_run', 0, true]],
 			['config.add', ['vinny_calendar_geoapify_key', '']],
 
-			['config.add', ['vinny_calendar_fp_date_format', 'Y-m-d H:i']],
-
 			['config.add', ['vinny_calendar_map_width', 1024]],
 			['config.add', ['vinny_calendar_map_height', 768]],
 			['config.add', ['vinny_calendar_map_zoom', 17]],
@@ -73,7 +71,6 @@ class v100_configs extends \phpbb\db\migration\migration
 			['config.remove', ['vinny_calendar_reminder_minutes']],
 			['config.remove', ['vinny_calendar_reminder_last_run']],
 			['config.remove', ['vinny_calendar_geoapify_key']],
-			['config.remove', ['vinny_calendar_fp_date_format']],
 			['config.remove', ['vinny_calendar_map_width']],
 			['config.remove', ['vinny_calendar_map_height']],
 			['config.remove', ['vinny_calendar_map_zoom']],

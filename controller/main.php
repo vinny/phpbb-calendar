@@ -860,12 +860,10 @@ class main
 
 	protected function assign_form_defaults(array $vars)
 	{
-		$fp_alt_format = $this->get_flatpickr_alt_format();
-
 		$this->template->assign_vars(array_merge([
 			'S_EDIT_MODE' => false,
-			'S_FP_24HR' => $this->is_flatpickr_24hr($fp_alt_format),
-			'S_FP_DATE_FORMAT' => $fp_alt_format,
+			'S_FP_24HR' => !$this->is_user_12hour(),
+			'S_FP_ALT_FORMAT' => $this->get_user_flatpickr_format(),
 			'U_GEO_PROXY' => $this->helper->route('vinny_calendar_geo_proxy'),
 			'S_GEOAPIFY_ENABLED' => ((string) ($this->config['vinny_calendar_geoapify_key'] ?? '') !== ''),
 			'S_BBCODE_ALLOWED' => (bool) ($this->config['allow_bbcode'] && $this->user->optionget('bbcode')),
@@ -1007,26 +1005,30 @@ class main
 		}
 	}
 
-	protected function get_flatpickr_alt_format()
+	protected function get_user_flatpickr_format()
 	{
-		$format = trim((string) ($this->config['vinny_calendar_fp_date_format'] ?? ''));
+		$user_dateformat = !empty($this->user->data['user_dateformat']) ? $this->user->data['user_dateformat'] : ($this->config['default_dateformat'] ?? 'Y-m-d H:i');
 
-		return ($format !== '') ? $format : 'Y-m-d H:i';
-	}
+		// Strip relative date pipe markers (e.g. |d M Y|)
+		$format = str_replace('|', '', $user_dateformat);
 
-	protected function is_flatpickr_24hr($format)
-	{
-		if (strpos($format, 'K') !== false || strpos($format, 'h') !== false || strpos($format, 'g') !== false)
+		// Map PHP date tokens to Flatpickr tokens
+		$replacements = [
+			'jS' => 'J',
+			'a'  => 'K',
+			'A'  => 'K',
+			'g'  => 'h',
+			's'  => 'S',
+		];
+		$format = str_replace(array_keys($replacements), array_values($replacements), $format);
+
+		// Ensure a time component exists
+		if (!preg_match('/(?:[HGh]):i/i', $format))
 		{
-			return false;
+			$format = trim($format) . ($this->is_user_12hour() ? ' h:i K' : ' H:i');
 		}
 
-		if (strpos($format, 'H') !== false || strpos($format, 'G') !== false)
-		{
-			return true;
-		}
-
-		return !$this->is_user_12hour();
+		return trim($format);
 	}
 
 	protected function is_user_12hour()
@@ -1047,10 +1049,8 @@ class main
 	protected function format_flatpickr_value($timestamp)
 	{
 		$date = new \DateTimeImmutable('@' . (int) $timestamp);
-		$format = $this->get_flatpickr_alt_format();
-		$php_format = str_replace(['K', 'J'], ['A', 'jS'], $format);
 
-		return $date->setTimezone($this->get_user_timezone())->format($php_format);
+		return $date->setTimezone($this->get_user_timezone())->format('Y-m-d H:i');
 	}
 
 	protected function format_fullcalendar_value($timestamp)
