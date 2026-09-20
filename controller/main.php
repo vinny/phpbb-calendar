@@ -1116,11 +1116,6 @@ class main
 	protected function lang()
 	{
 		$args = func_get_args();
-		if ($this->language !== null)
-		{
-			return call_user_func_array([$this->language, 'lang'], $args);
-		}
-
-		return call_user_func_array([$this->user, 'lang'], $args);
+		return $this->language->lang(...$args);
 	}
 }

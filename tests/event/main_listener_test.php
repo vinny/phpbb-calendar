@@ -20,6 +20,7 @@ class main_listener_test extends \phpbb_test_case
 	protected $calendar_link;
 	protected $event_query;
 	protected $event_access;
+	protected $language;
 	protected $listener;
 
 	public function setUp(): void
@@ -28,7 +29,9 @@ class main_listener_test extends \phpbb_test_case
 
 		$this->user = $this->createMock('\phpbb\user');
 		$this->user->data = ['user_id' => 2];
-		$this->user->method('lang')->willReturnCallback(function () {
+
+		$this->language = $this->createMock('\phpbb\language\language');
+		$this->language->method('lang')->willReturnCallback(function () {
 			$args = func_get_args();
 			$key = array_shift($args);
 
@@ -75,7 +78,8 @@ class main_listener_test extends \phpbb_test_case
 			$this->auth,
 			$this->calendar_link,
 			$this->event_query,
-			$this->event_access
+			$this->event_access,
+			$this->language
 		);
 	}
 

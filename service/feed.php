@@ -50,10 +50,10 @@ class feed
 			$end_date_str = $this->user->format_date($row['end_at']);
 			$location_str = !empty($row['location']) ? utf8_htmlspecialchars($row['location']) : '';
 
-			$start_label = $this->language ? $this->language->lang('EVENT_START') : $this->user->lang('EVENT_START');
-			$end_label = $this->language ? $this->language->lang('EVENT_END') : $this->user->lang('EVENT_END');
-			$loc_label = $this->language ? $this->language->lang('EVENT_LOCATION') : $this->user->lang('EVENT_LOCATION');
-			$uncat_label = $this->language ? $this->language->lang('UNCATEGORIZED') : $this->user->lang('UNCATEGORIZED');
+			$start_label = $this->language->lang('EVENT_START');
+			$end_label = $this->language->lang('EVENT_END');
+			$loc_label = $this->language->lang('EVENT_LOCATION');
+			$uncat_label = $this->language->lang('UNCATEGORIZED');
 
 			$meta_html = '<p><strong>' . $start_label . ':</strong> ' . $start_date_str . '<br />';
 			$meta_html .= '<strong>' . $end_label . ':</strong> ' . $end_date_str . '<br />';

@@ -70,9 +70,9 @@ class rsvp
 
 		$this->db->sql_transaction('begin');
 
-		// Acquire exclusive row lock on the event to serialize concurrent reservations
+		// Acquire exclusive row lock on the event to serialize concurrent reservations (using non-identity column for SQL Server compatibility)
 		$sql = 'UPDATE ' . EVENTBOARD_EVENTS_TABLE . '
-			SET event_id = event_id
+			SET cat_id = cat_id
 			WHERE event_id = ' . (int) $event['event_id'];
 		$this->db->sql_query($sql);
 
