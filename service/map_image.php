@@ -27,13 +27,17 @@ class map_image
 	/** @var \phpbb\filesystem\filesystem_interface */
 	protected $filesystem;
 
-	public function __construct(\phpbb\config\config $config, $root_path, \phpbb\user $user, \phpbb\auth\auth $auth, \phpbb\filesystem\filesystem_interface $filesystem)
+	/** @var \phpbb\language\language */
+	protected $language;
+
+	public function __construct(\phpbb\config\config $config, $root_path, \phpbb\user $user, \phpbb\auth\auth $auth, \phpbb\filesystem\filesystem_interface $filesystem, \phpbb\language\language $language = null)
 	{
 		$this->config = $config;
 		$this->root_path = $root_path;
 		$this->user = $user;
 		$this->auth = $auth;
 		$this->filesystem = $filesystem;
+		$this->language = $language ?: (isset($user->language) && is_object($user->language) ? $user->language : null);
 	}
 
 	public function generate($event_id, $lat, $lng)
@@ -60,7 +64,7 @@ class map_image
 		$width = (int) $this->config['vinny_calendar_map_width'];
 		$height = (int) $this->config['vinny_calendar_map_height'];
 		$zoom = (int) $this->config['vinny_calendar_map_zoom'];
-		$map_lang = $this->user->lang('CALENDAR_MAP_LANG');
+		$map_lang = ($this->language !== null) ? $this->language->lang('CALENDAR_MAP_LANG') : 'en';
 
 		$url = 'https://maps.geoapify.com/v1/staticmap'
 			. '?style=osm-carto'
@@ -102,7 +106,15 @@ class map_image
 			}
 		}
 
-		$filename = 'event_' . (int) $event_id . '.png';
+		try
+		{
+			$filename = bin2hex(random_bytes(16)) . '.png';
+		}
+		catch (\Exception $e)
+		{
+			$filename = substr(hash('sha256', uniqid((string) mt_rand(), true)), 0, 32) . '.png';
+		}
+
 		try
 		{
 			$this->filesystem->dump_file($dir . $filename, $image_data);
@@ -115,9 +127,14 @@ class map_image
 		return $filename;
 	}
 
-	public function delete($event_id)
+	public function delete($file_or_id)
 	{
-		$filename = 'event_' . (int) $event_id . '.png';
+		if (empty($file_or_id))
+		{
+			return;
+		}
+
+		$filename = is_numeric($file_or_id) ? 'event_' . (int) $file_or_id . '.png' : basename((string) $file_or_id);
 		$file = $this->root_path . 'images/vinny_calendar_img/' . $filename;
 		if ($this->filesystem->exists($file))
 		{

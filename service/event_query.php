@@ -152,8 +152,8 @@ class event_query
 	public function get_category_list($limit = null)
 	{
 		$sql = 'SELECT cat_id, cat_name, cat_icon, cat_color
-            FROM ' . EVENTBOARD_CATEGORIES_TABLE . '
-            ORDER BY cat_id ASC';
+			FROM ' . EVENTBOARD_CATEGORIES_TABLE . '
+			ORDER BY cat_id ASC';
 
 		return $this->fetch_all($sql, $limit, 0, 3600);
 	}
@@ -161,13 +161,13 @@ class event_query
 	public function get_event_with_details($event_id)
 	{
 		$sql = 'SELECT e.*, c.cat_name, c.cat_color, c.cat_icon,
-                u.username, u.user_colour, u.user_avatar, u.user_avatar_type, u.user_avatar_width, u.user_avatar_height,
-                gr.group_name
-            FROM ' . EVENTBOARD_EVENTS_TABLE . ' e
-            LEFT JOIN ' . EVENTBOARD_CATEGORIES_TABLE . ' c ON (e.cat_id = c.cat_id)
-            LEFT JOIN ' . USERS_TABLE . ' u ON (e.user_id = u.user_id)
-            LEFT JOIN ' . GROUPS_TABLE . ' gr ON (u.group_id = gr.group_id)
-            WHERE e.event_id = ' . (int) $event_id;
+				u.username, u.user_colour, u.user_avatar, u.user_avatar_type, u.user_avatar_width, u.user_avatar_height,
+				gr.group_name
+			FROM ' . EVENTBOARD_EVENTS_TABLE . ' e
+			LEFT JOIN ' . EVENTBOARD_CATEGORIES_TABLE . ' c ON (e.cat_id = c.cat_id)
+			LEFT JOIN ' . USERS_TABLE . ' u ON (e.user_id = u.user_id)
+			LEFT JOIN ' . GROUPS_TABLE . ' gr ON (u.group_id = gr.group_id)
+			WHERE e.event_id = ' . (int) $event_id;
 
 		return $this->fetch_row($sql);
 	}
@@ -175,8 +175,8 @@ class event_query
 	public function get_event_basic($event_id)
 	{
 		$sql = 'SELECT *
-            FROM ' . EVENTBOARD_EVENTS_TABLE . '
-            WHERE event_id = ' . (int) $event_id;
+			FROM ' . EVENTBOARD_EVENTS_TABLE . '
+			WHERE event_id = ' . (int) $event_id;
 
 		return $this->fetch_row($sql);
 	}
@@ -184,8 +184,8 @@ class event_query
 	public function get_event_for_join($event_id)
 	{
 		$sql = 'SELECT event_id, user_id, title, max_participants, start_at, end_at, visibility, access_token
-            FROM ' . EVENTBOARD_EVENTS_TABLE . '
-            WHERE event_id = ' . (int) $event_id;
+			FROM ' . EVENTBOARD_EVENTS_TABLE . '
+			WHERE event_id = ' . (int) $event_id;
 
 		return $this->fetch_row($sql);
 	}
@@ -193,8 +193,8 @@ class event_query
 	public function get_event_for_redirect($event_id)
 	{
 		$sql = 'SELECT event_id, user_id, start_at, end_at, visibility, access_token
-            FROM ' . EVENTBOARD_EVENTS_TABLE . '
-            WHERE event_id = ' . (int) $event_id;
+			FROM ' . EVENTBOARD_EVENTS_TABLE . '
+			WHERE event_id = ' . (int) $event_id;
 
 		return $this->fetch_row($sql);
 	}
@@ -202,8 +202,8 @@ class event_query
 	public function get_event_for_comment($event_id)
 	{
 		$sql = 'SELECT event_id, user_id, title, start_at, end_at, visibility, access_token
-            FROM ' . EVENTBOARD_EVENTS_TABLE . '
-            WHERE event_id = ' . (int) $event_id;
+			FROM ' . EVENTBOARD_EVENTS_TABLE . '
+			WHERE event_id = ' . (int) $event_id;
 
 		return $this->fetch_row($sql);
 	}
@@ -211,10 +211,10 @@ class event_query
 	public function get_event_participants($event_id, $limit = 200)
 	{
 		$sql = 'SELECT u.user_id, u.username, u.user_colour, u.user_avatar, u.user_avatar_type, u.user_avatar_width, u.user_avatar_height
-            FROM ' . EVENTBOARD_PARTICIPANTS_TABLE . ' p
-            JOIN ' . USERS_TABLE . ' u ON (p.user_id = u.user_id)
-            WHERE p.event_id = ' . (int) $event_id . '
-            ORDER BY p.joined_at DESC';
+			FROM ' . EVENTBOARD_PARTICIPANTS_TABLE . ' p
+			JOIN ' . USERS_TABLE . ' u ON (p.user_id = u.user_id)
+			WHERE p.event_id = ' . (int) $event_id . '
+			ORDER BY p.joined_at DESC';
 
 		return $this->fetch_all($sql, $limit);
 	}
@@ -222,8 +222,8 @@ class event_query
 	public function get_category($category_id)
 	{
 		$sql = 'SELECT *
-            FROM ' . EVENTBOARD_CATEGORIES_TABLE . '
-            WHERE cat_id = ' . (int) $category_id;
+			FROM ' . EVENTBOARD_CATEGORIES_TABLE . '
+			WHERE cat_id = ' . (int) $category_id;
 
 		return $this->fetch_row($sql);
 	}

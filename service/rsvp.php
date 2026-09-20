@@ -39,9 +39,9 @@ class rsvp
 	public function has_joined($event_id, $user_id)
 	{
 		$sql = 'SELECT id
-            FROM ' . EVENTBOARD_PARTICIPANTS_TABLE . '
-            WHERE event_id = ' . (int) $event_id . '
-                AND user_id = ' . (int) $user_id;
+			FROM ' . EVENTBOARD_PARTICIPANTS_TABLE . '
+			WHERE event_id = ' . (int) $event_id . '
+				AND user_id = ' . (int) $user_id;
 		$result = $this->db->sql_query($sql);
 		$row = $this->db->sql_fetchrow($result);
 		$this->db->sql_freeresult($result);
@@ -52,8 +52,8 @@ class rsvp
 	public function count_participants($event_id)
 	{
 		$sql = 'SELECT COUNT(id) as total
-            FROM ' . EVENTBOARD_PARTICIPANTS_TABLE . '
-            WHERE event_id = ' . (int) $event_id;
+			FROM ' . EVENTBOARD_PARTICIPANTS_TABLE . '
+			WHERE event_id = ' . (int) $event_id;
 		$result = $this->db->sql_query($sql);
 		$total = (int) $this->db->sql_fetchfield('total');
 		$this->db->sql_freeresult($result);
@@ -70,9 +70,15 @@ class rsvp
 
 		$this->db->sql_transaction('begin');
 
+		// Acquire exclusive row lock on the event to serialize concurrent reservations
+		$sql = 'UPDATE ' . EVENTBOARD_EVENTS_TABLE . '
+			SET event_id = event_id
+			WHERE event_id = ' . (int) $event['event_id'];
+		$this->db->sql_query($sql);
+
 		$sql = 'SELECT max_participants
-            FROM ' . EVENTBOARD_EVENTS_TABLE . '
-            WHERE event_id = ' . (int) $event['event_id'];
+			FROM ' . EVENTBOARD_EVENTS_TABLE . '
+			WHERE event_id = ' . (int) $event['event_id'];
 		$result = $this->db->sql_query($sql);
 		$current_event = $this->db->sql_fetchrow($result);
 		$this->db->sql_freeresult($result);
@@ -124,8 +130,8 @@ class rsvp
 	public function leave($event_id, $user_id)
 	{
 		$sql = 'DELETE FROM ' . EVENTBOARD_PARTICIPANTS_TABLE . '
-            WHERE event_id = ' . (int) $event_id . '
-                AND user_id = ' . (int) $user_id;
+			WHERE event_id = ' . (int) $event_id . '
+				AND user_id = ' . (int) $user_id;
 		$this->db->sql_query($sql);
 	}
 }

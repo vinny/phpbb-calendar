@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		dateFormat: 'Y-m-d H:i',
 		altInput: true,
 		altFormat: '{{ S_FP_ALT_FORMAT|e('js') }}',
-		minDate: 'today',
+		{% if not S_EDIT_MODE %}minDate: 'today',{% endif %}
 		time_24hr: {% if S_FP_24HR %}true{% else %}false{% endif %},
 		allowInput: false,
 		locale: {

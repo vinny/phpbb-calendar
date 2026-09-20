@@ -38,6 +38,9 @@ class main_listener implements EventSubscriberInterface
 	/** @var \vinny\calendar\service\event_access */
 	protected $event_access;
 
+	/** @var \phpbb\language\language */
+	protected $language;
+
 	/**
 	 * Constructor
 	 *
@@ -49,8 +52,9 @@ class main_listener implements EventSubscriberInterface
 	 * @param \vinny\calendar\service\calendar_link $calendar_link
 	 * @param \vinny\calendar\service\event_query $event_query
 	 * @param \vinny\calendar\service\event_access $event_access
+	 * @param \phpbb\language\language $language
 	 */
-	public function __construct(\phpbb\user $user, \phpbb\controller\helper $helper, \phpbb\template\template $template, \phpbb\config\config $config, \phpbb\auth\auth $auth, \vinny\calendar\service\calendar_link $calendar_link, \vinny\calendar\service\event_query $event_query, \vinny\calendar\service\event_access $event_access)
+	public function __construct(\phpbb\user $user, \phpbb\controller\helper $helper, \phpbb\template\template $template, \phpbb\config\config $config, \phpbb\auth\auth $auth, \vinny\calendar\service\calendar_link $calendar_link, \vinny\calendar\service\event_query $event_query, \vinny\calendar\service\event_access $event_access, \phpbb\language\language $language = null)
 	{
 		$this->user = $user;
 		$this->helper = $helper;
@@ -60,6 +64,7 @@ class main_listener implements EventSubscriberInterface
 		$this->calendar_link = $calendar_link;
 		$this->event_query = $event_query;
 		$this->event_access = $event_access;
+		$this->language = $language ?: (isset($user->language) && is_object($user->language) ? $user->language : null);
 	}
 
 	public static function getSubscribedEvents()
@@ -137,7 +142,7 @@ class main_listener implements EventSubscriberInterface
 				$this->template->assign_block_vars('occurring_events', [
 					'TITLE'     => $row['title'],
 					'U_VIEW'    => $this->calendar_link->route('vinny_calendar_view', $row, ['id' => (int) $row['event_id']]),
-					'HOSTED_BY' => $this->user->lang('HOSTED_BY', $user_full),
+					'HOSTED_BY' => $this->lang('HOSTED_BY', $user_full),
 					'END_DATE'  => $this->user->format_date((int) $row['end_at']),
 				]);
 			}
@@ -167,9 +172,9 @@ class main_listener implements EventSubscriberInterface
 
 		if (!empty($this->config['vinny_calendar_display_stats']))
 		{
-			$total_users_string = $this->user->lang('TOTAL_USERS', (int) $this->config['num_users']);
+			$total_users_string = $this->lang('TOTAL_USERS', (int) $this->config['num_users']);
 			$total_events = (int) $this->event_query->get_total_events_count();
-			$total_events_string = $this->user->lang('TOTAL_EVENTS', $total_events);
+			$total_events_string = $this->lang('TOTAL_EVENTS', $total_events);
 
 			$this->template->assign_var('TOTAL_USERS', $total_users_string . ' &bull; ' . $total_events_string);
 		}
@@ -193,7 +198,7 @@ class main_listener implements EventSubscriberInterface
 
 		$user_id = (int) $this->user->data['user_id'];
 
-		$location = $this->user->lang('VIEWING_EVENT_CALENDAR');
+		$location = $this->lang('VIEWING_EVENT_CALENDAR');
 		$location_url = $this->helper->route('vinny_calendar_controller');
 
 		if (preg_match('#events/view/([0-9]+)#', $session_page, $matches))
@@ -203,24 +208,24 @@ class main_listener implements EventSubscriberInterface
 
 			if ($event_data && $this->event_access->can_view_event($event_data, $user_id, ''))
 			{
-				$location = sprintf($this->user->lang('VIEWING_EVENT'), $event_data['title']);
+				$location = sprintf($this->lang('VIEWING_EVENT'), $event_data['title']);
 				$route_params = $this->event_access->build_route_params($event_data, ['id' => $event_id]);
 				$location_url = $this->calendar_link->route('vinny_calendar_view', $event_data, $route_params);
 			}
 		}
 		else if (strpos($session_page, 'events/create') !== false)
 		{
-			$location = $this->user->lang('CREATING_EVENT');
+			$location = $this->lang('CREATING_EVENT');
 			$location_url = $this->helper->route('vinny_calendar_controller');
 		}
 		else if (preg_match('#events/edit/([0-9]+)#', $session_page, $matches))
 		{
-			$location = $this->user->lang('EDITING_EVENT');
+			$location = $this->lang('EDITING_EVENT');
 			$location_url = $this->helper->route('vinny_calendar_controller');
 		}
 		else if (strpos($session_page, 'events/upcoming') !== false)
 		{
-			$location = $this->user->lang('VIEWING_UPCOMING_EVENTS');
+			$location = $this->lang('VIEWING_UPCOMING_EVENTS');
 			$location_url = $this->helper->route('vinny_calendar_upcoming');
 		}
 		else if (preg_match('#events/category/([0-9]+)#', $session_page, $matches))
@@ -230,22 +235,33 @@ class main_listener implements EventSubscriberInterface
 
 			if ($category)
 			{
-				$location = sprintf($this->user->lang('VIEWING_EVENT_CATEGORY'), $category['cat_name']);
+				$location = sprintf($this->lang('VIEWING_EVENT_CATEGORY'), $category['cat_name']);
 				$location_url = $this->helper->route('vinny_calendar_category', ['id' => $cat_id]);
 			}
 		}
 		else if (strpos($session_page, 'events/my-events') !== false)
 		{
-			$location = $this->user->lang('VIEWING_MY_EVENTS');
+			$location = $this->lang('VIEWING_MY_EVENTS');
 			$location_url = $this->helper->route('vinny_calendar_my_events');
 		}
 		else if (strpos($session_page, 'events/my-rsvps') !== false)
 		{
-			$location = $this->user->lang('VIEWING_MY_RSVPS');
+			$location = $this->lang('VIEWING_MY_RSVPS');
 			$location_url = $this->helper->route('vinny_calendar_my_rsvps');
 		}
 
 		$event['location'] = $location;
 		$event['location_url'] = $location_url;
+	}
+
+	protected function lang()
+	{
+		$args = func_get_args();
+		if ($this->language !== null)
+		{
+			return call_user_func_array([$this->language, 'lang'], $args);
+		}
+
+		return call_user_func_array([$this->user, 'lang'], $args);
 	}
 }

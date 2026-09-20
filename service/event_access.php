@@ -51,7 +51,8 @@ class event_access
 		try
 		{
 			return bin2hex(random_bytes(16));
-		} catch (\Exception $e)
+		}
+		catch (\Exception $e)
 		{
 			return hash('sha256', uniqid((string) mt_rand(), true));
 		}
@@ -84,9 +85,9 @@ class event_access
 		}
 
 		$sql = 'SELECT id
-            FROM ' . EVENTBOARD_PARTICIPANTS_TABLE . '
-            WHERE event_id = ' . (int) $event_id . '
-                AND user_id = ' . (int) $user_id;
+			FROM ' . EVENTBOARD_PARTICIPANTS_TABLE . '
+			WHERE event_id = ' . (int) $event_id . '
+				AND user_id = ' . (int) $user_id;
 		$result = $this->db->sql_query($sql);
 		$row = $this->db->sql_fetchrow($result);
 		$this->db->sql_freeresult($result);

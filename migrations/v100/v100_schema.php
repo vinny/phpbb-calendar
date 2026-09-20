@@ -132,19 +132,13 @@ class v100_schema extends \phpbb\db\migration\container_aware_migration
 			$language->add_lang('common', 'vinny/calendar');
 			$cat_name = $language->lang('UNCATEGORIZED');
 		}
-		else if (isset($this->container) && $this->container->has('user'))
-		{
-			$user = $this->container->get('user');
-			$user->add_lang_ext('vinny/calendar', 'common');
-			$cat_name = $user->lang('UNCATEGORIZED');
-		}
 		else
 		{
-			global $user;
-			if (isset($user) && is_object($user))
+			global $language;
+			if (isset($language) && is_object($language))
 			{
-				$user->add_lang_ext('vinny/calendar', 'common');
-				$cat_name = $user->lang('UNCATEGORIZED');
+				$language->add_lang('common', 'vinny/calendar');
+				$cat_name = $language->lang('UNCATEGORIZED');
 			}
 		}
 

@@ -14,6 +14,7 @@ services:
             - '@user'
             - '@auth'
             - '@filesystem'
+            - '@language'
 
     vinny.calendar.service.event_query:
         class: vinny\calendar\service\event_query
@@ -32,6 +33,7 @@ services:
         class: vinny\calendar\service\feed
         arguments:
             - '@user'
+            - '@language'
 
     vinny.calendar.service.calendar_link:
         class: vinny\calendar\service\calendar_link
@@ -54,6 +56,7 @@ services:
             - '@config'
             - '@user'
             - '@cache.driver'
+            - '@language'
 
     vinny.calendar.service.share:
         class: vinny\calendar\service\share
@@ -114,6 +117,7 @@ services:
             - '@vinny.calendar.service.rsvp'
             - '%core.root_path%'
             - '%core.php_ext%'
+            - '@language'
 
     vinny.calendar.notification.type.participant_added:
         class: vinny\calendar\notification\type\participant_added
@@ -187,5 +191,6 @@ services:
             - '@vinny.calendar.service.calendar_link'
             - '@vinny.calendar.service.event_query'
             - '@vinny.calendar.service.event_access'
+            - '@language'
         tags:
             - { name: event.listener }

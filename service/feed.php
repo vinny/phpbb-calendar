@@ -15,9 +15,13 @@ class feed
 	/** @var \phpbb\user */
 	protected $user;
 
-	public function __construct(\phpbb\user $user)
+	/** @var \phpbb\language\language */
+	protected $language;
+
+	public function __construct(\phpbb\user $user, \phpbb\language\language $language = null)
 	{
 		$this->user = $user;
+		$this->language = $language ?: (isset($user->language) && is_object($user->language) ? $user->language : null);
 	}
 
 	public function build_atom(array $events, $feed_title, $feed_link, $feed_desc, $board_url, callable $event_url_builder)
@@ -46,17 +50,22 @@ class feed
 			$end_date_str = $this->user->format_date($row['end_at']);
 			$location_str = !empty($row['location']) ? utf8_htmlspecialchars($row['location']) : '';
 
-			$meta_html = '<p><strong>' . $this->user->lang('EVENT_START') . ':</strong> ' . $start_date_str . '<br />';
-			$meta_html .= '<strong>' . $this->user->lang('EVENT_END') . ':</strong> ' . $end_date_str . '<br />';
+			$start_label = $this->language ? $this->language->lang('EVENT_START') : $this->user->lang('EVENT_START');
+			$end_label = $this->language ? $this->language->lang('EVENT_END') : $this->user->lang('EVENT_END');
+			$loc_label = $this->language ? $this->language->lang('EVENT_LOCATION') : $this->user->lang('EVENT_LOCATION');
+			$uncat_label = $this->language ? $this->language->lang('UNCATEGORIZED') : $this->user->lang('UNCATEGORIZED');
+
+			$meta_html = '<p><strong>' . $start_label . ':</strong> ' . $start_date_str . '<br />';
+			$meta_html .= '<strong>' . $end_label . ':</strong> ' . $end_date_str . '<br />';
 			if (!empty($location_str))
 			{
-				$meta_html .= '<strong>' . $this->user->lang('EVENT_LOCATION') . ':</strong> ' . $location_str . '<br />';
+				$meta_html .= '<strong>' . $loc_label . ':</strong> ' . $location_str . '<br />';
 			}
 			$meta_html .= '</p><hr />';
 
 			$full_content = $meta_html . $desc_html;
 
-			$category = utf8_htmlspecialchars($row['cat_name'] ?: $this->user->lang('UNCATEGORIZED'));
+			$category = utf8_htmlspecialchars($row['cat_name'] ?: $uncat_label);
 			$author = utf8_htmlspecialchars($row['username']);
 
 			// Format dates (using created_at to avoid future dates)
@@ -99,8 +108,8 @@ class feed
 		$vcalendar .= "PRODID:-//phpBB EventBoard//EN\r\n";
 		$vcalendar .= "CALSCALE:GREGORIAN\r\n";
 		$vcalendar .= "METHOD:PUBLISH\r\n";
-		$vcalendar .= "X-WR-CALNAME:" . $calendar_name . "\r\n";
-		$vcalendar .= "X-WR-TIMEZONE:" . $timezone . "\r\n";
+		$vcalendar .= $this->format_ical_line('X-WR-CALNAME', html_entity_decode($calendar_name, ENT_QUOTES, 'UTF-8'));
+		$vcalendar .= $this->format_ical_line('X-WR-TIMEZONE', $timezone);
 
 		foreach ($events as $row)
 		{

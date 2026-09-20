@@ -94,7 +94,19 @@ class event_manager
 
 		if ($map_image === '')
 		{
-			$this->map_image->delete($event_id);
+			$sql = 'SELECT map_image
+				FROM ' . EVENTBOARD_EVENTS_TABLE . '
+				WHERE event_id = ' . (int) $event_id;
+			$result = $this->db->sql_query($sql);
+			$old_map_image = (string) $this->db->sql_fetchfield('map_image');
+			$this->db->sql_freeresult($result);
+
+			if ($old_map_image !== '')
+			{
+				$this->map_image->delete($old_map_image);
+			}
+			$this->map_image->delete((int) $event_id);
+
 			if ((float) $data['lat'] != 0.0 && (float) $data['lng'] != 0.0)
 			{
 				$map_image = $this->map_image->generate($event_id, $data['lat'], $data['lng']);
@@ -102,7 +114,7 @@ class event_manager
 		}
 
 		$sql = 'UPDATE ' . EVENTBOARD_EVENTS_TABLE . '
-            SET ' . $this->db->sql_build_array('UPDATE', [
+			SET ' . $this->db->sql_build_array('UPDATE', [
 				'title' => $data['title'],
 				'description' => $data['description'],
 				'start_at' => (int) $data['start_at'],
@@ -119,7 +131,7 @@ class event_manager
 				'desc_options' => (int) $data['desc_options'],
 				'map_image' => $map_image,
 			]) . '
-            WHERE event_id = ' . (int) $event_id;
+			WHERE event_id = ' . (int) $event_id;
 		$this->db->sql_query($sql);
 
 		return [
@@ -131,18 +143,29 @@ class event_manager
 
 	public function delete_event($event_id)
 	{
+		$sql = 'SELECT map_image
+			FROM ' . EVENTBOARD_EVENTS_TABLE . '
+			WHERE event_id = ' . (int) $event_id;
+		$result = $this->db->sql_query($sql);
+		$map_image = (string) $this->db->sql_fetchfield('map_image');
+		$this->db->sql_freeresult($result);
+
+		if ($map_image !== '')
+		{
+			$this->map_image->delete($map_image);
+		}
 		$this->map_image->delete((int) $event_id);
 
 		$sql = 'DELETE FROM ' . EVENTBOARD_EVENTS_TABLE . '
-            WHERE event_id = ' . (int) $event_id;
+			WHERE event_id = ' . (int) $event_id;
 		$this->db->sql_query($sql);
 
 		$sql = 'DELETE FROM ' . EVENTBOARD_PARTICIPANTS_TABLE . '
-            WHERE event_id = ' . (int) $event_id;
+			WHERE event_id = ' . (int) $event_id;
 		$this->db->sql_query($sql);
 
 		$sql = 'DELETE FROM ' . EVENTBOARD_COMMENTS_TABLE . '
-            WHERE event_id = ' . (int) $event_id;
+			WHERE event_id = ' . (int) $event_id;
 		$this->db->sql_query($sql);
 
 		$this->notification_manager->delete_notifications('vinny.calendar.notification.type.participant_added', (int) $event_id);

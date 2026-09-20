@@ -18,32 +18,33 @@ class main_module
 
 	public function main($id, $mode)
 	{
-		global $config, $request, $template, $user, $phpbb_container;
+		global $config, $request, $template, $user, $phpbb_container, $language;
 
-		$user->add_lang_ext('vinny/calendar', 'common');
-		$user->add_lang_ext('vinny/calendar', 'info_acp_calendar');
+		$language = $language ?: $phpbb_container->get('language');
+		$language->add_lang('common', 'vinny/calendar');
+		$language->add_lang('info_acp_calendar', 'vinny/calendar');
 
 		$this->tpl_name = 'acp_eventboard_' . $mode;
 		$mode_lang = ($mode === 'manage_events') ? 'ACP_EVENTBOARD_MANAGE' : 'ACP_EVENTBOARD_' . strtoupper($mode);
-		$this->page_title = $user->lang('ACP_EVENTBOARD') . ' - ' . $user->lang($mode_lang);
+		$this->page_title = $language->lang('ACP_EVENTBOARD') . ' - ' . $language->lang($mode_lang);
 
 		switch ($mode)
 		{
 			case 'settings':
-				$this->settings($config, $request, $template, $user, $phpbb_container);
+				$this->settings($config, $request, $template, $user, $phpbb_container, $language);
 				break;
 
 			case 'categories':
-				$this->categories($request, $template, $user, $phpbb_container);
+				$this->categories($request, $template, $user, $phpbb_container, $language);
 				break;
 
 			case 'manage_events':
-				$this->manage_events($request, $template, $user, $phpbb_container);
+				$this->manage_events($request, $template, $user, $phpbb_container, $language);
 				break;
 		}
 	}
 
-	protected function settings($config, $request, $template, $user, $container)
+	protected function settings($config, $request, $template, $user, $container, $language)
 	{
 		$form_key = 'vinny_calendar_settings';
 		add_form_key($form_key);
@@ -69,7 +70,7 @@ class main_module
 
 			$phpbb_log = $container->get('log');
 			$phpbb_log->add('admin', $user->data['user_id'], $user->ip, 'LOG_EVENTBOARD_CONFIG_UPDATED');
-			trigger_error($user->lang('CONFIG_UPDATED') . adm_back_link($this->u_action));
+			trigger_error($language->lang('CONFIG_UPDATED') . adm_back_link($this->u_action));
 		}
 
 		$template->assign_vars([
@@ -88,7 +89,7 @@ class main_module
 		]);
 	}
 
-	protected function categories($request, $template, $user, $container)
+	protected function categories($request, $template, $user, $container, $language)
 	{
 		$table_prefix = $container->getParameter('core.table_prefix');
 
@@ -121,7 +122,7 @@ class main_module
 				if ($cat_id)
 				{
 					$sql = 'SELECT *
-						FROM ' . $table_categories . '
+						FROM ' . EVENTBOARD_CATEGORIES_TABLE . '
 						WHERE cat_id = ' . (int) $cat_id;
 					$result = $db->sql_query($sql);
 					$category = $db->sql_fetchrow($result);
@@ -151,19 +152,19 @@ class main_module
 					$error = '';
 					if ($cat_name === '')
 					{
-						$error = $user->lang('CATEGORY_NAME_REQUIRED');
+						$error = $language->lang('CATEGORY_NAME_REQUIRED');
 					}
 					else if (utf8_strlen($cat_name) > 255)
 					{
-						$error = $user->lang('CATEGORY_NAME_TOO_LONG');
+						$error = $language->lang('CATEGORY_NAME_TOO_LONG');
 					}
 					else if (!preg_match('/^[a-f0-9]{3,6}$/i', $cat_color))
 					{
-						$error = $user->lang('CATEGORY_COLOR_INVALID');
+						$error = $language->lang('CATEGORY_COLOR_INVALID');
 					}
 					else if ($cat_icon === '' || !preg_match('/^[a-z0-9\-\s_]+$/i', $cat_icon))
 					{
-						$error = $user->lang('CATEGORY_ICON_INVALID');
+						$error = $language->lang('CATEGORY_ICON_INVALID');
 					}
 
 					if ($error === '')
@@ -177,18 +178,18 @@ class main_module
 
 						if ($action === 'add')
 						{
-							$sql = 'INSERT INTO ' . $table_categories . ' ' . $db->sql_build_array('INSERT', $sql_ary);
+							$sql = 'INSERT INTO ' . EVENTBOARD_CATEGORIES_TABLE . ' ' . $db->sql_build_array('INSERT', $sql_ary);
 							$db->sql_query($sql);
 							$phpbb_log->add('admin', $user->data['user_id'], $user->ip, 'LOG_EVENTBOARD_CATEGORY_ADDED', false, [$cat_name]);
-							trigger_error($user->lang('CATEGORY_ADDED') . adm_back_link($this->u_action));
+							trigger_error($language->lang('CATEGORY_ADDED') . adm_back_link($this->u_action));
 						}
 
-						$sql = 'UPDATE ' . $table_categories . '
+						$sql = 'UPDATE ' . EVENTBOARD_CATEGORIES_TABLE . '
 							SET ' . $db->sql_build_array('UPDATE', $sql_ary) . '
 							WHERE cat_id = ' . (int) $cat_id;
-						$db->sql_query($sql);
+							$db->sql_query($sql);
 						$phpbb_log->add('admin', $user->data['user_id'], $user->ip, 'LOG_EVENTBOARD_CATEGORY_UPDATED', false, [$cat_name]);
-						trigger_error($user->lang('CATEGORY_UPDATED') . adm_back_link($this->u_action));
+						trigger_error($language->lang('CATEGORY_UPDATED') . adm_back_link($this->u_action));
 					}
 
 					$template->assign_vars([
@@ -223,12 +224,12 @@ class main_module
 
 				if (!$category)
 				{
-					trigger_error($user->lang('CATEGORY_NOT_FOUND') . adm_back_link($this->u_action));
+					trigger_error($language->lang('CATEGORY_NOT_FOUND') . adm_back_link($this->u_action));
 				}
 
 				if ((int) $category['event_count'] > 0)
 				{
-					trigger_error($user->lang('CATEGORY_HAS_EVENTS') . adm_back_link($this->u_action));
+					trigger_error($language->lang('CATEGORY_HAS_EVENTS') . adm_back_link($this->u_action));
 				}
 
 				if (confirm_box(true))
@@ -237,10 +238,10 @@ class main_module
 						WHERE cat_id = ' . (int) $cat_id;
 					$db->sql_query($sql);
 					$phpbb_log->add('admin', $user->data['user_id'], $user->ip, 'LOG_EVENTBOARD_CATEGORY_REMOVED', false, [$category['cat_name']]);
-					trigger_error($user->lang('CATEGORY_DELETED') . adm_back_link($this->u_action));
+					trigger_error($language->lang('CATEGORY_DELETED') . adm_back_link($this->u_action));
 				}
 
-				confirm_box(false, $user->lang('CONFIRM_DELETE_CATEGORY'), build_hidden_fields([
+				confirm_box(false, $language->lang('CONFIRM_DELETE_CATEGORY'), build_hidden_fields([
 					'c' => $cat_id,
 					'action' => 'delete',
 				]));
@@ -271,7 +272,7 @@ class main_module
 		]);
 	}
 
-	protected function manage_events($request, $template, $user, $container)
+	protected function manage_events($request, $template, $user, $container, $language)
 	{
 		$table_prefix = $container->getParameter('core.table_prefix');
 
@@ -307,10 +308,10 @@ class main_module
 					]);
 				}
 
-				trigger_error($user->lang('EVENT_DELETED') . adm_back_link($this->u_action));
+				trigger_error($language->lang('EVENT_DELETED') . adm_back_link($this->u_action));
 			}
 
-			confirm_box(false, $user->lang('CONFIRM_DELETE_EVENT'), build_hidden_fields([
+			confirm_box(false, $language->lang('CONFIRM_DELETE_EVENT'), build_hidden_fields([
 				'id' => $event_id,
 				'action' => 'delete',
 				'completed' => $completed,
@@ -362,7 +363,7 @@ class main_module
 				'TITLE' => $row['title'],
 				'CATEGORY' => $row['cat_name'],
 				'START_TIME' => $user->format_date($row['start_at']),
-				'VISIBILITY' => ((int) $row['visibility'] === 0) ? $user->lang('PUBLIC') : $user->lang('PRIVATE'),
+				'VISIBILITY' => ((int) $row['visibility'] === 0) ? $language->lang('PUBLIC') : $language->lang('PRIVATE'),
 				'AUTHOR' => get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']),
 				'PARTICIPANT_COUNT' => (int) $row['participant_count'],
 				'U_VIEW' => $helper->route('vinny_calendar_view', $event_route),

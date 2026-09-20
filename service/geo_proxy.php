@@ -12,14 +12,24 @@ namespace vinny\calendar\service;
 
 class geo_proxy
 {
+	/** @var \phpbb\config\config */
+	protected $config;
+
+	/** @var \phpbb\user */
+	protected $user;
+
 	/** @var \phpbb\cache\driver\driver_interface */
 	protected $cache;
 
-	public function __construct(\phpbb\config\config $config, \phpbb\user $user, \phpbb\cache\driver\driver_interface $cache)
+	/** @var \phpbb\language\language */
+	protected $language;
+
+	public function __construct(\phpbb\config\config $config, \phpbb\user $user, \phpbb\cache\driver\driver_interface $cache, \phpbb\language\language $language = null)
 	{
 		$this->config = $config;
 		$this->user = $user;
 		$this->cache = $cache;
+		$this->language = $language ?: (isset($user->language) && is_object($user->language) ? $user->language : null);
 	}
 
 	public function is_rate_limited($session_id = null)
@@ -58,7 +68,7 @@ class geo_proxy
 		$text = trim((string) $text);
 		$text = mb_substr($text, 0, 120);
 		$api_key = (string) ($this->config['vinny_calendar_geoapify_key'] ?? '');
-		$map_lang = (string) ($this->user->lang('CALENDAR_MAP_LANG') ?: 'en');
+		$map_lang = (string) (($this->language ? $this->language->lang('CALENDAR_MAP_LANG') : 'en') ?: 'en');
 
 		if ($text === '' || mb_strlen($text) < 2 || $api_key === '')
 		{
@@ -75,13 +85,15 @@ class geo_proxy
 
 		if ($result === false)
 		{
-			return ['features' => [], 'error' => $this->user->lang('EVENT_GEO_PROXY_FETCH_FAILED')];
+			$error_msg = $this->language ? $this->language->lang('EVENT_GEO_PROXY_FETCH_FAILED') : 'Fetch failed';
+			return ['features' => [], 'error' => $error_msg];
 		}
 
 		$data = json_decode($result, true);
 		if (!is_array($data) || empty($data['features']) || !is_array($data['features']))
 		{
-			return ['features' => [], 'error' => $this->user->lang('EVENT_GEO_PROXY_INVALID_JSON')];
+			$error_msg = $this->language ? $this->language->lang('EVENT_GEO_PROXY_INVALID_JSON') : 'Invalid JSON';
+			return ['features' => [], 'error' => $error_msg];
 		}
 
 		$features = [];

@@ -43,6 +43,7 @@ class main
 	protected $rsvp;
 	protected $root_path;
 	protected $php_ext;
+	protected $language;
 
 	public function __construct(
 		config $config,
@@ -65,7 +66,8 @@ class main
 		\vinny\calendar\service\event_manager $event_manager,
 		\vinny\calendar\service\rsvp $rsvp,
 		$root_path,
-		$php_ext
+		$php_ext,
+		\phpbb\language\language $language = null
 	)
 	{
 		$this->config = $config;
@@ -89,8 +91,16 @@ class main
 		$this->rsvp = $rsvp;
 		$this->root_path = $root_path;
 		$this->php_ext = $php_ext;
+		$this->language = $language ?: (isset($user->language) && is_object($user->language) ? $user->language : null);
 
-		$this->user->add_lang_ext('vinny/calendar', 'common');
+		if ($this->language)
+		{
+			$this->language->add_lang('common', 'vinny/calendar');
+		}
+		else
+		{
+			$this->user->add_lang_ext('vinny/calendar', 'common');
+		}
 	}
 
 	public function index()
@@ -152,12 +162,12 @@ class main
 			'CALENDAR_EVENTS_JSON' => json_encode($events, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT),
 			'S_FC_12HR' => $this->is_user_12hour(),
 			'U_CANONICAL' => $canonical_url,
-			'CALENDAR_OG_TITLE' => $this->user->lang('PUBLIC_CALENDAR') ?: $this->user->lang('EVENT_CALENDAR'),
-			'CALENDAR_OG_DESCRIPTION' => $this->user->lang('PUBLIC_CALENDAR_EXPLAIN'),
+			'CALENDAR_OG_TITLE' => $this->lang('PUBLIC_CALENDAR') ?: $this->lang('EVENT_CALENDAR'),
+			'CALENDAR_OG_DESCRIPTION' => $this->lang('PUBLIC_CALENDAR_EXPLAIN'),
 			'CALENDAR_OG_URL' => $canonical_url,
 		]);
 
-		return $this->helper->render('event_calendar.html', $this->user->lang('EVENT_CALENDAR'));
+		return $this->helper->render('event_calendar.html', $this->lang('EVENT_CALENDAR'));
 	}
 
 	public function upcoming()
@@ -183,15 +193,15 @@ class main
 		$canonical_url = $this->calendar_link->absolute_url(generate_board_url(), $this->helper->route('vinny_calendar_upcoming'));
 
 		$this->template->assign_vars([
-			'TOTAL_EVENTS' => $total ? $this->user->lang('EVENTS_COUNT', $total) : '',
+			'TOTAL_EVENTS' => $total ? $this->lang('EVENTS_COUNT', $total) : '',
 			'PAGE_NUMBER' => $this->build_page_number($total, $per_page, $start),
 			'U_CANONICAL' => $canonical_url,
-			'CALENDAR_OG_TITLE' => $this->user->lang('COMING_UP'),
-			'CALENDAR_OG_DESCRIPTION' => $this->user->lang('COMING_UP'),
+			'CALENDAR_OG_TITLE' => $this->lang('COMING_UP'),
+			'CALENDAR_OG_DESCRIPTION' => $this->lang('COMING_UP'),
 			'CALENDAR_OG_URL' => $canonical_url,
 		]);
 
-		return $this->helper->render('event_upcoming.html', $this->user->lang('COMING_UP'));
+		return $this->helper->render('event_upcoming.html', $this->lang('COMING_UP'));
 	}
 
 	public function category($id)
@@ -225,7 +235,7 @@ class main
 		$this->template->assign_vars([
 			'CAT_NAME' => $category['cat_name'],
 			'CAT_DESC' => $category['cat_desc'],
-			'TOTAL_EVENTS' => $total ? $this->user->lang('EVENTS_COUNT', $total) : '',
+			'TOTAL_EVENTS' => $total ? $this->lang('EVENTS_COUNT', $total) : '',
 			'PAGE_NUMBER' => $this->build_page_number($total, $per_page, $start),
 			'U_CANONICAL' => $canonical_url,
 			'CALENDAR_OG_TITLE' => $category['cat_name'],
@@ -268,7 +278,7 @@ class main
 		$this->pagination->generate_template_pagination($base_url, 'pagination', 'start', $total, $per_page, $start);
 
 		$this->template->assign_vars([
-			'TOTAL_EVENTS' => $total ? $this->user->lang('EVENTS_COUNT', $total) : '',
+			'TOTAL_EVENTS' => $total ? $this->lang('EVENTS_COUNT', $total) : '',
 			'PAGE_NUMBER' => $this->build_page_number($total, $per_page, $start),
 			'S_SHOW_COMPLETED' => $completed,
 			'U_CREATE_EVENT' => $this->helper->route('vinny_calendar_create'),
@@ -276,7 +286,7 @@ class main
 			'U_MY_EVENTS_COMPLETED' => $this->helper->route('vinny_calendar_my_events', ['completed' => 1]),
 		]);
 
-		return $this->helper->render('event_my_events.html', $this->user->lang('MY_EVENTS'));
+		return $this->helper->render('event_my_events.html', $this->lang('MY_EVENTS'));
 	}
 
 	public function my_rsvps()
@@ -308,11 +318,11 @@ class main
 		$this->pagination->generate_template_pagination($base_url, 'pagination', 'start', $total, $per_page, $start);
 
 		$this->template->assign_vars([
-			'TOTAL_EVENTS' => $total ? $this->user->lang('EVENTS_COUNT', $total) : '',
+			'TOTAL_EVENTS' => $total ? $this->lang('EVENTS_COUNT', $total) : '',
 			'PAGE_NUMBER' => $this->build_page_number($total, $per_page, $start),
 		]);
 
-		return $this->helper->render('event_my_rsvps.html', $this->user->lang('MY_RSVPS'));
+		return $this->helper->render('event_my_rsvps.html', $this->lang('MY_RSVPS'));
 	}
 
 	public function view($id)
@@ -375,7 +385,7 @@ class main
 		}
 
 		$event_url = $this->calendar_link->absolute_route(generate_board_url(), 'vinny_calendar_view', $event, ['id' => (int) $event['event_id']]);
-		$event_location = $this->event_display->is_online($event) ? $this->user->lang('EVENT_ONLINE') : (string) $event['location'];
+		$event_location = $this->event_display->is_online($event) ? $this->lang('EVENT_ONLINE') : (string) $event['location'];
 		$event_plain_description = $this->event_display->plain_text($event['description'], $event['desc_uid'], $event['desc_bitfield'], $event['desc_options']);
 		$calendar_targets = $this->calendar_add->build_targets($event, $event_url, $event_plain_description, $event_location);
 		$share_targets = $this->share->build_targets($event_url, (string) $event['title']);
@@ -484,7 +494,7 @@ class main
 			'EVENT_CATEGORY' => $this->request->variable('event_category', 0),
 		]);
 
-		return $this->helper->render('event_editor.html', $this->user->lang('EVENT_CREATE'));
+		return $this->helper->render('event_editor.html', $this->lang('EVENT_CREATE'));
 	}
 
 	public function edit($id)
@@ -541,7 +551,7 @@ class main
 			'EVENT_MAP_IMAGE_SRC' => $event['map_image'] ? generate_board_url() . '/images/vinny_calendar_img/' . $event['map_image'] : '',
 		]);
 
-		return $this->helper->render('event_editor.html', $this->user->lang('EDIT_EVENT'));
+		return $this->helper->render('event_editor.html', $this->lang('EDIT_EVENT'));
 	}
 
 	public function delete($id)
@@ -576,15 +586,15 @@ class main
 			{
 				$json_response = new \phpbb\json_response();
 				$json_response->send([
-					'MESSAGE_TITLE' => $this->user->lang('INFORMATION'),
-					'MESSAGE_TEXT' => $this->user->lang('EVENT_DELETED') . '<br /><br /><a href="' . $redirect_url . '">' . $this->user->lang('RETURN_TO_MY_EVENTS') . '</a>',
+					'MESSAGE_TITLE' => $this->lang('INFORMATION'),
+					'MESSAGE_TEXT' => $this->lang('EVENT_DELETED') . '<br /><br /><a href="' . $redirect_url . '">' . $this->lang('RETURN_TO_MY_EVENTS') . '</a>',
 				]);
 			}
 
 			redirect($redirect_url);
 		}
 
-		confirm_box(false, $this->user->lang('CONFIRM_DELETE_EVENT'), build_hidden_fields([
+		confirm_box(false, $this->lang('CONFIRM_DELETE_EVENT'), build_hidden_fields([
 			'id' => (int) $id,
 			't' => $this->calendar_link->current_access_token(),
 		]));
@@ -666,9 +676,9 @@ class main
 		$board_url = generate_board_url();
 		$feed = $this->feed_service->build_atom(
 			$this->event_query->get_public_feed_events(30),
-			$this->config['sitename'] . ' - ' . $this->user->lang('EVENT_CALENDAR'),
+			$this->config['sitename'] . ' - ' . $this->lang('EVENT_CALENDAR'),
 			$this->calendar_link->absolute_url($board_url, $this->helper->route('vinny_calendar_feed')),
-			$this->user->lang('EVENT_CALENDAR'),
+			$this->lang('EVENT_CALENDAR'),
 			$board_url,
 			function ($event) {
 				return $this->calendar_link->route('vinny_calendar_view', $event, ['id' => (int) $event['event_id']]);
@@ -687,7 +697,7 @@ class main
 		$events = $this->event_query->get_public_ical_events();
 		$ical = $this->feed_service->build_ical(
 			$events,
-			$this->config['sitename'] . ' - ' . $this->user->lang('EVENT_CALENDAR'),
+			$this->config['sitename'] . ' - ' . $this->lang('EVENT_CALENDAR'),
 			$this->config['board_timezone'] ?? 'UTC',
 			$this->request->server('HTTP_HOST', 'localhost'),
 			function ($event) {
@@ -749,7 +759,7 @@ class main
 
 		if ($this->geo_proxy->is_rate_limited())
 		{
-			return new JsonResponse(['features' => [], 'error' => $this->user->lang('EVENT_GEO_PROXY_RATE_LIMITED')], 429);
+			return new JsonResponse(['features' => [], 'error' => $this->lang('EVENT_GEO_PROXY_RATE_LIMITED')], 429);
 		}
 
 		return new JsonResponse($this->geo_proxy->autocomplete($this->request->variable('text', '', true)));
@@ -761,7 +771,7 @@ class main
 		$this->guard_view_permission();
 		$this->guard_login();
 
-		if (!$this->auth->acl_get('u_eventboard_comment'))
+		if (empty($this->config['vinny_calendar_allow_comments']) || !$this->auth->acl_get('u_eventboard_comment'))
 		{
 			trigger_error('NOT_AUTHORISED');
 		}
@@ -852,7 +862,7 @@ class main
 			redirect($redirect_url);
 		}
 
-		confirm_box(false, $this->user->lang('CONFIRM_DELETE_COMMENT'), build_hidden_fields([
+		confirm_box(false, $this->lang('CONFIRM_DELETE_COMMENT'), build_hidden_fields([
 			'id' => (int) $id,
 			't' => $this->calendar_link->current_access_token(),
 		]));
@@ -899,7 +909,7 @@ class main
 	{
 		return [
 			'TITLE' => $row['title'],
-			'LOCATION' => $row['location'] ?: $this->user->lang('EVENT_ONLINE'),
+			'LOCATION' => $row['location'] ?: $this->lang('EVENT_ONLINE'),
 			'CAT_NAME' => $row['cat_name'],
 			'CAT_COLOR' => ltrim((string) $row['cat_color'], '#'),
 			'CAT_ICON' => $row['cat_icon'],
@@ -1073,13 +1083,13 @@ class main
 		$current = (int) floor($start / $per_page) + 1;
 		$pages = (int) ceil($total / $per_page);
 
-		return $this->user->lang('PAGE_OF', $current, $pages);
+		return $this->lang('PAGE_OF', $current, $pages);
 	}
 
 	protected function truncate_desc($string, $max_length = 150)
 	{
 		$string = trim(strip_tags($string));
-		$ellipsis = $this->user->lang('ELLIPSIS');
+		$ellipsis = $this->lang('ELLIPSIS');
 		if (mb_strlen($string, 'UTF-8') > $max_length)
 		{
 			return mb_substr($string, 0, $max_length - mb_strlen($ellipsis, 'UTF-8'), 'UTF-8') . $ellipsis;
@@ -1090,16 +1100,27 @@ class main
 	protected function assign_breadcrumbs($label, $url, $translate = true)
 	{
 		$this->template->assign_block_vars('navlinks', [
-			'FORUM_NAME' => $this->user->lang('EVENT_CALENDAR'),
+			'FORUM_NAME' => $this->lang('EVENT_CALENDAR'),
 			'U_VIEW_FORUM' => $this->helper->route('vinny_calendar_controller'),
 		]);
 
 		if ($label !== 'EVENT_CALENDAR')
 		{
 			$this->template->assign_block_vars('navlinks', [
-				'FORUM_NAME' => $translate ? $this->user->lang($label) : $label,
+				'FORUM_NAME' => $translate ? $this->lang($label) : $label,
 				'U_VIEW_FORUM' => $url,
 			]);
 		}
+	}
+
+	protected function lang()
+	{
+		$args = func_get_args();
+		if ($this->language !== null)
+		{
+			return call_user_func_array([$this->language, 'lang'], $args);
+		}
+
+		return call_user_func_array([$this->user, 'lang'], $args);
 	}
 }

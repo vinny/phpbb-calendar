@@ -39,10 +39,10 @@ class comment
 	public function get_comments_for_event($event_id)
 	{
 		$sql = 'SELECT c.*, u.username, u.user_colour, u.user_avatar, u.user_avatar_type, u.user_avatar_width, u.user_avatar_height
-            FROM ' . EVENTBOARD_COMMENTS_TABLE . ' c
-            JOIN ' . USERS_TABLE . ' u ON (c.user_id = u.user_id)
-            WHERE c.event_id = ' . (int) $event_id . '
-            ORDER BY c.created_at DESC';
+			FROM ' . EVENTBOARD_COMMENTS_TABLE . ' c
+			JOIN ' . USERS_TABLE . ' u ON (c.user_id = u.user_id)
+			WHERE c.event_id = ' . (int) $event_id . '
+			ORDER BY c.created_at DESC';
 
 		return $this->fetch_all($sql);
 	}
@@ -68,8 +68,8 @@ class comment
 	public function get_event_notify_users($event_id)
 	{
 		$sql = 'SELECT user_id
-            FROM ' . EVENTBOARD_PARTICIPANTS_TABLE . '
-            WHERE event_id = ' . (int) $event_id;
+			FROM ' . EVENTBOARD_PARTICIPANTS_TABLE . '
+			WHERE event_id = ' . (int) $event_id;
 		$result = $this->db->sql_query($sql);
 
 		$notify_users = [];
@@ -101,9 +101,9 @@ class comment
 	public function get_comment_with_event($comment_id)
 	{
 		$sql = 'SELECT c.user_id, c.event_id, e.visibility, e.access_token, e.user_id as event_owner_id
-            FROM ' . EVENTBOARD_COMMENTS_TABLE . ' c
-            JOIN ' . EVENTBOARD_EVENTS_TABLE . ' e ON (e.event_id = c.event_id)
-            WHERE c.comment_id = ' . (int) $comment_id;
+			FROM ' . EVENTBOARD_COMMENTS_TABLE . ' c
+			JOIN ' . EVENTBOARD_EVENTS_TABLE . ' e ON (e.event_id = c.event_id)
+			WHERE c.comment_id = ' . (int) $comment_id;
 
 		$result = $this->db->sql_query($sql);
 		$row = $this->db->sql_fetchrow($result);
@@ -115,7 +115,7 @@ class comment
 	public function delete_comment($comment_id)
 	{
 		$sql = 'DELETE FROM ' . EVENTBOARD_COMMENTS_TABLE . '
-            WHERE comment_id = ' . (int) $comment_id;
+			WHERE comment_id = ' . (int) $comment_id;
 		$this->db->sql_query($sql);
 	}
 
