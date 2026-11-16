@@ -14,11 +14,12 @@ class calendar_add
 {
 	public function build_targets(array $event, $absolute_url, $description, $location)
 	{
-		$title = (string) $event['title'];
+		$title = html_entity_decode((string) $event['title'], ENT_QUOTES, 'UTF-8');
 		$start_at = (int) $event['start_at'];
 		$end_at = (int) $event['end_at'];
+		$description = html_entity_decode((string) $description, ENT_QUOTES, 'UTF-8');
 		$body = trim($description . "\n\n" . $absolute_url);
-		$location = (string) $location;
+		$location = html_entity_decode((string) $location, ENT_QUOTES, 'UTF-8');
 
 		return [
 			'google' => 'https://calendar.google.com/calendar/render?action=TEMPLATE'

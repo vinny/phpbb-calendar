@@ -18,10 +18,10 @@ class feed
 	/** @var \phpbb\language\language */
 	protected $language;
 
-	public function __construct(\phpbb\user $user, \phpbb\language\language $language = null)
+	public function __construct(\phpbb\user $user, \phpbb\language\language $language)
 	{
 		$this->user = $user;
-		$this->language = $language ?: (isset($user->language) && is_object($user->language) ? $user->language : null);
+		$this->language = $language;
 	}
 
 	public function build_atom(array $events, $feed_title, $feed_link, $feed_desc, $board_url, callable $event_url_builder)
@@ -41,14 +41,14 @@ class feed
 		foreach ($events as $row)
 		{
 			$view_url = utf8_htmlspecialchars($root_url . $event_url_builder($row));
-			$title = utf8_htmlspecialchars(html_entity_decode($row['title']));
+			$title = $row['title'];
 
 			// Format HTML content
 			$desc_html = generate_text_for_display($row['description'], $row['desc_uid'], $row['desc_bitfield'], $row['desc_options']);
 
 			$start_date_str = $this->user->format_date($row['start_at']);
 			$end_date_str = $this->user->format_date($row['end_at']);
-			$location_str = !empty($row['location']) ? utf8_htmlspecialchars($row['location']) : '';
+			$location_str = !empty($row['location']) ? $row['location'] : '';
 
 			$start_label = $this->language->lang('EVENT_START');
 			$end_label = $this->language->lang('EVENT_END');
@@ -65,8 +65,8 @@ class feed
 
 			$full_content = $meta_html . $desc_html;
 
-			$category = utf8_htmlspecialchars($row['cat_name'] ?: $uncat_label);
-			$author = utf8_htmlspecialchars($row['username']);
+			$category = !empty($row['cat_name']) ? $row['cat_name'] : utf8_htmlspecialchars($uncat_label);
+			$author = $row['username'];
 
 			// Format dates (using created_at to avoid future dates)
 			$published_time = !empty($row['created_at']) ? (int) $row['created_at'] : time();
@@ -91,8 +91,8 @@ class feed
 		return '<?xml version="1.0" encoding="UTF-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="' . $xml_lang . '">
     <link rel="self" type="application/atom+xml" href="' . utf8_htmlspecialchars($feed_link) . '" />
-    <title>' . utf8_htmlspecialchars($feed_title) . '</title>
-    <subtitle>' . utf8_htmlspecialchars($feed_desc) . '</subtitle>
+    <title>' . utf8_htmlspecialchars(html_entity_decode($feed_title, ENT_QUOTES, 'UTF-8')) . '</title>
+    <subtitle>' . utf8_htmlspecialchars(html_entity_decode($feed_desc, ENT_QUOTES, 'UTF-8')) . '</subtitle>
     <link href="' . utf8_htmlspecialchars($feed_link) . '" />
     <updated>' . $feed_updated . '</updated>
     <id>' . utf8_htmlspecialchars($feed_link) . '</id>

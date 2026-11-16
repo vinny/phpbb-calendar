@@ -76,6 +76,12 @@ class rsvp
 			WHERE event_id = ' . (int) $event['event_id'];
 		$this->db->sql_query($sql);
 
+		if ($this->has_joined($event['event_id'], $user_id))
+		{
+			$this->db->sql_transaction('commit');
+			return 'already_joined';
+		}
+
 		$sql = 'SELECT max_participants
 			FROM ' . EVENTBOARD_EVENTS_TABLE . '
 			WHERE event_id = ' . (int) $event['event_id'];
@@ -103,6 +109,7 @@ class rsvp
 		];
 		$sql = 'INSERT INTO ' . EVENTBOARD_PARTICIPANTS_TABLE . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
 		$this->db->sql_query($sql);
+		$participant_id = (int) $this->db->sql_nextid();
 
 		$total_after_insert = $this->count_participants($event['event_id']);
 		if ((int) $current_event['max_participants'] > 0 && $total_after_insert > (int) $current_event['max_participants'])
@@ -117,6 +124,7 @@ class rsvp
 		$this->notification_manager->add_notifications(
 			'vinny.calendar.notification.type.participant_added',
 			[
+				'participant_id' => $participant_id,
 				'event_id' => (int) $event['event_id'],
 				'event_title' => $event['title'],
 				'organizer_id' => (int) $event['user_id'],
@@ -129,9 +137,22 @@ class rsvp
 
 	public function leave($event_id, $user_id)
 	{
+		$sql = 'SELECT id
+			FROM ' . EVENTBOARD_PARTICIPANTS_TABLE . '
+			WHERE event_id = ' . (int) $event_id . '
+				AND user_id = ' . (int) $user_id;
+		$result = $this->db->sql_query($sql);
+		$participant_id = (int) $this->db->sql_fetchfield('id');
+		$this->db->sql_freeresult($result);
+
 		$sql = 'DELETE FROM ' . EVENTBOARD_PARTICIPANTS_TABLE . '
 			WHERE event_id = ' . (int) $event_id . '
 				AND user_id = ' . (int) $user_id;
 		$this->db->sql_query($sql);
+
+		if ($participant_id > 0)
+		{
+			$this->notification_manager->delete_notifications('vinny.calendar.notification.type.participant_added', $participant_id);
+		}
 	}
 }

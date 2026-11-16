@@ -24,12 +24,12 @@ class geo_proxy
 	/** @var \phpbb\language\language */
 	protected $language;
 
-	public function __construct(\phpbb\config\config $config, \phpbb\user $user, \phpbb\cache\driver\driver_interface $cache, \phpbb\language\language $language = null)
+	public function __construct(\phpbb\config\config $config, \phpbb\user $user, \phpbb\cache\driver\driver_interface $cache, \phpbb\language\language $language)
 	{
 		$this->config = $config;
 		$this->user = $user;
 		$this->cache = $cache;
-		$this->language = $language ?: (isset($user->language) && is_object($user->language) ? $user->language : null);
+		$this->language = $language;
 	}
 
 	public function is_rate_limited($session_id = null)

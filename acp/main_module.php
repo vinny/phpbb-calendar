@@ -94,6 +94,7 @@ class main_module
 		$table_prefix = $container->getParameter('core.table_prefix');
 
 		$db = $container->get('dbal.conn');
+		$cache = $container->get('cache.driver');
 		$phpbb_log = $container->get('log');
 
 		if (!defined('EVENTBOARD_CATEGORIES_TABLE'))
@@ -180,6 +181,7 @@ class main_module
 						{
 							$sql = 'INSERT INTO ' . EVENTBOARD_CATEGORIES_TABLE . ' ' . $db->sql_build_array('INSERT', $sql_ary);
 							$db->sql_query($sql);
+							$cache->destroy('sql', EVENTBOARD_CATEGORIES_TABLE);
 							$phpbb_log->add('admin', $user->data['user_id'], $user->ip, 'LOG_EVENTBOARD_CATEGORY_ADDED', false, [$cat_name]);
 							trigger_error($language->lang('CATEGORY_ADDED') . adm_back_link($this->u_action));
 						}
@@ -187,7 +189,8 @@ class main_module
 						$sql = 'UPDATE ' . EVENTBOARD_CATEGORIES_TABLE . '
 							SET ' . $db->sql_build_array('UPDATE', $sql_ary) . '
 							WHERE cat_id = ' . (int) $cat_id;
-							$db->sql_query($sql);
+						$db->sql_query($sql);
+						$cache->destroy('sql', EVENTBOARD_CATEGORIES_TABLE);
 						$phpbb_log->add('admin', $user->data['user_id'], $user->ip, 'LOG_EVENTBOARD_CATEGORY_UPDATED', false, [$cat_name]);
 						trigger_error($language->lang('CATEGORY_UPDATED') . adm_back_link($this->u_action));
 					}
@@ -237,6 +240,7 @@ class main_module
 					$sql = 'DELETE FROM ' . EVENTBOARD_CATEGORIES_TABLE . '
 						WHERE cat_id = ' . (int) $cat_id;
 					$db->sql_query($sql);
+					$cache->destroy('sql', EVENTBOARD_CATEGORIES_TABLE);
 					$phpbb_log->add('admin', $user->data['user_id'], $user->ip, 'LOG_EVENTBOARD_CATEGORY_REMOVED', false, [$category['cat_name']]);
 					trigger_error($language->lang('CATEGORY_DELETED') . adm_back_link($this->u_action));
 				}
@@ -320,14 +324,14 @@ class main_module
 
 		if ($completed)
 		{
-			$total_events = $this->fetch_count($db, 'SELECT COUNT(event_id) AS total FROM ' . EVENTBOARD_EVENTS_TABLE . ' e WHERE e.start_at < ' . (int) time());
+			$total_events = $this->fetch_count($db, 'SELECT COUNT(event_id) AS total FROM ' . EVENTBOARD_EVENTS_TABLE . ' e WHERE e.end_at <= ' . (int) time());
 		}
 		else
 		{
-			$total_events = $this->fetch_count($db, 'SELECT COUNT(event_id) AS total FROM ' . EVENTBOARD_EVENTS_TABLE . ' e WHERE e.start_at >= ' . (int) time());
+			$total_events = $this->fetch_count($db, 'SELECT COUNT(event_id) AS total FROM ' . EVENTBOARD_EVENTS_TABLE . ' e WHERE e.end_at > ' . (int) time());
 		}
-		$total_active = $this->fetch_count($db, 'SELECT COUNT(event_id) AS total FROM ' . EVENTBOARD_EVENTS_TABLE . ' WHERE start_at >= ' . (int) time());
-		$total_completed = $this->fetch_count($db, 'SELECT COUNT(event_id) AS total FROM ' . EVENTBOARD_EVENTS_TABLE . ' WHERE start_at < ' . (int) time());
+		$total_active = $this->fetch_count($db, 'SELECT COUNT(event_id) AS total FROM ' . EVENTBOARD_EVENTS_TABLE . ' WHERE end_at > ' . (int) time());
+		$total_completed = $this->fetch_count($db, 'SELECT COUNT(event_id) AS total FROM ' . EVENTBOARD_EVENTS_TABLE . ' WHERE end_at <= ' . (int) time());
 
 		if ($completed)
 		{
@@ -336,7 +340,7 @@ class main_module
 				FROM ' . EVENTBOARD_EVENTS_TABLE . ' e
 				LEFT JOIN ' . USERS_TABLE . ' u ON (u.user_id = e.user_id)
 				LEFT JOIN ' . EVENTBOARD_CATEGORIES_TABLE . ' c ON (c.cat_id = e.cat_id)
-				WHERE e.start_at < ' . (int) time() . '
+				WHERE e.end_at <= ' . (int) time() . '
 				ORDER BY e.start_at DESC';
 		}
 		else
@@ -346,7 +350,7 @@ class main_module
 				FROM ' . EVENTBOARD_EVENTS_TABLE . ' e
 				LEFT JOIN ' . USERS_TABLE . ' u ON (u.user_id = e.user_id)
 				LEFT JOIN ' . EVENTBOARD_CATEGORIES_TABLE . ' c ON (c.cat_id = e.cat_id)
-				WHERE e.start_at >= ' . (int) time() . '
+				WHERE e.end_at > ' . (int) time() . '
 				ORDER BY e.start_at ASC';
 		}
 		$result = $db->sql_query_limit($sql, $per_page, $start);

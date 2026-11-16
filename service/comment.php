@@ -117,6 +117,8 @@ class comment
 		$sql = 'DELETE FROM ' . EVENTBOARD_COMMENTS_TABLE . '
 			WHERE comment_id = ' . (int) $comment_id;
 		$this->db->sql_query($sql);
+
+		$this->notification_manager->delete_notifications('vinny.calendar.notification.type.new_comment', (int) $comment_id);
 	}
 
 	protected function fetch_all($sql)

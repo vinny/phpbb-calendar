@@ -14,6 +14,7 @@ class share
 {
 	public function build_targets($absolute_url, $title)
 	{
+		$title = html_entity_decode((string) $title, ENT_QUOTES, 'UTF-8');
 		$url = rawurlencode($absolute_url);
 		$text = rawurlencode($title);
 

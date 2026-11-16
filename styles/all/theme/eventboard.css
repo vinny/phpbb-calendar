@@ -110,7 +110,8 @@
 	margin-top: 8px;
 }
 
-.post-buttons {
+.calendar-event-post .post-buttons,
+.calendar-comment-post .post-buttons {
 	margin-top: 0;
 }
 

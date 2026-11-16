@@ -54,7 +54,7 @@ class main_listener implements EventSubscriberInterface
 	 * @param \vinny\calendar\service\event_access $event_access
 	 * @param \phpbb\language\language $language
 	 */
-	public function __construct(\phpbb\user $user, \phpbb\controller\helper $helper, \phpbb\template\template $template, \phpbb\config\config $config, \phpbb\auth\auth $auth, \vinny\calendar\service\calendar_link $calendar_link, \vinny\calendar\service\event_query $event_query, \vinny\calendar\service\event_access $event_access, \phpbb\language\language $language = null)
+	public function __construct(\phpbb\user $user, \phpbb\controller\helper $helper, \phpbb\template\template $template, \phpbb\config\config $config, \phpbb\auth\auth $auth, \vinny\calendar\service\calendar_link $calendar_link, \vinny\calendar\service\event_query $event_query, \vinny\calendar\service\event_access $event_access, \phpbb\language\language $language)
 	{
 		$this->user = $user;
 		$this->helper = $helper;
@@ -64,7 +64,7 @@ class main_listener implements EventSubscriberInterface
 		$this->calendar_link = $calendar_link;
 		$this->event_query = $event_query;
 		$this->event_access = $event_access;
-		$this->language = $language ?: (isset($user->language) && is_object($user->language) ? $user->language : null);
+		$this->language = $language;
 	}
 
 	public static function getSubscribedEvents()

@@ -67,7 +67,7 @@ class main
 		\vinny\calendar\service\rsvp $rsvp,
 		$root_path,
 		$php_ext,
-		\phpbb\language\language $language = null
+		\phpbb\language\language $language
 	)
 	{
 		$this->config = $config;
@@ -91,16 +91,8 @@ class main
 		$this->rsvp = $rsvp;
 		$this->root_path = $root_path;
 		$this->php_ext = $php_ext;
-		$this->language = $language ?: (isset($user->language) && is_object($user->language) ? $user->language : null);
-
-		if ($this->language)
-		{
-			$this->language->add_lang('common', 'vinny/calendar');
-		}
-		else
-		{
-			$this->user->add_lang_ext('vinny/calendar', 'common');
-		}
+		$this->language = $language;
+		$this->language->add_lang('common', 'vinny/calendar');
 	}
 
 	public function index()
@@ -238,7 +230,7 @@ class main
 			'TOTAL_EVENTS' => $total ? $this->lang('EVENTS_COUNT', $total) : '',
 			'PAGE_NUMBER' => $this->build_page_number($total, $per_page, $start),
 			'U_CANONICAL' => $canonical_url,
-			'CALENDAR_OG_TITLE' => $category['cat_name'],
+			'CALENDAR_OG_TITLE' => html_entity_decode($category['cat_name'], ENT_QUOTES, 'UTF-8'),
 			'CALENDAR_OG_DESCRIPTION' => $this->truncate_desc($category['cat_desc'] ?: $category['cat_name']),
 			'CALENDAR_OG_URL' => $canonical_url,
 		]);
@@ -410,7 +402,7 @@ class main
 			'S_LINKS_ALLOWED' => (bool) $this->config['allow_post_links'],
 			'S_BBCODE_FLASH' => (bool) ($this->config['allow_bbcode'] && $this->user->optionget('bbcode') && $this->config['allow_post_flash']),
 			'U_CANONICAL' => $event_url,
-			'CALENDAR_OG_TITLE' => $event['title'],
+			'CALENDAR_OG_TITLE' => html_entity_decode($event['title'], ENT_QUOTES, 'UTF-8'),
 			'CALENDAR_OG_DESCRIPTION' => $this->truncate_desc($event_plain_description),
 			'CALENDAR_OG_URL' => $event_url,
 			'CALENDAR_OG_IMAGE' => $event['map_image'] ? generate_board_url() . '/images/vinny_calendar_img/' . $event['map_image'] : '',
@@ -598,6 +590,8 @@ class main
 			'id' => (int) $id,
 			't' => $this->calendar_link->current_access_token(),
 		]));
+
+		redirect($this->calendar_link->route('vinny_calendar_view', $event, ['id' => (int) $event['event_id']]));
 	}
 
 	public function join($id)
@@ -866,6 +860,8 @@ class main
 			'id' => (int) $id,
 			't' => $this->calendar_link->current_access_token(),
 		]));
+
+		redirect($redirect_url);
 	}
 
 	protected function assign_form_defaults(array $vars)
@@ -1088,7 +1084,7 @@ class main
 
 	protected function truncate_desc($string, $max_length = 150)
 	{
-		$string = trim(strip_tags($string));
+		$string = html_entity_decode(trim(strip_tags($string)), ENT_QUOTES, 'UTF-8');
 		$ellipsis = $this->lang('ELLIPSIS');
 		if (mb_strlen($string, 'UTF-8') > $max_length)
 		{

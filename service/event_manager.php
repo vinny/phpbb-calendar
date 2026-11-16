@@ -156,6 +156,28 @@ class event_manager
 		}
 		$this->map_image->delete((int) $event_id);
 
+		$participant_ids = [];
+		$sql = 'SELECT id
+			FROM ' . EVENTBOARD_PARTICIPANTS_TABLE . '
+			WHERE event_id = ' . (int) $event_id;
+		$result = $this->db->sql_query($sql);
+		while ($row = $this->db->sql_fetchrow($result))
+		{
+			$participant_ids[] = (int) $row['id'];
+		}
+		$this->db->sql_freeresult($result);
+
+		$comment_ids = [];
+		$sql = 'SELECT comment_id
+			FROM ' . EVENTBOARD_COMMENTS_TABLE . '
+			WHERE event_id = ' . (int) $event_id;
+		$result = $this->db->sql_query($sql);
+		while ($row = $this->db->sql_fetchrow($result))
+		{
+			$comment_ids[] = (int) $row['comment_id'];
+		}
+		$this->db->sql_freeresult($result);
+
 		$sql = 'DELETE FROM ' . EVENTBOARD_EVENTS_TABLE . '
 			WHERE event_id = ' . (int) $event_id;
 		$this->db->sql_query($sql);
@@ -168,8 +190,14 @@ class event_manager
 			WHERE event_id = ' . (int) $event_id;
 		$this->db->sql_query($sql);
 
-		$this->notification_manager->delete_notifications('vinny.calendar.notification.type.participant_added', (int) $event_id);
+		if (!empty($participant_ids))
+		{
+			$this->notification_manager->delete_notifications('vinny.calendar.notification.type.participant_added', $participant_ids, (int) $event_id);
+		}
 		$this->notification_manager->delete_notifications('vinny.calendar.notification.type.event_reminder', (int) $event_id);
-		$this->notification_manager->delete_notifications('vinny.calendar.notification.type.new_comment', false, (int) $event_id);
+		if (!empty($comment_ids))
+		{
+			$this->notification_manager->delete_notifications('vinny.calendar.notification.type.new_comment', $comment_ids, (int) $event_id);
+		}
 	}
 }

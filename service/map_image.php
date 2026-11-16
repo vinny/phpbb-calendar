@@ -30,14 +30,14 @@ class map_image
 	/** @var \phpbb\language\language */
 	protected $language;
 
-	public function __construct(\phpbb\config\config $config, $root_path, \phpbb\user $user, \phpbb\auth\auth $auth, \phpbb\filesystem\filesystem_interface $filesystem, \phpbb\language\language $language = null)
+	public function __construct(\phpbb\config\config $config, $root_path, \phpbb\user $user, \phpbb\auth\auth $auth, \phpbb\filesystem\filesystem_interface $filesystem, \phpbb\language\language $language)
 	{
 		$this->config = $config;
 		$this->root_path = $root_path;
 		$this->user = $user;
 		$this->auth = $auth;
 		$this->filesystem = $filesystem;
-		$this->language = $language ?: (isset($user->language) && is_object($user->language) ? $user->language : null);
+		$this->language = $language;
 	}
 
 	public function generate($event_id, $lat, $lng)

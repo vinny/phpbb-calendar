@@ -72,7 +72,7 @@ class participant_added extends \phpbb\notification\type\base
 	 */
 	public static function get_item_id($data)
 	{
-		return $data['event_id'];
+		return (int) $data['participant_id'];
 	}
 
 	/**
@@ -80,7 +80,7 @@ class participant_added extends \phpbb\notification\type\base
 	 */
 	public static function get_item_parent_id($data)
 	{
-		return 0;
+		return (int) $data['event_id'];
 	}
 
 	/**
@@ -174,6 +174,7 @@ class participant_added extends \phpbb\notification\type\base
 	{
 		parent::create_insert_array($data, $pre_create_data);
 
+		$this->set_data('participant_id', $data['participant_id']);
 		$this->set_data('event_id', $data['event_id']);
 		$this->set_data('event_title', $data['event_title']);
 		$this->set_data('organizer_id', $data['organizer_id']);

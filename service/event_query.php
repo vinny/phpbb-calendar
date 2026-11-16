@@ -293,14 +293,14 @@ class event_query
 			$sql = 'SELECT COUNT(e.event_id) as total
 				FROM ' . EVENTBOARD_EVENTS_TABLE . ' e
 				WHERE e.user_id = ' . (int) $user_id . '
-					AND e.start_at < ' . (int) time();
+					AND e.end_at <= ' . (int) time();
 		}
 		else
 		{
 			$sql = 'SELECT COUNT(e.event_id) as total
 				FROM ' . EVENTBOARD_EVENTS_TABLE . ' e
 				WHERE e.user_id = ' . (int) $user_id . '
-					AND e.start_at >= ' . (int) time();
+					AND e.end_at > ' . (int) time();
 		}
 
 		return $this->fetch_count($sql);
@@ -315,7 +315,7 @@ class event_query
 				FROM ' . EVENTBOARD_EVENTS_TABLE . ' e
 				LEFT JOIN ' . EVENTBOARD_CATEGORIES_TABLE . ' c ON (e.cat_id = c.cat_id)
 				WHERE e.user_id = ' . (int) $user_id . '
-					AND e.start_at < ' . (int) time() . '
+					AND e.end_at <= ' . (int) time() . '
 				ORDER BY e.start_at DESC';
 		}
 		else
@@ -325,7 +325,7 @@ class event_query
 				FROM ' . EVENTBOARD_EVENTS_TABLE . ' e
 				LEFT JOIN ' . EVENTBOARD_CATEGORIES_TABLE . ' c ON (e.cat_id = c.cat_id)
 				WHERE e.user_id = ' . (int) $user_id . '
-					AND e.start_at >= ' . (int) time() . '
+					AND e.end_at > ' . (int) time() . '
 				ORDER BY e.start_at ASC';
 		}
 
@@ -339,7 +339,7 @@ class event_query
 			FROM ' . EVENTBOARD_EVENTS_TABLE . ' e
 			JOIN ' . EVENTBOARD_PARTICIPANTS_TABLE . ' p ON (e.event_id = p.event_id)
 			WHERE p.user_id = ' . (int) $user_id . '
-				AND e.start_at >= ' . (int) time()
+				AND e.end_at > ' . (int) time()
 		);
 	}
 
@@ -351,7 +351,7 @@ class event_query
 			JOIN ' . EVENTBOARD_PARTICIPANTS_TABLE . ' p ON (e.event_id = p.event_id)
 			LEFT JOIN ' . EVENTBOARD_CATEGORIES_TABLE . ' c ON (e.cat_id = c.cat_id)
 			WHERE p.user_id = ' . (int) $user_id . '
-				AND e.start_at >= ' . (int) time() . '
+				AND e.end_at > ' . (int) time() . '
 			ORDER BY e.start_at ASC';
 
 		return $this->fetch_all($sql, $limit, $start);

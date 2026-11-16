@@ -15,6 +15,7 @@ class geo_proxy_test extends \phpbb_test_case
 	protected $config;
 	protected $user;
 	protected $cache;
+	protected $language;
 	protected $service;
 
 	public function setUp(): void
@@ -32,10 +33,17 @@ class geo_proxy_test extends \phpbb_test_case
 		$this->cache = $this->getMockBuilder(\phpbb\cache\driver\driver_interface::class)
 			->getMock();
 
+		$this->language = $this->getMockBuilder(\phpbb\language\language::class)
+			->disableOriginalConstructor()
+			->getMock();
+		$this->language->method('lang')
+			->willReturn('en');
+
 		$this->service = new \vinny\calendar\service\geo_proxy(
 			$this->config,
 			$this->user,
-			$this->cache
+			$this->cache,
+			$this->language
 		);
 	}
 
