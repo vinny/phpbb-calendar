@@ -41,48 +41,62 @@ class feed
 		foreach ($events as $row)
 		{
 			$view_url = utf8_htmlspecialchars($root_url . $event_url_builder($row));
-			$title = $row['title'];
+			$title = utf8_htmlspecialchars(html_entity_decode($row['title'], ENT_QUOTES, 'UTF-8'));
 
-			// Format HTML content
 			$desc_html = generate_text_for_display($row['description'], $row['desc_uid'], $row['desc_bitfield'], $row['desc_options']);
+			$desc_html = preg_replace('#<br\s*/?>#i', "\n", $desc_html);
+			$desc_text = trim(html_entity_decode(strip_tags($desc_html), ENT_QUOTES, 'UTF-8'));
 
 			$start_date_str = $this->user->format_date($row['start_at']);
 			$end_date_str = $this->user->format_date($row['end_at']);
-			$location_str = !empty($row['location']) ? $row['location'] : '';
 
 			$start_label = $this->language->lang('EVENT_START');
 			$end_label = $this->language->lang('EVENT_END');
 			$loc_label = $this->language->lang('EVENT_LOCATION');
 			$uncat_label = $this->language->lang('UNCATEGORIZED');
 
-			$meta_html = '<p><strong>' . $start_label . ':</strong> ' . $start_date_str . '<br />';
-			$meta_html .= '<strong>' . $end_label . ':</strong> ' . $end_date_str . '<br />';
-			if (!empty($location_str))
+			$raw_loc = trim((string) ($row['location'] ?? ''));
+			if ($raw_loc === '' || strtolower($raw_loc) === 'online')
 			{
-				$meta_html .= '<strong>' . $loc_label . ':</strong> ' . $location_str . '<br />';
+				$location_str = $this->language->lang('EVENT_ONLINE');
 			}
-			$meta_html .= '</p><hr />';
+			else
+			{
+				$location_str = html_entity_decode($raw_loc, ENT_QUOTES, 'UTF-8');
+			}
 
-			$full_content = $meta_html . $desc_html;
+			$meta_lines = [
+				$start_label . ': ' . $start_date_str,
+				$end_label . ': ' . $end_date_str,
+				$loc_label . ': ' . $location_str,
+			];
 
-			$category = !empty($row['cat_name']) ? $row['cat_name'] : utf8_htmlspecialchars($uncat_label);
-			$author = $row['username'];
+			$full_content = implode("\n", $meta_lines);
+			if ($desc_text !== '')
+			{
+				$full_content .= "\n\n" . $desc_text;
+			}
+			$full_content = utf8_htmlspecialchars($full_content);
+
+			$category_raw = !empty($row['cat_name']) ? html_entity_decode($row['cat_name'], ENT_QUOTES, 'UTF-8') : $uncat_label;
+			$category = utf8_htmlspecialchars($category_raw);
+			$author = utf8_htmlspecialchars(html_entity_decode($row['username'], ENT_QUOTES, 'UTF-8'));
 
 			// Format dates (using created_at to avoid future dates)
 			$published_time = !empty($row['created_at']) ? (int) $row['created_at'] : time();
 			$dt->setTimestamp($published_time);
 			$published_str = $dt->format(\DateTime::ATOM);
 
-			$entries .= '        <entry>
-            <author><name><![CDATA[' . $author . ']]></name></author>
-            <updated>' . $published_str . '</updated>
-            <published>' . $published_str . '</published>
-            <id>' . $view_url . '</id>
-            <link href="' . $view_url . '" />
-            <title type="html"><![CDATA[' . $title . ']]></title>
-            <category term="' . $category . '" label="' . $category . '" />
-            <content type="html" xml:base="' . $view_url . '"><![CDATA[' . $full_content . ']]></content>
-        </entry>
+			$entries .= '		<entry>
+			<author><name>' . $author . '</name></author>
+			<updated>' . $published_str . '</updated>
+			<published>' . $published_str . '</published>
+			<id>' . $view_url . '</id>
+			<link href="' . $view_url . '" />
+			<title>' . $title . '</title>
+			<category term="' . $category . '" label="' . $category . '" />
+			<content type="text">' . $full_content . '</content>
+		</entry>
 ';
 		}
 
@@ -90,12 +104,12 @@ class feed
 
 		return '<?xml version="1.0" encoding="UTF-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="' . $xml_lang . '">
-    <link rel="self" type="application/atom+xml" href="' . utf8_htmlspecialchars($feed_link) . '" />
-    <title>' . utf8_htmlspecialchars(html_entity_decode($feed_title, ENT_QUOTES, 'UTF-8')) . '</title>
-    <subtitle>' . utf8_htmlspecialchars(html_entity_decode($feed_desc, ENT_QUOTES, 'UTF-8')) . '</subtitle>
-    <link href="' . utf8_htmlspecialchars($feed_link) . '" />
-    <updated>' . $feed_updated . '</updated>
-    <id>' . utf8_htmlspecialchars($feed_link) . '</id>
+	<link rel="self" type="application/atom+xml" href="' . utf8_htmlspecialchars($feed_link) . '" />
+	<title>' . utf8_htmlspecialchars(html_entity_decode($feed_title, ENT_QUOTES, 'UTF-8')) . '</title>
+	<subtitle>' . utf8_htmlspecialchars(html_entity_decode($feed_desc, ENT_QUOTES, 'UTF-8')) . '</subtitle>
+	<link href="' . utf8_htmlspecialchars($feed_link) . '" />
+	<updated>' . $feed_updated . '</updated>
+	<id>' . utf8_htmlspecialchars($feed_link) . '</id>
 ' . $entries . '</feed>';
 	}
 
